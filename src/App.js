@@ -37,7 +37,7 @@ function App() {
           <h4 className='profile_id'> 학번</h4>
         </div>
         <div className='what'>
-          여기머함??
+          여기 머함??
         </div>
       </div>
 
