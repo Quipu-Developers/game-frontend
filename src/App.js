@@ -1,11 +1,18 @@
 import './App.css';
-import Start from './page/game';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Start from './page/start';
+import Game from './page/game';
+
 
 function App() {
   return (
-    <>
-      <Start/>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Start />} />
+        <Route path="/game" element={<Game />} />
+      </Routes>
+    </Router>
   );
 }
 

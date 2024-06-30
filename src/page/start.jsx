@@ -1,7 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../style/start.css'
 
 export default function Start() {
+    const navigate = useNavigate();
+
+    const handleStartClick = () => {
+      navigate('/game');
+    };
     return (
         <div className="start-container">
             <h1>배틀글라운드</h1>
@@ -40,7 +46,7 @@ export default function Start() {
             </div>
             <div className="start-button-container">
                 <label htmlFor="start-button">GAME START</label>
-                <button id="start-button">▶</button>
+                <button id="start-button" onClick={handleStartClick}>▶</button>
             </div>
         </div>
     )

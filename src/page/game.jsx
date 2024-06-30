@@ -2,7 +2,7 @@ import '../style/game.css';
 import wordlist from '../wordlist/word.js';
 import React, { useState, useEffect } from "react";
 
-function App() {
+export default function Game() {
 
   const [count, setCount] = useState(60);
   useEffect(() => {
@@ -61,5 +61,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
