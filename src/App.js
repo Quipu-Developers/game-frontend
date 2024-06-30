@@ -20,7 +20,7 @@ function App() {
 
       <div className='topcontainer'>
         <div className='logo'>
-          Quipu
+          Quipu&nbsp;
         </div>
         <div className='title'>
           배틀글라운드
@@ -31,13 +31,10 @@ function App() {
       </div>
       
       <div className='leftcontainer'>
-        <div className='profile'>
-          <h4 className='profile_name'> 이름</h4>
-          <h4 className='profile_major'> 학부/학과</h4>
-          <h4 className='profile_id'> 학번</h4>
-        </div>
-        <div className='what'>
-          여기 머함??
+        <div className='rankbox'>
+          <div className='rankbox_first'>죠르디 300점</div>
+          <div className='rankbox_second'>피카츄 200점</div>
+          <div className='rankbox_third'>김준호 100점</div>
         </div>
       </div>
 
@@ -53,10 +50,12 @@ function App() {
       </div>
 
       <div className='rightcontainer'>
-        <div className='rankbox'>
-          <div className='rankbox_first'>죠르디 300점</div>
-          <div className='rankbox_second'>피카츄 200점</div>
-          <div className='rankbox_third'>김준호 100점</div>
+        <div className='profile'>
+          <h4 className='profile_name'> 이름</h4>
+          <img src={process.env.PUBLIC_URL + "./image/irumae.png"}/>
+        </div>
+        <div className='what'>
+          여기 머함??
         </div>
       </div>
     </div>

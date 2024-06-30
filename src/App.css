@@ -5,21 +5,22 @@
 .container {
   display: flex;
   height: 100vh;
-  background-color: #888782;
+  background-color: #808FA4;
+  flex-wrap: wrap;
 }
 
 .topcontainer {
   display: flex;
-  position: fixed;
+  position: relative;
   width: 100%;
   justify-content: space-around;
-  height: 15%;
+  height: 15vh;
 }
 
 .logo {
   margin-top: 1.5%;
   font-size: 65px;
-  height: 80px;
+  height: 87px;
   width: 200px;
   margin-left: 0px;
   margin-right: 50px;
@@ -30,14 +31,15 @@
   border-radius: 50%;
   box-shadow: 2.5px 2.5px rgb(104, 107, 109);
   background-color: rgb(231, 244, 255);
+  font-style: italic;
 }
 
 .title {
-  padding-top: 3%;
+  margin-top: 3vh;
   font-size: 70px;
   font-weight: bold;
   color: white;
-  text-shadow: 3px 3px 0px rgb(201, 201, 0);
+  text-shadow: 4px 4px 0px #c3803b;
 }
 
 .timer {
@@ -49,7 +51,7 @@
   text-align: center;
   border-radius: 40px;
   border-style: solid;
-  border-width: 4px;  
+  border-width: 4px;
   border-color: black gray black gray;
   font-family: "Londrina Solid", sans-serif;
   font-weight: 600;
@@ -57,100 +59,7 @@
 }
 
 .leftcontainer {
-  width: 10%;
-  padding-top: 180px;
-  flex-grow: 1;
-  text-align: center;
-  align-items: center;
-  margin-right: 4%;
-  margin-left: 6%;
-}
-
-.profile {
-  background-color: #F9D8B7;
-  margin-top: 15px;
-  height: 200px;
-  border-radius: 20px;
-  box-shadow: 3.5px 3.5px 1px #303131;
-  border: 2px solid #717372;
-}
-
-.profile_name {
-  line-height: 50px;
-  margin-top: 10px;
-  font-size: x-large;
-}
-
-.profile_major {
-  line-height: 30px;
-  font-size: large;
-}
-
-.profile_name {
-  line-height: 55px;
-}
-
-.what {
-  background-color: #F9D8B7;
-  margin-top: 80px;
-  height: 280px;
-  border-radius: 20px;
-  box-shadow: 3.5px 3.5px 1px #303131;
-  line-height: 280px;
-  border: 2px solid #717372;
-}
-
-.centercontainer {
-  padding-top: 180px;
-  width: 60%;
-  display: flex;
-  text-align: center;
-  display: inline-block;
-}
-
-.wordbox {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-template-rows: repeat(12, 1fr);
-  grid-gap: 5px;
-  grid-row-gap: 14px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-bottom: 25px;
-  padding-top: 25px;
-  font-size: 23px;
-  border: 5px solid #263440;
-  box-shadow: 0px 0px 10px #263440;
-  background-color: #F5DBBA;
-  border-radius: 10%;
-  font-family: "Noto Sans KR", sans-serif;
-  font-weight: 500;
-}
-
-.text {
-  background-color: #2D3E4E;
-  color: #F5DBBA;
-  text-decoration: none;
-  border-radius: 10px;
-  padding-top: 2px;
-  padding-bottom: 3px;
-  padding-left: 15px;
-  padding-right: 15px;
-}
-
-.inputbox input{
-  height: 40px;
-  border-radius: 10px;
-  margin-top: 30px;
-  width: 45%;
-  text-align: center;
-  font-size: x-large;
-  font-family: "Noto Sans KR", sans-serif;
-  font-weight: 500;
-}
-
-.rightcontainer {
-  padding-top: 180px;
+  position: relative;
   width: 10%;
   flex-grow: 1;
   text-align: center;
@@ -161,15 +70,15 @@
 
 .rankbox {
   background-color: white;
-  margin-top: 50px;
-  height: 560px;
+  margin-top: 10vh;
+  height: 75vh;
   border-radius: 20px;
-  background-color: #898987;
+  background-color: #808FA4;
 }
 
 .rankbox_first {
-  background-color: #243644;
-  color: bisque;
+  background-color: #11324C;
+  color: #CECDCA;
   margin-left: 10%;
   margin-right: 10%;
   width: 200px;
@@ -177,15 +86,15 @@
   line-height: 102px;
   font-weight: bold;
   border-radius: 15px;
-  border: 4px solid bisque;
+  border: 4px solid #CECDCA;
   font-family: "Noto Sans KR", sans-serif;
   font-weight: 600;
   font-size: x-large;
 }
 
 .rankbox_second {
-  background-color: #243644;
-  color: bisque;
+  background-color: #11324C;
+  color: #CECDCA;
   margin-left: 10%;
   margin-right: 10%;
   width: 200px;
@@ -193,7 +102,7 @@
   line-height: 102px;
   font-weight: bold;
   border-radius: 15px;
-  border: 4px solid bisque;
+  border: 4px solid #CECDCA;
   font-family: "Noto Sans KR", sans-serif;
   font-weight: 600;
   margin-top: 80px;
@@ -201,8 +110,8 @@
 }
 
 .rankbox_third {
-  background-color: #243644;
-  color: bisque;
+  background-color: #11324C;
+  color: #CECDCA;
   margin-left: 10%;
   margin-right: 10%;
   width: 200px;
@@ -210,9 +119,100 @@
   line-height: 102px;
   font-weight: bold;
   border-radius: 15px;
-  border: 4px solid bisque;
+  border: 4px solid #CECDCA;
   font-family: "Noto Sans KR", sans-serif;
   font-weight: 600;
   margin-top: 80px;
   font-size: x-large;
+}
+
+.centercontainer {
+  width: 60%;
+  display: flex;
+  text-align: center;
+  display: inline-block;
+}
+
+.wordbox {
+  margin-top: 3vh;
+  height: 70vh;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  grid-column-gap: 1vh;
+  grid-row-gap: 14px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 25px;
+  padding-top: 25px;
+  font-size: 23px;
+  border: 5px solid #11324C;
+  box-shadow: 0px 0px 15px #11324C;
+  background-color: #F7F6F2;
+  border-radius: 10%;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 500;
+}
+
+.text {
+  height: auto;
+  background-color: #11324C;
+  color: #F7F6F2;
+  text-decoration: none;
+  border-radius: 10px;
+  padding-top: 0.1vh;
+  padding-bottom: 0.1vh;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.inputbox input {
+  height: 5vh;
+  border-radius: 10px;
+  margin-top: 2vh;
+  width: 45%;
+  text-align: center;
+  font-size: x-large;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 500;
+}
+
+.rightcontainer {
+  width: 10%;
+  flex-grow: 1;
+  text-align: center;
+  align-items: center;
+  margin-right: 5%;
+  margin-left: 5%;
+}
+
+.profile {
+  background-color: #8D9FB5;
+  margin-top: 4.4vh;
+  height: 25vh;
+  border-radius: 20px;
+  box-shadow: 3.5px 3.5px 1px #1D2636;
+  border: 4px solid #1D2636;
+}
+
+.profile_name {
+  line-height: 5vh;
+  margin-top: 1vh;
+  font-size: x-large;
+}
+
+.profile img {
+  margin-top: -4.5vh;
+  width: 100%;
+  height: 18vh;
+}
+
+.what {
+  background-color: #8D9FB5;
+  margin-top: 7vh;
+  height: 35vh;
+  border-radius: 20px;
+  box-shadow: 3.5px 3.5px 1px #1D2636;
+  line-height: 34vh;
+  border: 4px solid #1D2636;
 }
