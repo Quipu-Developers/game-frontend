@@ -1,5 +1,5 @@
 .start-container {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     background-color: #8090a4;
     display: flex;
@@ -16,7 +16,7 @@
 }
 
 .start-subcontainer {
-    width: 700px;
+    width: 950px;
     height: 450px;
     display: flex;
     justify-content: center;
@@ -52,7 +52,7 @@
 }
 
 .left-subcontainer {
-    width: 50%;
+    width: 45%;
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
@@ -61,8 +61,6 @@
     border-top: 2px solid #11324D;
     background-color: #F7F6F2;
     border-radius: 10px 0 0 10px;
-    box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s;
 }
 
 .input-box {
@@ -81,7 +79,6 @@
     border: 1.5px solid #11324D;
     border-radius: 40px 60px / 60px 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-
 }
 
 .input-box div p {
@@ -115,7 +112,7 @@
 .promo-text p {
     padding: 5px 15px;
     border-radius: 80px 60px / 90px 60px;
-    font-weight: 400;   
+    font-weight: 400;
     border: 1.5px solid #11324D;
     background-color: #7E94BF;
     color: #11324D;
@@ -134,7 +131,7 @@
 }
 
 .right-subcontainer {
-    width: 50%;
+    width: 55%;
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
@@ -143,27 +140,26 @@
     border-top: 2px solid #11324D;
     background-color: #F7F6F2;
     border-radius: 0 10px 10px 0;
-    padding: 20px;  
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s;
+    padding: 20px;
 }
 
 .right-subcontainer h3 {
-    font-size: 24px;
+    font-size: 20px;
     color: #11324D;
-    margin-bottom: 10px;
+    margin: 0;
+    text-align: center;
 }
 
 .right-subcontainer ul {
     list-style: none;
     padding: 0;
+    margin: 20px 0;
 }
 
 .right-subcontainer li {
-    font-size: 18px;
+    font-size: 16px;
     color: #333;
-    margin-bottom: 10px;
-    line-height: 1.5;
+    line-height: 1.6;
     position: relative;
     word-break: keep-all;
 }
@@ -192,7 +188,7 @@
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    background-color: #11324D;  
+    background-color: #11324D;
     color: #F1F0E8;
     border: none;
     font-size: 18px;

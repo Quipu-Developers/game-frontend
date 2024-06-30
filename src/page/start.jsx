@@ -16,19 +16,25 @@ export default function Start() {
                         <div style={{ width: '45%' }}><p>이름</p></div>
                         <input style={{ width: '50%' }}></input>
                     </div>
-                    <div className="promo-text"><p>UOS 최고의 타이핑 마스터에 도전하세요!</p></div>
+                    <div className="promo-text"><p>누구보다 빠르고 정확하게</p></div>
                     <div className="input-box">
                         <input style={{ width: '70%' }}></input>
                         <div style={{ width: '25%' }}><p>전화번호</p></div>
                     </div>
-                    <div className="promo-text"><p>누구보다 빠르고 정확하게</p></div>
+                    <div className="promo-text"><p>UOS 최고의 타이핑 마스터에 도전하세요!</p></div>
                 </div>
                 <div className="right-subcontainer">
-                    <h3>Rule</h3>
+                    <h3>게임 방법 🌟</h3>
                     <ul>
-                        <li>1. 팀 내에서 입력한 단어들이<br></br><span className="highlight">실시간으로 화면에서 사라진다</span>.</li>
-                        <li>2. 모든 자원이 없어질 때까지<br></br><span className="highlight">입력한 글자수대로 점수 부여한다</span>.</li>
-                        <li>3. 제한 시간 내에 모든 자원이<br></br><span className="highlight">없어지지 않는다면 팀 전체가 탈락한다</span>.</li>
+                        <li>✔️ 단어들을 빠르게 입력해서 없애세요! 🚀</li>
+                        <li>✔️ 팀원보다 <span className="highlight">먼저 입력</span>하여 단어를 낚아채세요!</li>
+                        <li>✔️ <span className="highlight">최대한 많은 글자</span>를 입력할수록 점수가 높아집니다 💪</li>
+                    </ul>
+                    <h3>점수 🏆</h3>
+                    <ul>
+                        <li>✔️ 입력한 글자 수만큼 점수가 부여되고 <span className="highlight">팀 내 순위</span>가 결정됩니다!</li>
+                        <li>✔️ <span className="highlight">남은 시간</span> 합산으로 전체 등수가 결정됩니다! top 10에 도전해보세요! 😘</li>
+                        <li>✔️ 시간 내에 모든 단어를 제거하지 못하면 <span className="highlight">팀 전체 탈락</span>합니다! ⚠️</li>
                     </ul>
                 </div>
             </div>
