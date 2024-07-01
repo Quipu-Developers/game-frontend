@@ -51,11 +51,12 @@ export default function Game() {
 
       <div className='rightcontainer'>
         <div className='profile'>
-          <h4 className='profile_name'> 이름</h4>
+          <h4 className='profile_name'>김준호</h4>
           <img src={process.env.PUBLIC_URL + "./image/irumae.png"}/>
         </div>
-        <div className='what'>
-          여기 머함??
+        <div className='ranking'>
+          <h4 className='ranking_title'>현재 순위</h4>
+          <h4 className='ranking_number'>3</h4>
         </div>
       </div>
     </div>
