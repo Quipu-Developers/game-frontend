@@ -1,0 +1,237 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #808FA4;
+  flex-wrap: wrap;
+}
+
+.topcontainer {
+  display: flex;
+  position: relative;
+  width: 100%;
+  justify-content: space-around;
+  height: 15vh;
+}
+
+.title {
+  margin-top: 5vh;
+  font-size: 7vh;
+  font-weight: bold;
+  color: white;
+  text-shadow: 4px 4px 0px #c3803b;
+  margin-right: 60vh;
+  height: auto;
+  font-weight: 900;
+  margin-left: 5vh;
+}
+
+.logo {
+  margin-top: 1vh;
+  font-size: 6.5vh;
+  height: 9vh;
+  width: 200vh;
+  text-align: center;
+  border-radius: 50px;
+  color: rgb(39, 30, 118);
+  border-radius: 50%;
+  box-shadow: 0.3vh 0.3vh rgb(104, 107, 109);
+  background-color: rgb(231, 244, 255);
+  font-style: italic;
+  font-weight: 900;
+}
+
+.timer {
+  margin-top: 7.5vh;
+  font-size: 3.2vh;
+  width: 30vh;
+  height: 7vh;
+  background-color: white;
+  text-align: center;
+  border-radius: 7vh;
+  border-style: solid;
+  border-width: 0.5vh;
+  border-color: black gray black gray;
+  font-weight: 600;
+  line-height: 6.5vh;
+  font-weight: 900;
+}
+
+.leftcontainer {
+  position: relative;
+  width: 10%;
+  flex-grow: 1;
+  text-align: center;
+  align-items: center;
+  margin-right: 7%;
+  margin-left: 3%;
+  margin-top: 1vh;
+}
+
+.rankbox {
+  background-color: white;
+  margin-top: 10vh;
+  height: 75vh;
+  width: 10%;
+  border-radius: 20px;
+  background-color: #808FA4;
+}
+
+.rankbox_first {
+  background-color: #153c5a;
+  color: rgb(237, 237, 237);
+  margin-left: 10%;
+  margin-right: 10%;
+  width: 1260%;
+  height: 12vh;
+  line-height: 11vh;
+  font-weight: bold;
+  border-radius: 1.5vh;
+  border: 0.5vh solid #b4b3b0;
+  font-weight: 600;
+  font-size: 2.7vh;
+}
+
+.rankbox_second {
+  background-color: #3c6482;
+  color: rgb(237, 237, 237);
+  margin-left: 10%;
+  margin-right: 10%;
+  width: 1260%;
+  height: 12vh;
+  line-height: 11vh;
+  font-weight: bold;
+  border-radius: 1.5vh;
+  border: 0.5vh solid #d7d6d2;
+  font-weight: 600;
+  margin-top: 8vh;
+  font-size: 2.7vh;
+}
+
+.rankbox_third {
+  background-color: #5a95c1;
+  color: rgb(237, 237, 237);
+  margin-left: 10%;
+  margin-right: 10%;
+  width: 1260%;
+  height: 12vh;
+  line-height: 11vh;
+  font-weight: bold;
+  border-radius: 1.5vh;
+  border: 0.5vh solid #dedddb;
+  font-weight: 600;
+  margin-top: 8vh;
+  font-size: 2.7vh;
+}
+
+.centercontainer {
+  width: 60%;
+  display: flex;
+  text-align: center;
+  display: inline-block;
+  margin-top: 1vh;
+}
+
+.wordbox {
+  margin-top: 3vh;
+  height: 70vh;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(12, 1fr);
+  grid-column-gap: 1vh;
+  grid-row-gap: 14px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  font-size: 2.4vh;
+  border: 6px solid #11324C;
+  box-shadow: 0px 0px 8px #11324C;
+  background-color: #f0eee9;
+  border-radius: 2%;
+  font-weight: 500;
+}
+
+.text {
+  height: auto;
+  background-color: #11324C;
+  color: #f0eee9;
+  text-decoration: none;
+  border-radius: 0.6vh;
+  padding-top: 0.4vh;
+  padding-bottom: 0.4vh;
+  padding-left: 1.6vh;
+  padding-right: 1.6vh;
+  font-weight: 900;
+}
+
+.inputbox input {
+  height: 5vh;
+  border-radius: 1vh;
+  margin-top: 2vh;
+  width: 45%;
+  text-align: center;
+  font-size: x-large;
+  font-weight: 500;
+}
+
+.rightcontainer {
+  width: 10%;
+  flex-grow: 1;
+  text-align: center;
+  align-items: center;
+  margin-right: 5%;
+  margin-left: 5%;
+  margin-top: 0.5vh;
+}
+
+.profile {
+  background-color: #becfe3;
+  margin-top: 4.4vh;
+  height: 25vh;
+  border-radius: 20px;
+  box-shadow: 3.5px 3.5px 1px #1D2636;
+  border: 4px solid #1D2636;
+}
+
+.profile_name {
+  line-height: 5vh;
+  margin-top: 0.3vh;
+  font-size: 3vh;
+  background-color: #becfe3;
+  width: 85%;
+  margin-left: 7.5%;
+  border-bottom: 0.3vh solid #1D2636;
+  height: 20%;
+}
+
+.profile img {
+  margin-top: -3vh;
+  width: 100%;
+  height: 18vh;
+}
+
+.ranking {
+  background-color: #829bb9;
+  margin-top: 10vh;
+  height: 30vh;
+  border-radius: 20px;
+  box-shadow: 3.5px 3.5px 1px #1D2636;
+  border: 4px solid #1D2636;
+}
+
+.ranking_title {
+  line-height: 5vh;
+  margin-top: 0.5vh;
+  font-size: 3.2vh;
+  background-color: #829bb9;
+  width: 85%;
+  margin-left: 7.5%;
+  border-bottom: 0.3vh solid #1D2636;
+  height: 18%;
+}
+
+.ranking_number {
+  margin-top: -4.5vh;
+  font-size: 17vh;
+  text-shadow: 0.4vh 0.4vh 0px #becfe3;
+}
