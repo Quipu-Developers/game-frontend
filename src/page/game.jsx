@@ -52,7 +52,7 @@ export default function Game() {
       <div className='rightcontainer'>
         <div className='profile'>
           <h4 className='profile_name'>김준호</h4>
-          <img src={process.env.PUBLIC_URL + "./image/irumae.png"}/>
+          <img src={process.env.PUBLIC_URL + "./image/irumae_sad.png"}/>
         </div>
         <div className='ranking'>
           <h4 className='ranking_title'>현재 순위</h4>
