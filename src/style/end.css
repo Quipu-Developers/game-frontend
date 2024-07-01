@@ -91,7 +91,7 @@
   height: 60vh;          /* 전체 화면 높이 */
   text-align: center;     /* 텍스트 중앙 정렬 */
   width: 150px;
-  background-color: #FFD4A5; /* Lighter blue background */
+  background-color: #7E94BF; /* Lighter blue background */
   padding: 10px;
   border-radius: 10px;
   
@@ -106,7 +106,7 @@
   height: 60vh;          /* 전체 화면 높이 */
   text-align: center;     /* 텍스트 중앙 정렬 */
   
-  background-color: #FFB3C1; /* Lighter blue background */
+  background-color: #5357A6; /* Lighter blue background */
   padding: 10px;
   border-radius: 10px;
 }
@@ -133,14 +133,14 @@
 }
 
 .ranking-number { 
-  border-radius: 5px;
-  color: #7EA08D;
- 
+    border-radius: 5px;
+    color: white;
+ background-color: #9692AF;
   display:block;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 30px;
-  border: 5px solid #7EA08D;
+  border: 5px solid #9692AF;
 }
 
 .ranking-icon img {
@@ -162,7 +162,7 @@
   align-items: center;   
   justify-content: center;
   width: 20vh;
-  background-color: #ff6b6b; 
+  background-color: #ACDBDF; 
   color: #fff;
   border: none;
   padding: 10px 20px;
