@@ -1,17 +1,17 @@
 import React from 'react';
-import './end.css';
+import '../style/end.css';
 
-const GameResultScreen = () => {
+const End = () => {
   return (
     <div className="game-result-screen">
       <div className="rocket">
       
-      <img className ="rocketimage" alt="로켓" src="img/rocket.png"/>
+      <img className ="rocketimage" alt="로켓" src="/image/rocket.png"/>
   
       </div>
       <div className="rocket1">
       
-      <img className ="rocketimage1" alt="로켓" src="img/rocket.png"/>
+      <img className ="rocketimage1" alt="로켓" src="/image/rocket.png"/>
   
       </div>
       <div className="header">
@@ -57,4 +57,4 @@ const GameResultScreen = () => {
   );
 };
 
-export default GameResultScreen;
+export default End;
