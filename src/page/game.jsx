@@ -37,8 +37,8 @@ export default function Game() {
   return (
     <div className='container'>
       <div className='topcontainer'>
-        <div className='logo'>
-          Quipu&nbsp;
+        <div className='game_logo'>
+        &nbsp;Quipu&nbsp;&nbsp;
         </div>
         <div className='title'>
           배틀글라운드
