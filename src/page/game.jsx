@@ -3,13 +3,32 @@ import wordlist from '../wordlist/word.js';
 import React, { useState, useEffect } from "react";
 
 export default function Game() {
+  const [inputValue, setInputValue] = useState('');
+  const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  }
+
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      if (wordlist.includes(inputValue)) 
+      {
+        setSelectedImage(<img src="image/irumae_happy.png" />);
+      } 
+      else {
+        setSelectedImage(<img src="image/irumae_sad.png" />);
+      }
+      setInputValue('');
+    }
+  }
 
   const [count, setCount] = useState(60);
   useEffect(() => {
     const id = setInterval(() => {
-      setCount(count => count - 1); 
+      setCount(count => count - 1);
     }, 1000);
-    if(count === 0){
+    if (count === 0) {
       clearInterval(id);
     }
     return () => clearInterval(id);
@@ -17,7 +36,6 @@ export default function Game() {
 
   return (
     <div className='container'>
-
       <div className='topcontainer'>
         <div className='logo'>
           Quipu&nbsp;
@@ -29,7 +47,7 @@ export default function Game() {
           제한시간 :&nbsp;&nbsp;{count}초
         </div>
       </div>
-      
+
       <div className='leftcontainer'>
         <div className='rankbox'>
           <div className='rankbox_first'>죠르디 300점</div>
@@ -45,14 +63,14 @@ export default function Game() {
           ))}
         </div>
         <div className='inputbox'>
-          <input></input>
+          <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress} />
         </div>
       </div>
 
       <div className='rightcontainer'>
         <div className='profile'>
           <h4 className='profile_name'>김준호</h4>
-          <img src={process.env.PUBLIC_URL + "./image/irumae_sad.png"}/>
+          {selectedImage}
         </div>
         <div className='ranking'>
           <h4 className='ranking_title'>현재 순위</h4>
