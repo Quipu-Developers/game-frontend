@@ -10,6 +10,7 @@ export default function Start() {
     };
     return (
         <div className="start-container">
+            <div className="distorted"></div>
             <h1>배틀글라운드</h1>
             <div className="start-subcontainer">
                 <div className="start-subcontainer__bar"><p>● ● ●</p></div>
@@ -46,7 +47,7 @@ export default function Start() {
             </div>
             <div className="start-button-container">
                 <label htmlFor="start-button">GAME START</label>
-                <button id="start-button" onClick={handleStartClick}>▶</button>
+                <div id="start-button" onClick={handleStartClick}></div>
             </div>
         </div>
     )
