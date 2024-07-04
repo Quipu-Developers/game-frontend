@@ -22,12 +22,16 @@
 
 .start-container h1 {
     font-family: 'VITRO';
-    font-size: 2.5rem;
+    font-size: 45px;
     font-weight: 900;
     color: #F1F0E8;
     -webkit-text-stroke: 2px #11324D;
     z-index: 3000;
     margin: 0;
+
+    @media (min-width: 1400px) or (min-height: 700px) {
+        font-size: 2.5rem;
+    }
 }
 
 /* 창을 포함하는 컨테이너 */
@@ -39,12 +43,22 @@
     justify-content: center;
     align-items: center;
     position: relative;
+
+    @media (min-height: 700px) {
+        margin: 60px;
+    }
+    @media (min-height: 800px) {
+        margin: 70px;
+    }
+    @media (min-height: 900px) {
+        margin: 80px;
+    }
 }
 
 /* 창 스타일 */
 .window {
-    width: 455px;
-    height: 350px;
+    width: 380px;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: end;
@@ -55,6 +69,24 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 3000;
     transition: transform 0.3s ease-in-out;
+
+    @media (min-width: 1400px) {
+        width: 430px;
+    }
+    @media (min-width: 1600px) {
+        width: 460px;
+    }
+
+    @media (min-height: 700px) {
+        height: 350px;
+    }
+    @media (min-height: 800px) {
+        height: 400px;
+    }
+    @media (min-height: 900px) {
+        height: 450px;
+    }
+
 }
 
 .window:hover {
@@ -63,7 +95,7 @@
 
 .window-bar {
     width: 100%;
-    height: 20px;
+    height: 10px;
     position: absolute;
     top: 0;
     left: 0;
@@ -98,7 +130,15 @@
 }
 
 .start-subcontainer:hover .window.left{
-    transform: translate(calc(-50% - 390px), calc(-50% - 55px));
+    transform: translate(calc(-50% - 310px), calc(-50% - 55px));
+
+    @media (min-width: 1400px) {
+        transform: translate(calc(-50% - 360px), calc(-50% - 55px));
+    }
+
+    @media (min-width: 1600px) {
+        transform: translate(calc(-50% - 390px), calc(-50% - 55px));
+    }
 }
 
 .start-subcontainer:hover .window.middle{
@@ -106,7 +146,16 @@
 }
 
 .start-subcontainer:hover .window.right{
-    transform: translate(calc(-50% + 390px), calc(-50% + 15px));
+    transform: translate(calc(-50% + 310px), calc(-50% + 15px));
+
+    @media (min-width: 1400px) {
+        transform: translate(calc(-50% + 360px), calc(-50% + 15px));
+    }
+
+    @media (min-width: 1600px) {
+        transform: translate(calc(-50% + 390px), calc(-50% + 15px));
+    }
+
 }
 
 /* 왼쪽 창 */
@@ -126,8 +175,13 @@
     width: 90%;
     height: 30px;
     display: flex;
-    margin: 10px;
+    margin: 6px;
     justify-content: space-between;
+
+    @media (min-height: 700px) {
+        height: 33px;
+        margin: 8px;
+    }
 }
 
 .input-box div {
@@ -197,29 +251,48 @@
 }
 
 .window-middle h3 {
-    font-size: 20px;
+    font-size: 18px;
     color: #11324D;
     margin: 0;
     width: 100%;
     text-align: center;
     letter-spacing: 3px;
     font-family: 'VITRO';
+
+    @media (min-width: 1400px) or (min-height: 700px) {
+        font-size: 21px;
+    }
 }
 
 .window-middle ul {
     list-style: none;
     padding: 0;
-    margin: 15px 0;
+    margin: 10px 0;
+
+    @media (min-height: 700px) {
+        margin: 15px 0;
+    }
+    @media (min-height: 800px) {
+        margin: 20px 0;
+    }
 }
 
 .window-middle li {
-    font-size: 15px;
+    font-size: 14px;
     color: #333;
-    line-height: 1.7;
+    line-height: 1.5;
     letter-spacing: 0.2px;
     position: relative;
     font-weight: 400;
     word-break: keep-all;
+
+    @media (min-width: 1400px) {
+        font-size: 15px;
+    }
+    
+    @media (min-height: 700px) {
+        line-height: 1.7;
+    }
 }
 
 .window-middle .highlight {
@@ -254,21 +327,36 @@
 
 .start-button-container label {
     font-family: 'VITRO';
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 700;
     color: #F1F0E8;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
+
+    @media (min-width: 1400px) or (min-height: 700px) {
+        font-size: 1rem;
+    }
 }
 
 .start-button-container div {
-    width: 90px;
-    height: 80px;
+    width: 80px;
+    height: 60px;
     border: none;
     cursor: pointer;
     background-image: url('../../public/image/enter.png');
     transition: transform 0.3s;
     background-size: 100% 100%;
     background-position: center, center;
+
+    @media (min-width: 1400px) {
+        width: 100px;
+    }
+    
+    @media (min-height: 700px) {
+        height: 80px;
+    }
+    @media (min-height: 800px) {
+        height: 90px;
+    }
 }
 
 .start-button-container div:hover {
