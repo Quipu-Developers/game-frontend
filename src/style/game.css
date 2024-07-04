@@ -15,10 +15,10 @@
 
 .game_logo {
   margin-top: 4vh;
-  font-size: 5.5vh;
+  font-size: calc(2vh + 1.7vw);
   height: 9vh;
-  width: 20vh;
-  line-height: 9vh;
+  width: 11vw;
+  line-height: 8.5vh;
   text-align: center;
   border-radius: 50px;
   color: rgb(39, 30, 118);
@@ -27,13 +27,13 @@
   background-color: rgb(231, 244, 255);
   font-style: italic;
   font-weight: 900;
-  margin-right: 8vh;
-  margin-left: 2vh;
+  margin-right: 4.5vw;
+  margin-left: 1.5vw;
 }
 
 .title {
   margin-top: 4vh;
-  font-size: 8vh;
+  font-size: calc(4vh + 2.5vw);
   font-weight: bold;
   color: white;
   text-shadow: 4px 4px 0px #FF6F61;
@@ -43,8 +43,8 @@
 
 .timer {
   margin-top: 7.5vh;
-  font-size: 3.2vh;
-  width: 30vh;
+  font-size: calc(1.8vh + 0.8vw);
+  width: 17vw;
   height: 7vh;
   background-color: white;
   text-align: center;
@@ -69,7 +69,7 @@
 }
 
 .rankbox {
-  margin-top: 5.5vh;
+  margin-top: 3.5vh;
   padding-top: 3.7vh;
   height: 60vh;
   width: 120%;
@@ -91,7 +91,7 @@
   border-radius: 0.5vh 1.5vh;
   border: 0.5vh solid #b4b3b0;
   font-weight: 600;
-  font-size: 2.9vh;
+  font-size: calc(1.1vh + 1vw);
 }
 
 .rankbox_second {
@@ -107,7 +107,7 @@
   border: 0.5vh solid #d7d6d2;
   font-weight: 600;
   margin-top: 8vh;
-  font-size: 2.9vh;
+  font-size: calc(1.1vh + 1vw);
 }
 
 .rankbox_third {
@@ -123,7 +123,7 @@
   border: 0.5vh solid #d7d6d2;
   font-weight: 600;
   margin-top: 8vh;
-  font-size: 2.9vh;
+  font-size: calc(1.1vh + 1vw);
 }
 
 .centercontainer {
@@ -135,7 +135,7 @@
 }
 
 .wordbox {
-  margin-top: 2vh;
+  margin-top: 0vh;
   height: 67vh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -170,7 +170,7 @@
 .inputbox input {
   height: 5vh;
   border-radius: 1vh;
-  margin-top: 3vh;
+  margin-top: 3.5vh;
   width: 45%;
   text-align: center;
   font-size: 3vh;
@@ -184,12 +184,12 @@
   align-items: center;
   margin-right: 6%;
   margin-left: 4%;
-  margin-top: 0.5vh;
+  margin-top: 0vh;
 }
 
 .profile {
   background-color: #becfe3;
-  margin-top: 3.4vh;
+  margin-top: 2.4vh;
   height: 23vh;
   border-radius: 20px;
   box-shadow: 3.5px 3.5px 1px #1D2636;
@@ -225,7 +225,7 @@
 .ranking_title {
   line-height: 5vh;
   margin-top: 0.5vh;
-  font-size: 3.2vh;
+  font-size: calc(1.5vh + 0.9vw);
   background-color: #829bb9;
   width: 85%;
   margin-left: 7.5%;
