@@ -6,7 +6,7 @@ export default function Start() {
     const navigate = useNavigate();
 
     const handleStartClick = () => {
-        navigate('/game');
+      navigate('/game');
     };
     return (
         <div className="start-container">
