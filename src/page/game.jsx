@@ -47,7 +47,6 @@ export default function Game() {
           제한시간 :&nbsp;&nbsp;{count}초
         </div>
       </div>
-
       <div className='leftcontainer'>
         <div className='rankbox'>
           <div className='rankbox_first'>죠르디 300점</div>
@@ -55,7 +54,6 @@ export default function Game() {
           <div className='rankbox_third'>김준호 100점</div>
         </div>
       </div>
-
       <div className='centercontainer'>
         <div className='wordbox'>
           {wordlist.map((word, index) => (
@@ -66,7 +64,6 @@ export default function Game() {
           <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress} />
         </div>
       </div>
-
       <div className='rightcontainer'>
         <div className='profile'>
           <h4 className='profile_name'>김준호</h4>

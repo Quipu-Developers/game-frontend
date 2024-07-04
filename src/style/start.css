@@ -1,23 +1,50 @@
+/* 시작화면 전체 컨테이너 */
 .start-container {
-    width: 100vw;
-    height: 100vh;
-    background-color: #8090a4;
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
+    position: absolute;
+    background: linear-gradient(140deg, #8090a4 40%, transparent 0%),
+                linear-gradient(190deg, #3b4755 50%, transparent 0%),
+                #6d8191;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.start-container * {
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 .start-container h1 {
-    font-size: 45px;
+    font-family: 'VITRO';
+    font-size: 2.5rem;
     font-weight: 900;
     color: #F1F0E8;
     -webkit-text-stroke: 2px #11324D;
+    z-index: 3000;
+    margin: 0;
 }
 
+/* 창을 포함하는 컨테이너 */
 .start-subcontainer {
-    width: 950px;
-    height: 450px;
+    width: 100%;
+    height: auto;
+    margin: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* 창 스타일 */
+.window {
+    width: 455px;
+    height: 350px;
     display: flex;
     justify-content: center;
     align-items: end;
@@ -26,33 +53,65 @@
     border: 2px solid #11324D;
     border-radius: 10px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transition: box-shadow 0.3s;
+    z-index: 3000;
+    transition: transform 0.3s ease-in-out;
 }
 
-.start-subcontainer:hover {
+.window:hover {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
 }
 
-.start-subcontainer__bar {
+.window-bar {
     width: 100%;
     height: 20px;
     position: absolute;
     top: 0;
     left: 0;
-    border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;;
     display: flex;
     justify-content: start;
     align-items: center;
-    padding: 12px 15px;
+    padding: 10px 15px;
 }
 
-.start-subcontainer__bar p {
+.window-bar p {
     color: #11324D;
-    font-size: 13px;
+    font-size: 19px;
 }
 
-.left-subcontainer {
-    width: 45%;
+
+/* 창 위치 설정 */
+.window.left {
+    position: absolute;
+    top: calc(50% + 35px);
+    left: calc(50% - 80px);
+    transform: translate(-50%, -50%);
+    z-index: 5000;
+}
+
+.window.right {
+    position: absolute;
+    top: calc(50% - 35px);
+    left: calc(50% + 80px);
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.start-subcontainer:hover .window.left{
+    transform: translate(calc(-50% - 390px), calc(-50% - 55px));
+}
+
+.start-subcontainer:hover .window.middle{
+    transform: translateY(-20px);
+}
+
+.start-subcontainer:hover .window.right{
+    transform: translate(calc(-50% + 390px), calc(-50% + 15px));
+}
+
+/* 왼쪽 창 */
+.window-left {
+    width: 100%;
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
@@ -60,7 +119,7 @@
     align-items: center;
     border-top: 2px solid #11324D;
     background-color: #F7F6F2;
-    border-radius: 10px 0 0 10px;
+    border-radius: 10px;
 }
 
 .input-box {
@@ -84,6 +143,8 @@
 .input-box div p {
     color: #11324D;
     font-weight: 700;
+    letter-spacing: 3px;
+    font-family: 'VITRO';
 }
 
 .input-box input {
@@ -93,6 +154,7 @@
     border-radius: 60px 30px / 20px 40px;
     transition: box-shadow 0.3s, transform 0.3s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 .input-box input:hover {
@@ -112,7 +174,7 @@
 .promo-text p {
     padding: 5px 15px;
     border-radius: 80px 60px / 90px 60px;
-    font-weight: 400;
+    font-weight: 700;
     border: 1.5px solid #11324D;
     background-color: #7E94BF;
     color: #11324D;
@@ -120,18 +182,56 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.start-container label {
-    margin-top: 30px;
+/* 가운데 창 */
+.window-middle {
+    width: 100%;
+    height: calc(100% - 20px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    border-top: 2px solid #11324D;
+    background-color: #F7F6F2;
+    border-radius: 10px;
+    padding: 10px;
 }
 
-.start-container button {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+.window-middle h3 {
+    font-size: 20px;
+    color: #11324D;
+    margin: 0;
+    width: 100%;
+    text-align: center;
+    letter-spacing: 3px;
+    font-family: 'VITRO';
 }
 
-.right-subcontainer {
-    width: 55%;
+.window-middle ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.window-middle li {
+    font-size: 15px;
+    color: #333;
+    line-height: 1.7;
+    letter-spacing: 0.2px;
+    position: relative;
+    font-weight: 400;
+    word-break: keep-all;
+}
+
+.window-middle .highlight {
+    font-weight: bold;
+    color: #D9534F;
+    background-color: #F9F2F4;
+    border-radius: 4px;
+}
+
+/* 오른쪽 창 */
+.window-right {
+    width: 100%;
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
@@ -139,65 +239,38 @@
     align-items: center;
     border-top: 2px solid #11324D;
     background-color: #F7F6F2;
-    border-radius: 0 10px 10px 0;
+    border-radius: 10px;
     padding: 20px;
 }
 
-.right-subcontainer h3 {
-    font-size: 20px;
-    color: #11324D;
-    margin: 0;
-    text-align: center;
-}
-
-.right-subcontainer ul {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-}
-
-.right-subcontainer li {
-    font-size: 16px;
-    color: #333;
-    line-height: 1.6;
-    position: relative;
-    word-break: keep-all;
-}
-
-.right-subcontainer .highlight {
-    font-weight: bold;
-    color: #D9534F;
-    background-color: #F9F2F4;
-    padding: 2px 4px;
-    border-radius: 4px;
-}
-
+/* 게임 시작 버튼 컨테이너 */
 .start-button-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 3000;
+    width: 100%;
 }
 
 .start-button-container label {
-    font-size: 18px;
+    font-family: 'VITRO';
+    font-size: 20px;
+    font-weight: 700;
     color: #F1F0E8;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
 
-.start-button-container button {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #11324D;
-    color: #F1F0E8;
+.start-button-container div {
+    width: 90px;
+    height: 80px;
     border: none;
-    font-size: 18px;
     cursor: pointer;
-    transition: background-color 0.2s, box-shadow 0.3s, transform 0.3s;
+    background-image: url('../../public/image/enter.png');
+    transition: transform 0.3s;
+    background-size: 100% 100%;
+    background-position: center, center;
 }
 
-.start-button-container button:hover {
-    background-color: #0a2335;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+.start-button-container div:hover {
     transform: scale(1.1);
 }
