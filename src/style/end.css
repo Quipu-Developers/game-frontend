@@ -29,7 +29,7 @@
 }
 
 .logo {
-  border: 10px solid#11324C;
+  border: 1vh solid#11324C;
   position: absolute; 
   height: 11vh;
   width: 12vh;
@@ -108,16 +108,16 @@
   color: white;
   background-color: #11324C;
   display: block;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: bold;
-  margin-bottom: 30px;
-  border: 5px solid #11324C;
+  margin-bottom: 20px;
+  border: 5px solid #11324C;  
 }
 .ranking-item1{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(5, auto); 
-  row-gap: 0.5vh;
+  row-gap: 0.1vh;  
   column-gap: 2vh;
   margin-top: 14vh; 
   margin-bottom: 1vh;

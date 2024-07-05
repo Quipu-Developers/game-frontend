@@ -1,7 +1,13 @@
 import React from 'react';
 import '../style/end.css';
+import { useNavigate } from 'react-router-dom';
 
 const End = () => {
+  const navigate = useNavigate();
+
+    const handleStartClick = () => {
+      navigate('/');
+    };
   return (
     <div className="game-result-screen">
       <div className="rocket">
@@ -47,7 +53,7 @@ const End = () => {
         </div>
       </div>
       <div className="home-button">
-        <button>처음으로</button>
+      <button onClick={handleStartClick}>처음으로</button>
       </div>
     </div>
   );
