@@ -1,32 +1,35 @@
 .game-result-screen {
   height: 100vh;
-
-  background: linear-gradient(to bottom, #69779B,  #8090a4 );
-  color: #fff; /* White text color */
+  background: linear-gradient(to bottom, #69779B,  #8090a4);
+  color: #fff;
   font-family: Arial, sans-serif;
   padding: 20px;  
 }
-  .rocketimage1{
-    position: absolute;
-    right: 0; /* 오른쪽에 붙게 설정 */
-    top: 30%;
-    margin-right: 50px; /* 필요한 경우 오른쪽 여백 설정 */
-    height: 400px;
-    width: 300px;
-  }
-.rocketimage{ 
+
+.trophyimage1 {
   position: absolute;
-  top: 30%;
-  margin-left: 10px;
-  height: 400px;
+  right: 0;
+  top: 35%;
+  margin-right: 8%;
+  height: 300px;
   width: 300px;
 }
+
+.trophyimage {
+  position: absolute;
+  top: 35%;
+  margin-left: 6% ;
+  height: 300px;
+  width: 300px;
+}
+
 .header {
   text-align: center;
   margin-bottom: 20px;
 }
+
 .logo {
-  border: 10px solid #7EA08D;
+  border: 10px solid#11324C;
   position: absolute;
   height: 100px;
   width: 120px;
@@ -34,21 +37,16 @@
   margin-top: 50px;
   background-color: white;
   border-radius: 10px;
-  display: flex; /* Flexbox 적용 */
-  flex-direction: column; /* 세로 정렬 */
-  align-items: center; /* 가로 중앙 정렬 */
-  justify-content: center; /* 세로 중앙 정렬 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .logo h2 {
-  color: #7EA08D;
+  font-size: 22px;
+  color: #11324C;
   margin: 0;
-}
-
-.header h1 {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 10px;
 }
 
 .stars {
@@ -59,7 +57,6 @@
 .star {
   width: 20px;
   height: 20px;
- /* Replace with your star icon */
   margin: 0 5px;
 }
 
@@ -70,79 +67,72 @@
   gap: 30px;
   margin-bottom: 20px;
 }
+
 .wrap {
   position: relative;
   background-color: white;
-  border: 10px solid #7EA08D;
+  border: 10px solid #11324C;
   border-radius: 10px;
   padding: 30px;
   display: flex;
   gap: 50px;
-  justify-content: center; /* 수평으로 시작 부분에 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center;
+  align-items: center;
 }
 
-.team-ranking
-{
+.team-ranking {
   display: flex;
-  flex-direction: column; /* 세로 정렬 */
-  align-items: center;    /* 가로 중앙 정렬 */
-  justify-content: center; /* 세로 중앙 정렬 */
-  height: 60vh;          /* 전체 화면 높이 */
-  text-align: center;     /* 텍스트 중앙 정렬 */
-  width: 150px;
-  background-color: #7E94BF; /* Lighter blue background */
-  padding: 10px;
-  border-radius: 10px;
-  
-}
-.overall-ranking
-{
-  display: flex;
-  width: 150px;
-  flex-direction: column; /* 세로 정렬 */
-  align-items: center;    /* 가로 중앙 정렬 */
-  justify-content: center; /* 세로 중앙 정렬 */
-  height: 60vh;          /* 전체 화면 높이 */
-  text-align: center;     /* 텍스트 중앙 정렬 */
-  
-  background-color: #5357A6; /* Lighter blue background */
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  width: 250px;
+  background-color: #f0eee9;
   padding: 10px;
   border-radius: 10px;
 }
-.overall-top-10
-{
+
+.overall-ranking {
   display: flex;
-  width: 150px;
-  flex-direction: column; /* 세로 정렬 */
-  align-items: center;    /* 가로 중앙 정렬 */
-  justify-content: center; /* 세로 중앙 정렬 */
-  height: 60vh;          /* 전체 화면 높이 */
-  text-align: center;     /* 텍스트 중앙 정렬 */
-  
-  background-color: #9AC1D9; /* Lighter blue background */
+  width: 350px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  background-color: #f0eee9;
   padding: 10px;
   border-radius: 10px;
 }
+
 .ranking-item {
   display: block;
   align-items: center;
   margin-top: 160px;
   margin-bottom: 10px;
- 
 }
 
 .ranking-number { 
-    border-radius: 5px;
-    color: white;
- background-color: #9692AF;
-  display:block;
+  border-radius: 5px;
+  color: white;
+  background-color: #11324C;
+  display: block;
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 30px;
-  border: 5px solid #9692AF;
+  border: 5px solid #11324C;
 }
-
+.ranking-item1{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2개의 열을 만들고 각각 동일한 너비를 줍니다 */
+  grid-template-rows: repeat(5, auto); /* 5개의 행을 자동 높이로 만듭니다 */
+  gap: 10px;
+  margin-top: 160px;
+  margin-bottom: 10px;
+  grid-auto-flow: column; 
+  
+}
 .ranking-icon img {
   width: 30px;
   height: 30px;
@@ -153,17 +143,17 @@
 }
 
 .home-button {
-  margin-top: 30px; 
+  margin-top: 30px;
   position: absolute;
   top: 90%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
-  align-items: center;   
+  align-items: center;
   justify-content: center;
   width: 20vh;
-  background-color: #ACDBDF; 
-  color: #fff;
+  background-color: #11324C;
+  color: #fff;  
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
