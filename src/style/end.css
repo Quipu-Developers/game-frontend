@@ -11,16 +11,16 @@
   right: 0;
   top: 35%;
   margin-right: 8%;
-  height: 300px;
-  width: 300px;
+  height: 30vh;
+  width: 30vh;
 }
 
 .trophyimage {
   position: absolute;
   top: 35%;
   margin-left: 6% ;
-  height: 300px;
-  width: 300px;
+  height: 30vh;
+  width: 30vh;
 }
 
 .header {
@@ -30,11 +30,11 @@
 
 .logo {
   border: 10px solid#11324C;
-  position: absolute;
-  height: 100px;
-  width: 120px;
+  position: absolute; 
+  height: 11vh;
+  width: 12vh;
   top: 0;
-  margin-top: 50px;
+  margin-top: 5vh;
   background-color: white;
   border-radius: 10px;
   display: flex;
@@ -44,38 +44,28 @@
 }
 
 .logo h2 {
-  font-size: 22px;
+  font-size: 0.6rem;
   color: #11324C;
   margin: 0;
 }
 
-.stars {
-  display: flex;
-  justify-content: center;
-}
 
-.star {
-  width: 20px;
-  height: 20px;
-  margin: 0 5px;
-}
 
 .content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 20px;
+ 
 }
 
 .wrap {
   position: relative;
-  background-color: white;
+  background-color: #ffffff;
   border: 10px solid #11324C;
   border-radius: 10px;
   padding: 30px;
   display: flex;
-  gap: 50px;
+  gap: 10vh;
   justify-content: center;
   align-items: center;
 }
@@ -87,15 +77,15 @@
   justify-content: center;
   height: 60vh;
   text-align: center;
-  width: 250px;
+  width: 25vh;
   background-color: #f0eee9;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 10px;  
 }
 
 .overall-ranking {
   display: flex;
-  width: 350px;
+  width: 40vh;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -109,7 +99,7 @@
 .ranking-item {
   display: block;
   align-items: center;
-  margin-top: 160px;
+  margin-top: 10vh;
   margin-bottom: 10px;
 }
 
@@ -118,28 +108,21 @@
   color: white;
   background-color: #11324C;
   display: block;
-  font-size: 24px;
+  font-size: 0.7rem;
   font-weight: bold;
   margin-bottom: 30px;
   border: 5px solid #11324C;
 }
 .ranking-item1{
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2개의 열을 만들고 각각 동일한 너비를 줍니다 */
-  grid-template-rows: repeat(5, auto); /* 5개의 행을 자동 높이로 만듭니다 */
-  gap: 10px;
-  margin-top: 160px;
-  margin-bottom: 10px;
-  grid-auto-flow: column; 
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(5, auto); 
+  row-gap: 0.5vh;
+  column-gap: 2vh;
+  margin-top: 14vh; 
+  margin-bottom: 1vh;
+  grid-auto-flow: column;
   
-}
-.ranking-icon img {
-  width: 30px;
-  height: 30px;
-}
-
-.footer {
-  text-align: center;
 }
 
 .home-button {
