@@ -36,42 +36,42 @@ export default function Game() {
 
   return (
     <div className='container'>
-      <div className='topcontainer'>
-        <div className='game_logo'>
-        &nbsp;Quipu&nbsp;&nbsp;
-        </div>
-        <div className='title'>
-          배틀글라운드
-        </div>
-        <div className='timer'>
-          제한시간 :&nbsp;&nbsp;{count}초
-        </div>
-      </div>
       <div className='leftcontainer'>
+        <div className='profile'>
+          {selectedImage}
+        </div>
+        <div className='profile_name'>
+          김준호
+        </div>
+        <div className='profile_timer'>
+          남은 시간 :&nbsp;&nbsp;{count}초
+        </div>
         <div className='rankbox'>
-          <div className='rankbox_first'>죠르디 300점</div>
-          <div className='rankbox_second'>피카츄 200점</div>
-          <div className='rankbox_third'>김준호 100점</div>
+          <div className='rankbox_title'>
+            실시간 순위
+          </div>
+          <div className='rankbox_first'>
+            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(255, 225, 225)'}}>1등</div>
+            <div style={{width: '70%'}}><p>죠르디 300점</p></div>
+          </div>
+          <div className='rankbox_second'>
+            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(250, 237, 214)', marginLeft: '5%'}}>2등</div>
+            <div style={{width: '65%'}}><p>피카츄 200점</p></div>
+          </div>
+          <div className='rankbox_third'>
+            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(235, 255, 235)', marginLeft: '10%'}}>3등</div>
+            <div style={{width: '60%'}}><p>김준호 100점</p></div>
+          </div>
         </div>
       </div>
-      <div className='centercontainer'>
+      <div className='rightcontainer'>
         <div className='wordbox'>
           {wordlist.map((word, index) => (
             <div key={index}><u className='text'>{word}</u></div>
           ))}
         </div>
         <div className='inputbox'>
-          <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress} />
-        </div>
-      </div>
-      <div className='rightcontainer'>
-        <div className='profile'>
-          <h4 className='profile_name'>김준호</h4>
-          {selectedImage}
-        </div>
-        <div className='ranking'>
-          <h4 className='ranking_title'>현재 순위</h4>
-          <h4 className='ranking_number'>3</h4>
+          <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress}/>
         </div>
       </div>
     </div>
