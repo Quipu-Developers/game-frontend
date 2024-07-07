@@ -50,6 +50,13 @@ const End = () => {
               <div className="ranking-number">name10</div>
             </div>
           </div>
+          <div className = "myranking">
+          <div className="logo">
+              <h2>MY</h2>
+              <h2>RANKING</h2>
+            </div>
+          <div className="ranking-number">name1</div>
+          </div>
         </div>
       </div>
       <div className="home-button">
