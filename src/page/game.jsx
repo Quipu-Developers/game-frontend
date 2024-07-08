@@ -51,6 +51,9 @@ export default function Game() {
           <img className="timer" src="/image/timer.png" />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
+        <div className='ranking'>
+          <div className='ranking_number'>3</div>
+        </div>
         <div className="rankbox">
           <div className="rankbox_title">실시간 순위</div>
           <div className="rankbox_first">
