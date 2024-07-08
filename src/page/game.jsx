@@ -1,5 +1,5 @@
 import '../style/game.css';
-import wordlist from '../wordlist/word.js';
+import gameData from '../data/game_data.jsx';
 import React, { useState, useEffect } from "react";
 
 export default function Game() {
@@ -12,7 +12,7 @@ export default function Game() {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      if (wordlist.includes(inputValue)) 
+      if (gameData.wordList.includes(inputValue)) 
       {
         setSelectedImage(<img src="image/irumae_happy.png" />);
       } 
@@ -41,7 +41,7 @@ export default function Game() {
           {selectedImage}
         </div>
         <div className='profile_name'>
-          김준호
+          {gameData.currentUserName}
         </div>
         <div className='profile_timer'>
           남은 시간 :&nbsp;&nbsp;{count}초
@@ -52,21 +52,21 @@ export default function Game() {
           </div>
           <div className='rankbox_first'>
             <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(255, 225, 225)'}}>1등</div>
-            <div style={{width: '70%'}}><p>죠르디 300점</p></div>
+            <div style={{width: '70%'}}><p>{gameData.scores[0].userName} {gameData.scores[0].score}점</p></div>
           </div>
           <div className='rankbox_second'>
             <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(250, 237, 214)', marginLeft: '5%'}}>2등</div>
-            <div style={{width: '65%'}}><p>피카츄 200점</p></div>
+            <div style={{width: '65%'}}><p>{gameData.scores[1].userName} {gameData.scores[1].score}점</p></div>
           </div>
           <div className='rankbox_third'>
             <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(235, 255, 235)', marginLeft: '10%'}}>3등</div>
-            <div style={{width: '60%'}}><p>김준호 100점</p></div>
+            <div style={{width: '60%'}}><p>{gameData.scores[2].userName} {gameData.scores[2].score}점</p></div>
           </div>
         </div>
       </div>
       <div className='rightcontainer'>
         <div className='wordbox'>
-          {wordlist.map((word, index) => (
+          {gameData.wordList.map((word, index) => (
             <div key={index}><u className='text'>{word}</u></div>
           ))}
         </div>
