@@ -14,9 +14,6 @@
   margin-right: 3%;
   height: 25vh;
   width: 15vw;
-  @media(height: 700px){
-
-  }
 }
 
 .trophyimage {
@@ -162,4 +159,3 @@
   font-size: 0.5rem;
   cursor: pointer;
 }
-

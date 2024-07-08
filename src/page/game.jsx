@@ -1,10 +1,14 @@
 import '../style/game.css';
 import gameData from '../data/game_data.jsx';
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 
 export default function Game() {
   const [inputValue, setInputValue] = useState('');
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
+  const [isValid, setIsvalid] = useState(false);
+  const navigate = useNavigate();
+  const [hiddenWords, setHiddenWords] = useState([]);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -12,12 +16,16 @@ export default function Game() {
 
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
-      if (gameData.wordList.includes(inputValue)) 
+      const trimmedInput = inputValue.trim();
+      if (gameData.wordList.includes(trimmedInput)) 
       {
         setSelectedImage(<img src="image/irumae_happy.png" />);
+        setIsvalid(false);
+        setHiddenWords([...hiddenWords, trimmedInput]);
       } 
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
+        setIsvalid(true);
       }
       setInputValue('');
     }
@@ -35,43 +43,88 @@ export default function Game() {
   }, [count]);
 
   return (
-    <div className='container'>
-      <div className='leftcontainer'>
-        <div className='profile'>
-          {selectedImage}
+    <div className="container">
+      <div className="leftcontainer">
+        <div className="profile">{selectedImage}</div>
+        <div className="profile_name">{gameData.currentUserName}</div>
+        <div className="profile_timer">
+          <img className="timer" src="/image/timer.png" />
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
-        <div className='profile_name'>
-          {gameData.currentUserName}
+        <div className='ranking'>
+          <div className='ranking_number'>3</div>
         </div>
-        <div className='profile_timer'>
-          남은 시간 :&nbsp;&nbsp;{count}초
-        </div>
-        <div className='rankbox'>
-          <div className='rankbox_title'>
-            실시간 순위
+        <div className="rankbox">
+          <div className="rankbox_title">실시간 순위</div>
+          <div className="rankbox_first">
+            <div
+              className="rankbox_num"
+              style={{ width: "8vh", backgroundColor: "rgb(255, 225, 225)" }}
+            >
+              1등
+            </div>
+            <div style={{ width: "70%" }}>
+              <p>
+                {gameData.scores[0].userName} {gameData.scores[0].score}점
+              </p>
+            </div>
           </div>
-          <div className='rankbox_first'>
-            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(255, 225, 225)'}}>1등</div>
-            <div style={{width: '70%'}}><p>{gameData.scores[0].userName} {gameData.scores[0].score}점</p></div>
+          <div className="rankbox_second">
+            <div
+              className="rankbox_num"
+              style={{
+                width: "8vh",
+                backgroundColor: "rgb(250, 237, 214)",
+                marginLeft: "5%",
+              }}
+            >
+              2등
+            </div>
+            <div style={{ width: "65%" }}>
+              <p>
+                {gameData.scores[1].userName} {gameData.scores[1].score}점
+              </p>
+            </div>
           </div>
-          <div className='rankbox_second'>
-            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(250, 237, 214)', marginLeft: '5%'}}>2등</div>
-            <div style={{width: '65%'}}><p>{gameData.scores[1].userName} {gameData.scores[1].score}점</p></div>
-          </div>
-          <div className='rankbox_third'>
-            <div className='rankbox_num' style={{width: '8vh', backgroundColor: 'rgb(235, 255, 235)', marginLeft: '10%'}}>3등</div>
-            <div style={{width: '60%'}}><p>{gameData.scores[2].userName} {gameData.scores[2].score}점</p></div>
+          <div className="rankbox_third">
+            <div
+              className="rankbox_num"
+              style={{
+                width: "8vh",
+                backgroundColor: "rgb(235, 255, 235)",
+                marginLeft: "10%",
+              }}
+            >
+              3등
+            </div>
+            <div style={{ width: "60%" }}>
+              <p>
+                {gameData.scores[2].userName} {gameData.scores[2].score}점
+              </p>
+            </div>
           </div>
         </div>
       </div>
-      <div className='rightcontainer'>
-        <div className='wordbox'>
+      <div className="rightcontainer">
+        <div className="wordbox">
           {gameData.wordList.map((word, index) => (
-            <div key={index}><u className='text'>{word}</u></div>
+            <div
+              key={index}
+              className={hiddenWords.includes(word) ? "hidden-word" : ""}
+            >
+              <u className="text">{word}</u>
+            </div>
           ))}
         </div>
-        <div className='inputbox'>
-          <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress}/>
+        <div className="inputbox">
+          <input
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            style={{
+              border: isValid ? "5px solid red" : "1px solid black",
+            }}
+          />
         </div>
       </div>
     </div>
