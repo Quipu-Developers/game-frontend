@@ -57,7 +57,7 @@ const End = () => {
               <h2>MY</h2>
               <h2>RANKING</h2>
             </div>
-          <div className="ranking-number">{scoreData.personalRanking[0].globalRank}위 </div>
+          <div className="ranking-number">name </div>
           </div>
         </div>
       </div>
