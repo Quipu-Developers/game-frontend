@@ -4,7 +4,6 @@
                 linear-gradient(190deg, #3b4755 50%, transparent 0%),
                 #6d8191;
   color: #fff;
-  font-family: Arial, sans-serif;
   padding: 20px;  
 }
 
@@ -15,7 +14,6 @@
   margin-right: 3%;
   height: 25vh;
   width: 15vw;
-  @media(height: 700px)
 }
 
 .trophyimage {
@@ -161,4 +159,3 @@
   font-size: 0.5rem;
   cursor: pointer;
 }
-

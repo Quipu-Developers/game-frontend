@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 export default function Game() {
   const [inputValue, setInputValue] = useState('');
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
+  const [isValid, setIsvalid] = useState(false);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -15,9 +16,11 @@ export default function Game() {
       if (gameData.wordList.includes(inputValue)) 
       {
         setSelectedImage(<img src="image/irumae_happy.png" />);
+        setIsvalid(false);
       } 
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
+        setIsvalid(true);
       }
       setInputValue('');
     }
@@ -71,7 +74,13 @@ export default function Game() {
           ))}
         </div>
         <div className='inputbox'>
-          <input value={inputValue} onChange={handleInputChange} onKeyPress={handleKeyPress}/>
+          <input
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          style={{
+            border: isValid? '5px solid red' : '1px solid black' 
+          }}/>
         </div>
       </div>
     </div>
