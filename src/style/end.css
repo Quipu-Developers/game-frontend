@@ -1,8 +1,9 @@
 .game-result-screen {
   height: 100vh;
-  background: linear-gradient(to bottom, #69779B,  #8090a4);
+  background:   linear-gradient(140deg, #8090a4 40%, transparent 0%),
+                linear-gradient(190deg, #3b4755 50%, transparent 0%),
+                #6d8191;
   color: #fff;
-  font-family: Arial, sans-serif;
   padding: 20px;  
 }
 
@@ -10,24 +11,32 @@
   position: absolute;
   right: 0;
   top: 35%;
-  margin-right: 8%;
-  height: 30vh;
-  width: 30vh;
+  margin-right: 3%;
+  height: 25vh;
+  width: 15vw;
+  @media(height: 700px){
+
+  }
 }
 
 .trophyimage {
   position: absolute;
   top: 35%;
-  margin-left: 6% ;
-  height: 30vh;
-  width: 30vh;
+  left: 0;
+  margin-left: 3% ;
+  height: 25vh;
+  width: 15vw;
 }
 
 .header {
   text-align: center;
   margin-bottom: 20px;
 }
-
+.header h1{
+  font-size: 2.5rem;
+  -webkit-text-stroke: 2px #11324D;
+  margin: 8px 0;
+}
 .logo {
   border: 1vh solid#11324C;
   position: absolute; 
@@ -49,13 +58,10 @@
   margin: 0;
 }
 
-
-
 .content {
   display: flex;
   align-items: center;
   justify-content: center;
- 
 }
 
 .wrap {
@@ -65,6 +71,7 @@
   border-radius: 10px;
   padding: 30px;
   display: flex;
+  width: 60vw;
   gap: 10vh;
   justify-content: center;
   align-items: center;
@@ -77,7 +84,7 @@
   justify-content: center;
   height: 60vh;
   text-align: center;
-  width: 25vh;
+  width: 15vw;
   background-color: #f0eee9;
   padding: 10px;
   border-radius: 10px;  
@@ -85,7 +92,7 @@
 
 .overall-ranking {
   display: flex;
-  width: 40vh;
+  width: 20vw;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -95,7 +102,18 @@
   padding: 10px;
   border-radius: 10px;
 }
-
+.myranking{
+  display: flex;  
+  width: 12vw;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  background-color: #f0eee9;
+  padding: 10px;
+  border-radius: 10px;
+}
 .ranking-item {
   display: block;
   align-items: center;
@@ -112,6 +130,8 @@
   font-weight: bold;
   margin-bottom: 20px;
   border: 5px solid #11324C;  
+  letter-spacing: 2px;
+
 }
 .ranking-item1{
   display: grid;
@@ -122,11 +142,10 @@
   margin-top: 14vh; 
   margin-bottom: 1vh;
   grid-auto-flow: column;
-  
 }
 
 .home-button {
-  margin-top: 30px;
+   margin-top: 30px;
   position: absolute;
   top: 90%;
   left: 50%;
@@ -140,6 +159,7 @@
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
-  font-size: 16px;
+  font-size: 0.5rem;
   cursor: pointer;
 }
+

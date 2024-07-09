@@ -62,7 +62,7 @@ input {
   font-family: 'VITRO';
   src: url('./font/VITRO CORE TTF.ttf') format('truetype');
   font-weight: 900;
-  font-style: normal;
+  font-style: bold;
 }
 
 @font-face {
@@ -76,5 +76,12 @@ input {
   font-family: 'VITRO';
   src: url('./font/VITRO PRIDE TTF.ttf') format('truetype');
   font-weight: 400;
+  font-style: thin;
+}
+
+@font-face {
+  font-family: 'Cafe24Ssurround';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+  font-weight: normal;
   font-style: normal;
 }

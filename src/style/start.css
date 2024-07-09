@@ -130,7 +130,7 @@
 }
 
 .start-subcontainer:hover .window.left{
-    transform: translate(calc(-0% - 310px), calc(-50% - 55px));
+    transform: translate(calc(-50% - 310px), calc(-50% - 55px));
 
     @media (min-width: 1400px) {
         transform: translate(calc(-50% - 360px), calc(-50% - 55px));
