@@ -260,6 +260,20 @@
   font-size: 2.8vh;
 }
 
+.inputbox input.invalid {
+  border: 3px solid red;
+  outline: none;
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
 @keyframes fadeOut {
   0% {
     opacity: 1;

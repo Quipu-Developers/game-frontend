@@ -7,7 +7,8 @@ export default function Game() {
   const [inputValue, setInputValue] = useState('');
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
-  const [isValid, setIsvalid] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
   const [hiddenWords, setHiddenWords] = useState([]);
   const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
@@ -42,12 +43,12 @@ export default function Game() {
       if (shuffleWordList.includes(trimmedInput)) 
       {
         setSelectedImage(<img src="image/irumae_happy.png" />);
-        setIsvalid(false);
         setHiddenWords([...hiddenWords, trimmedInput]);
+        setIsValid(false);
       } 
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
-        setIsvalid(true);
+        setIsValid(true);
       }
       setInputValue('');
     }
@@ -57,23 +58,11 @@ export default function Game() {
   useEffect(() => {
     const id = setInterval(() => {
       setCount(count => count - 1);
-      if (count === 10) {
-        setShowTimeLeftMessage(true);
+      if (count === 10 || count === 9 || count === 8) {
+        setIsTimeout(true);
         setTimeout(() => {
-          setShowTimeLeftMessage(false);
-        }, 100);
-      }
-      else if(count === 9) {
-        setShowTimeLeftMessage(true);
-        setTimeout(() => {
-          setShowTimeLeftMessage(false);
-        }, 100);
-      }
-      else if(count === 8) {
-        setShowTimeLeftMessage(true);
-        setTimeout(() => {
-          setShowTimeLeftMessage(false);
-        }, 100);
+          setIsTimeout(false);
+        }, 200);
       }
     }, 1000);
     if (count === 0) {
@@ -86,7 +75,7 @@ export default function Game() {
     <div
       className="container"
       style={{
-        boxShadow: isValid ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
+        boxShadow: isTimeout ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
       }}
     >
       <div className="leftcontainer">
@@ -164,7 +153,7 @@ export default function Game() {
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            // className={isValid ? "invalid" : ""}
+            className={isValid ? "invalid" : ""}
           />
         </div>
       </div>
