@@ -1,13 +1,24 @@
+
 .game-result-screen {
   height: 100vh;
   background:   linear-gradient(140deg, #8090a4 40%, transparent 0%),
                 linear-gradient(190deg, #3b4755 50%, transparent 0%),
                 #6d8191;
   color: #fff;
-  font-family: Arial, sans-serif;
   padding: 20px;  
+} 
+.first{
+  display: flex;
+  text-align: center; 
+  height: 7vh;
+  margin-top: 0.1vh;  
 }
-
+.teamicon{
+  display: flex;    
+  text-align: center;     
+  height: 2.5vh;
+  margin-top: 0.1vh; 
+}
 .trophyimage1 {
   position: absolute;
   right: 0;
@@ -15,7 +26,7 @@
   margin-right: 3%;
   height: 25vh;
   width: 15vw;
-  @media(height: 700px)
+ 
 }
 
 .trophyimage {
@@ -27,31 +38,30 @@
   width: 15vw;
 }
 
-.header {
+.header { 
   text-align: center;
-  margin-bottom: 20px;
-}
+} 
 .header h1{
-  font-size: 5vh;
+  font-size: 7vh;
   -webkit-text-stroke: 2px #11324D;
 }
-.logo {
-  border: 1vh solid#11324C;
+.logo { 
+ 
   position: absolute; 
   height: 11vh;
-  width: 12vh;
+  width: 22%;
   top: 0;
-  margin-top: 5vh;
+  margin-top: 5vh;  
   background-color: white;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: center;  
 }
 
 .logo h2 {
-  font-size: 0.6rem;
+  font-size: 1.1rem;
   color: #11324C;
   margin: 0;
 }
@@ -62,11 +72,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} 
 
 .wrap {
+  margin-top: -2vh;
   position: relative;
-  background-color: #ffffff;
+  background-color: gray; 
   border: 10px solid #11324C;
   border-radius: 10px;
   padding: 30px;
@@ -117,19 +128,27 @@
 .ranking-item {
   display: block;
   align-items: center;
-  margin-top: 10vh;
+  margin-top: 10vh;  
   margin-bottom: 10px;
-}
+} 
 
-.ranking-number { 
+.ranking-number {   
   border-radius: 5px;
   color: white;
-  background-color: #11324C;
-  display: block;
-  font-size: 0.8rem;
+  background-color: #11324C;  
+  display: flex; 
+  align-items: center;
+  font-size: 0.9rem;
   font-weight: bold;
   margin-bottom: 20px;
-  border: 5px solid #11324C;  
+  border: 5px solid #11324C;
+  @media(max-height: 700px) and (width: 1200px) {
+    max-width: 15vh;  
+       }  
+  @media (min-width: 1200px) and (max-width:1400px) {
+  font-size: 0.6rem;
+  }
+
 }
 .ranking-item1{
   display: grid;
@@ -140,25 +159,47 @@
   margin-top: 14vh; 
   margin-bottom: 1vh;
   grid-auto-flow: column;
-  
-}
 
-.home-button {
-   margin-top: 30px;
+}
+.username {
+  display: inline-block;  
+  max-width: 12vh; /* 적절한 너비 설정 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  @media(max-height: 700px) and (min-width: 1200px) {
+  max-width: 15vh;
+     }
+  @media(max-height: 900px) and (min-width: 1200px) {
+      max-width: 16vh ; 
+         }
+}
+.home-button {  
+   margin-top: 10px;
   position: absolute;
-  top: 90%;
+  top: 93%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20vh;
+  width: 10vh;
+  padding: 10px   ;
   background-color: #11324C;
   color: #fff;  
   border: none;
-  padding: 10px 20px;
+  
   border-radius: 5px;
-  font-size: 0.5rem;
+ 
   cursor: pointer;
+  @media(max-height: 700px) and (max-width: 1300px) {
+   height: 6vh ;
+    }
+  @media(max-height: 600px) and (max-width: 1300px) {
+     top: 95%;
+       }
+}   
+.back{
+  height: 3vh;
+  width: 3vh;
 }
-
