@@ -1,14 +1,37 @@
 import '../style/game.css';
 import gameData from '../data/game_data.jsx';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 
 export default function Game() {
   const [inputValue, setInputValue] = useState('');
+  const [inputFocus, setInputFocus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
-  const [isValid, setIsvalid] = useState(false);
+  const [isTimeout, setIsTimeout] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
   const [hiddenWords, setHiddenWords] = useState([]);
+  const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
+  const [shuffleWordList, setShuffleWordList] = useState(gameData.wordList);
+  const inputRef = useRef(null);
+
+  //단어장 무작위 셔플
+  useEffect(() => {
+    const shuffledList = [...gameData.wordList];
+    for (let i = shuffledList.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
+    }
+    setShuffleWordList(shuffledList);
+  }, [gameData.wordList]);  
+
+  //화면 렌더링 시 바로 inputbox에 입력 기능
+  useEffect(() => {
+    setInputFocus(true);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -17,24 +40,30 @@ export default function Game() {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputValue.trim();
-      if (gameData.wordList.includes(trimmedInput)) 
+      if (shuffleWordList.includes(trimmedInput)) 
       {
         setSelectedImage(<img src="image/irumae_happy.png" />);
-        setIsvalid(false);
         setHiddenWords([...hiddenWords, trimmedInput]);
+        setIsValid(false);
       } 
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
-        setIsvalid(true);
+        setIsValid(true);
       }
       setInputValue('');
     }
   }
 
-  const [count, setCount] = useState(60);
+  const [count, setCount] = useState(10);
   useEffect(() => {
     const id = setInterval(() => {
       setCount(count => count - 1);
+      if (count === 10 || count === 9 || count === 8) {
+        setIsTimeout(true);
+        setTimeout(() => {
+          setIsTimeout(false);
+        }, 200);
+      }
     }, 1000);
     if (count === 0) {
       clearInterval(id);
@@ -43,7 +72,12 @@ export default function Game() {
   }, [count]);
 
   return (
-    <div className="container">
+    <div
+      className="container"
+      style={{
+        boxShadow: isTimeout ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
+      }}
+    >
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{gameData.currentUserName}</div>
@@ -51,54 +85,46 @@ export default function Game() {
           <img className="timer" src="/image/timer.png" />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
-        <div className='ranking'>
-          <div className='ranking_number'>3</div>
+        <div className="ranking">
+          <div className="ranking_number">3</div>
         </div>
         <div className="rankbox">
           <div className="rankbox_title">실시간 순위</div>
           <div className="rankbox_first">
-            <div
-              className="rankbox_num"
-              style={{ width: "8vh", backgroundColor: "rgb(255, 225, 225)" }}
-            >
-              1등
-            </div>
+            <div className="rankbox_num">1등</div>
             <div style={{ width: "70%" }}>
-              <p>
+              <p
+                style={{
+                  background:
+                    "linear-gradient(to right, #D1A722 -10%, transparent)",
+                }}
+              >
                 {gameData.scores[0].userName} {gameData.scores[0].score}점
               </p>
             </div>
           </div>
           <div className="rankbox_second">
-            <div
-              className="rankbox_num"
-              style={{
-                width: "8vh",
-                backgroundColor: "rgb(250, 237, 214)",
-                marginLeft: "5%",
-              }}
-            >
-              2등
-            </div>
+            <div className="rankbox_num">2등</div>
             <div style={{ width: "65%" }}>
-              <p>
+              <p
+                style={{
+                  background:
+                    "linear-gradient(to right, #b1abab -10%, transparent)",
+                }}
+              >
                 {gameData.scores[1].userName} {gameData.scores[1].score}점
               </p>
             </div>
           </div>
           <div className="rankbox_third">
-            <div
-              className="rankbox_num"
-              style={{
-                width: "8vh",
-                backgroundColor: "rgb(235, 255, 235)",
-                marginLeft: "10%",
-              }}
-            >
-              3등
-            </div>
+            <div className="rankbox_num">3등</div>
             <div style={{ width: "60%" }}>
-              <p>
+              <p
+                style={{
+                  background:
+                    "linear-gradient(to right, #836b2e -10%, transparent)",
+                }}
+              >
                 {gameData.scores[2].userName} {gameData.scores[2].score}점
               </p>
             </div>
@@ -107,7 +133,12 @@ export default function Game() {
       </div>
       <div className="rightcontainer">
         <div className="wordbox">
-          {gameData.wordList.map((word, index) => (
+          {showTimeLeftMessage && (
+            <div className="time-left-message">
+              <img src="/image/alert.png" />
+            </div>
+          )}
+          {shuffleWordList.map((word, index) => (
             <div
               key={index}
               className={hiddenWords.includes(word) ? "hidden-word" : ""}
@@ -118,12 +149,11 @@ export default function Game() {
         </div>
         <div className="inputbox">
           <input
+            ref={inputRef}
             value={inputValue}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            style={{
-              border: isValid ? "5px solid red" : "1px solid black",
-            }}
+            className={isValid ? "invalid" : ""}
           />
         </div>
       </div>
