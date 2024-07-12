@@ -2,8 +2,10 @@ import '../style/game.css';
 import gameData from '../data/game_data.jsx';
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 export default function Game() {
+  const socket = io("http://localhost:8080");
   const [inputValue, setInputValue] = useState('');
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
@@ -23,7 +25,7 @@ export default function Game() {
       [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
     }
     setShuffleWordList(shuffledList);
-  }, [gameData.wordList]);
+  }, [gameData.wordList]);  
 
   //화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
@@ -40,11 +42,12 @@ export default function Game() {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) {
+      if (shuffleWordList.includes(trimmedInput)) 
+      {
         setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
-      }
+      } 
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
         setIsValid(true);
@@ -53,11 +56,17 @@ export default function Game() {
     }
   }
 
-  const [count, setCount] = useState(15);
+  const [count, setCount] = useState(12);
   useEffect(() => {
+
+    socket.on("STARTGAME", ({ gameInfo }) => {
+      console.log(`game started`);
+      console.log(gameInfo);
+  });
+
     const id = setInterval(() => {
       setCount(count => count - 1);
-      if (count === 10 || count === 9 || count === 8 || count === 7 || count === 6 || count === 5 || count === 4 || count === 3 || count === 2 || count === 1 || count === 0) {
+      if (count <= 11 && count > 0) {
         setIsTimeout(true);
         setTimeout(() => {
           setIsTimeout(false);
@@ -74,9 +83,10 @@ export default function Game() {
     <div
       className="container"
       style={{
-        boxShadow: isTimeout ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
+        boxShadow: isTimeout ? "inset 0 0 3vh rgba(255, 0, 0, 1)" : "none",
       }}
     >
+      {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{gameData.currentUserName}</div>
