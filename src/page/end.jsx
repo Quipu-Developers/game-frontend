@@ -29,9 +29,9 @@ const End = () => {
               <h2>RANKING</h2>
             </div>
             <div className="ranking-item">
-              <div className="ranking-number">{scoreData.teamRankings[0].rank}위 {scoreData.teamRankings[0].userName}</div>
-              <div className="ranking-number">{scoreData.teamRankings[1].rank}위 {scoreData.teamRankings[1].userName}</div>
-              <div className="ranking-number">{scoreData.teamRankings[2].rank}위 {scoreData.teamRankings[2].userName}</div>
+              <div className="ranking-number"><img className="first" alt="트로피" src="/image/first.png"/>{scoreData.teamRankings[0].userName}</div>
+              <div className="ranking-number"><img className="first" alt="트로피" src="/image/second.png"/> {scoreData.teamRankings[1].userName}</div>
+              <div className="ranking-number"><img className="first" alt="트로피" src="/image/third.png"/>{scoreData.teamRankings[2].userName}</div>
             </div>
           </div>
           <div className="overall-ranking">
@@ -40,31 +40,23 @@ const End = () => {
               <h2>RANKING</h2>
             </div>
             <div className="ranking-item1">
-              <div className="ranking-number">{scoreData.top10GlobalRankings[0].rank}위 {scoreData.top10GlobalRankings[0].userName}</div>
-              <div className="ranking-number">{scoreData.top10GlobalRankings[1].rank}위 {scoreData.top10GlobalRankings[1].userName}</div>
-              <div className="ranking-number">{scoreData.top10GlobalRankings[2].rank}위 {scoreData.top10GlobalRankings[2].userName}</div>
+              <div className="ranking-number"><img className="teamicon" alt="트로피" src="/image/first.png"/> {scoreData.top10GlobalRankings[0].userName}</div>
+              <div className="ranking-number"><img className="teamicon" alt="트로피" src="/image/second.png"/> {scoreData.top10GlobalRankings[1].userName}</div>
+              <div className="ranking-number"><img className="teamicon" alt="트로피" src="/image/third.png"/> {scoreData.top10GlobalRankings[2].userName}</div> 
               <div className="ranking-number">{scoreData.top10GlobalRankings[3].rank}위 {scoreData.top10GlobalRankings[3].userName}</div>
               <div className="ranking-number">{scoreData.top10GlobalRankings[4].rank}위 {scoreData.top10GlobalRankings[4].userName}</div>
               <div className="ranking-number">{scoreData.top10GlobalRankings[5].rank}위 {scoreData.top10GlobalRankings[5].userName}</div>
               <div className="ranking-number">{scoreData.top10GlobalRankings[6].rank}위 {scoreData.top10GlobalRankings[6].userName}</div>
               <div className="ranking-number">{scoreData.top10GlobalRankings[7].rank}위 {scoreData.top10GlobalRankings[7].userName}</div>
-              <div className="ranking-number">{scoreData.top10GlobalRankings[8].rank}위 {scoreData.top10GlobalRankings[8].userName}</div>
+              <div className="ranking-number"><span className = "username">{scoreData.top10GlobalRankings[8].rank}위 {scoreData.top10GlobalRankings[8].userName}</span></div>
               <div className="ranking-number">{scoreData.top10GlobalRankings[9].rank}위 {scoreData.top10GlobalRankings[9].userName}</div>
             </div>
           </div>
-          <div className = "myranking">
-          <div className="logo">
-              <h2>MY</h2>
-              <h2>RANKING</h2>
-            </div>
-          <div className="ranking-number">
-            {scoreData.personalRanking.globalRank}위 {scoreData.personalRanking.userName}
-          </div>
-          </div>
+          
         </div>
       </div>
       <div className="home-button">
-      <button onClick={handleStartClick}>처음으로</button>
+      <button onClick={handleStartClick}><img className="back" alt="버튼" src="/image/back.png"/></button>
       </div>
     </div>
   );
