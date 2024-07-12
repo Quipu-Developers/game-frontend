@@ -1,12 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../style/start.css'
+import { io } from 'socket.io-client';
 
 export default function Start() {
+
+    const socket = io.connect("http://localhost:8080");
+    socket.emit("CREATEGAME", { userInfo: { userId: "1", userName: "string", phoneNumber: "string" } });
+
     const navigate = useNavigate();
 
     const handleStartClick = () => {
-      navigate('/game');
+        navigate('/game');
     };
     return (
         <div className="start-container">
@@ -29,21 +34,23 @@ export default function Start() {
                             <div style={{ width: '25%' }}><p>전화번호</p></div>
                         </div>
                         <div className="promo-text"><p>UOS 최고의 타이핑 마스터에 도전하세요!</p></div>
+                        <div className="input-box">
+                            <div style={{ width: '30%' }}><p>팀 이름</p></div>
+                            <input style={{ width: '65%' }}></input>
+                        </div>
                     </div>
                 </div>
                 <div className="window middle">
                     <div className="window-bar"><p>● ● ●</p></div>
                     <div className="window-middle">
-                        <h3>게임 방법 🌟</h3>
+                        <h3>개인전이고 🌟</h3>
                         <ul>
-                            <li>✔️ 단어들을 빠르게 입력해서 없애세요! 🚀</li>
-                            <li>✔️ 팀원보다 <span className="highlight">먼저 입력</span>하여 단어를 낚아채세요!</li>
-                            <li>✔️ <span className="highlight">최대한 많은 단어</span>를 입력할수록 점수가 높아집니다 💪</li>
+                            <li>✔️ 화면에 보이는 단어를 팀원보다 <span className="highlight">먼저 입력</span>하여 낚아채세요!</li>
+                            <li>✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀 내 1등에 도전하세요 💪</li>
                         </ul>
-                        <h3>점수 🏆</h3>
+                        <h3>팀전이기도 한 🏆</h3>
                         <ul>
-                            <li>✔️ 입력한 단어만큼 점수가 부여되고 <span className="highlight">팀 내 순위</span>가 결정됩니다!</li>
-                            <li>✔️ <span className="highlight">남은 시간</span> 합산으로 전체 등수가 결정됩니다! top10에 도전하세요!😘</li>
+                            <li>✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로 팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘</li>
                             <li>✔️ 시간 내에 모든 단어를 제거하지 못하면 <span className="highlight">팀 전체 탈락</span>합니다! ⚠️</li>
                         </ul>
                     </div>
@@ -51,6 +58,16 @@ export default function Start() {
                 <div className="window right">
                     <div className="window-bar"><p>● ● ●</p></div>
                     <div className="window-right">
+                        <div>
+                            <p>김준호님이 입장하셨습니다.</p>
+                        </div>
+                        <div style={{justifyContent:"end"}}>
+                            <p style={{borderRadius: '15px 15px 0 15px'}}>정지훈님이 입장하셨습니다.</p>
+                        </div>
+                        <div>
+                            <p>송승준님이 입장하셨습니다.</p>
+                        </div>
+                        <h3><span>5초</span> 후 게임이 시작됩니다.</h3>
                     </div>
                 </div>
             </div>
