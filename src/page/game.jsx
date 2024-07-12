@@ -23,7 +23,7 @@ export default function Game() {
       [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
     }
     setShuffleWordList(shuffledList);
-  }, [gameData.wordList]);  
+  }, [gameData.wordList]);
 
   //화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
@@ -40,12 +40,11 @@ export default function Game() {
   const handleKeyPress = (event) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) 
-      {
+      if (shuffleWordList.includes(trimmedInput)) {
         setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
-      } 
+      }
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
         setIsValid(true);
@@ -54,11 +53,11 @@ export default function Game() {
     }
   }
 
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(15);
   useEffect(() => {
     const id = setInterval(() => {
       setCount(count => count - 1);
-      if (count === 10 || count === 9 || count === 8) {
+      if (count === 10 || count === 9 || count === 8 || count === 7 || count === 6 || count === 5 || count === 4 || count === 3 || count === 2 || count === 1 || count === 0) {
         setIsTimeout(true);
         setTimeout(() => {
           setIsTimeout(false);
