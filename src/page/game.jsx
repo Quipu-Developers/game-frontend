@@ -1,6 +1,9 @@
 import '../style/game.css';
 import gameData from '../data/game_data.jsx';
 import React, { useState, useEffect } from "react";
+import { io } from 'socket.io-client';
+
+const socket = io("http://localhost:8080");
 
 export default function Game() {
   const [inputValue, setInputValue] = useState('');
@@ -25,6 +28,12 @@ export default function Game() {
 
   const [count, setCount] = useState(60);
   useEffect(() => {
+
+    socket.on("STARTGAME", ({ gameInfo }) => {
+      console.log(`game started`);
+      console.log(gameInfo);
+  });
+
     const id = setInterval(() => {
       setCount(count => count - 1);
     }, 1000);
