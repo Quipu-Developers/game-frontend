@@ -1,11 +1,11 @@
 import '../style/game.css';
 import gameData from '../data/game_data.jsx';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:8080");
-
 export default function Game() {
+  const socket = io("http://localhost:8080");
   const [inputValue, setInputValue] = useState('');
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
@@ -56,7 +56,7 @@ export default function Game() {
     }
   }
 
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(12);
   useEffect(() => {
 
     socket.on("STARTGAME", ({ gameInfo }) => {
@@ -66,7 +66,7 @@ export default function Game() {
 
     const id = setInterval(() => {
       setCount(count => count - 1);
-      if (count === 10 || count === 9 || count === 8) {
+      if (count <= 11 && count > 0) {
         setIsTimeout(true);
         setTimeout(() => {
           setIsTimeout(false);
@@ -83,9 +83,10 @@ export default function Game() {
     <div
       className="container"
       style={{
-        boxShadow: isTimeout ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
+        boxShadow: isTimeout ? "inset 0 0 3vh rgba(255, 0, 0, 1)" : "none",
       }}
     >
+      {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{gameData.currentUserName}</div>
