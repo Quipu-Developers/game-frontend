@@ -1,18 +1,67 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../style/start.css'
+import '../style/start.css';
 import { io } from 'socket.io-client';
 
 export default function Start() {
-
-    const socket = io.connect("http://localhost:8080");
-    socket.emit("CREATEGAME", { userInfo: { userId: "1", userName: "string", phoneNumber: "string" } });
-
     const navigate = useNavigate();
+    const [userInfo, setUserInfo] = useState({});
+    const [studentId, setStudentId] = useState(0);
+    const [userName, setUserName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [teamName, setTeamName] = useState('');
+    const [numUsers, setNumUsers] = useState(0);
+
+    const socket = io.connect("http://localhost:8082");
+
+    useEffect(() => {
+        socket.on('connect', () => {
+            console.log('대기방에 입장하셨습니다.');
+        });
+
+        socket.on('JOINUSER', ({ userInfo }) => {
+            console.log(`${userInfo.userName} 게임 준비 완료`);
+            setNumUsers(prevNumUsers => prevNumUsers + 1);
+        });
+        
+        socket.on('STARTGAME', () => {
+            console.log('Game started');
+            setTimeout(() => {
+                navigate('/game');
+            }, 5000);
+        });
+
+        return () => {
+            socket.off('connect');
+            socket.off('JOINUSER');
+            socket.off('STARTGAME');
+        };
+    }, [navigate]);
 
     const handleStartClick = () => {
-        navigate('/game');
+        const user_info = {
+            userId: 1,
+            studentId: studentId,
+            userName: userName,
+            phoneNumber: phoneNumber,
+            teamName: teamName,
+            score: 0
+        };
+        setUserInfo(user_info);
+
+        if (numUsers >= 3) {
+            console.log("인원을 초과하여 입장할 수 없습니다.");
+        } else {
+            socket.emit('JOINGAME', { userInfo: user_info, gameId: 1 }, (response) => {
+                if (response.success) {
+                    console.log('게임 참여 성공:', response.game);
+                } else {
+                    console.log('게임 참여 실패');
+                }
+            });
+        }
     };
+
     return (
         <div className="start-container">
             <h1>배틀글라운드</h1>
@@ -22,21 +71,21 @@ export default function Start() {
                     <div className="window-left">
                         <div className="input-box">
                             <div style={{ width: '30%' }}><p>학번</p></div>
-                            <input style={{ width: '65%' }}></input>
+                            <input style={{ width: '65%' }} onChange={(e) => setStudentId(e.target.value)}></input>
                         </div>
                         <div className="input-box">
                             <div style={{ width: '45%' }}><p>이름</p></div>
-                            <input style={{ width: '50%' }}></input>
+                            <input style={{ width: '50%' }} onChange={(e) => setUserName(e.target.value)}></input>
                         </div>
                         <div className="promo-text"><p>누구보다 빠르고 정확하게</p></div>
                         <div className="input-box">
-                            <input style={{ width: '70%' }}></input>
+                            <input style={{ width: '70%' }} onChange={(e) => setPhoneNumber(e.target.value)}></input>
                             <div style={{ width: '25%' }}><p>전화번호</p></div>
                         </div>
                         <div className="promo-text"><p>UOS 최고의 타이핑 마스터에 도전하세요!</p></div>
                         <div className="input-box">
                             <div style={{ width: '30%' }}><p>팀 이름</p></div>
-                            <input style={{ width: '65%' }}></input>
+                            <input style={{ width: '65%' }} onChange={(e) => setTeamName(e.target.value)}></input>
                         </div>
                     </div>
                 </div>
@@ -61,8 +110,8 @@ export default function Start() {
                         <div>
                             <p>김준호님이 입장하셨습니다.</p>
                         </div>
-                        <div style={{justifyContent:"end"}}>
-                            <p style={{borderRadius: '15px 15px 0 15px'}}>정지훈님이 입장하셨습니다.</p>
+                        <div style={{ justifyContent: "end" }}>
+                            <p style={{ borderRadius: '15px 15px 0 15px' }}>정지훈님이 입장하셨습니다.</p>
                         </div>
                         <div>
                             <p>송승준님이 입장하셨습니다.</p>
@@ -76,5 +125,5 @@ export default function Start() {
                 <div onClick={handleStartClick}></div>
             </div>
         </div>
-    )
+    );
 }
