@@ -1,14 +1,14 @@
 import '../style/game.css';
 import gameData from '../data/game_data.jsx';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:8080");
-
 export default function Game() {
+  const socket = io("http://localhost:8080");
   const [inputValue, setInputValue] = useState('');
   const [inputFocus, setInputFocus] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
+  const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" className='happy-image'/>);
   const [isTimeout, setIsTimeout] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
@@ -44,19 +44,19 @@ export default function Game() {
       const trimmedInput = inputValue.trim();
       if (shuffleWordList.includes(trimmedInput)) 
       {
-        setSelectedImage(<img src="image/irumae_happy.png" />);
+        setSelectedImage(<img src="image/irumae_happy.png" alt="happy" className='happy-image'/>);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
       } 
       else {
-        setSelectedImage(<img src="image/irumae_sad.png" />);
+        setSelectedImage(<img src="image/irumae_sad.png" alt="sad" className='sad-image'/>);
         setIsValid(true);
       }
       setInputValue('');
     }
   }
 
-  const [count, setCount] = useState(10);
+  const [count, setCount] = useState(12);
   useEffect(() => {
 
     socket.on("STARTGAME", ({ gameInfo }) => {
@@ -66,7 +66,7 @@ export default function Game() {
 
     const id = setInterval(() => {
       setCount(count => count - 1);
-      if (count === 10 || count === 9 || count === 8) {
+      if (count <= 11 && count > 0) {
         setIsTimeout(true);
         setTimeout(() => {
           setIsTimeout(false);
@@ -83,14 +83,15 @@ export default function Game() {
     <div
       className="container"
       style={{
-        boxShadow: isTimeout ? "inset 0 0 20px rgba(255, 0, 0, 1)" : "none",
+        boxShadow: isTimeout ? "inset 0 0 1.5vh rgba(255, 0, 0, 1)" : "none",
       }}
     >
+      {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{gameData.currentUserName}</div>
         <div className="profile_timer">
-          <img className="timer" src="/image/timer.png" />
+          <img className="timer" src="/image/timer.png" alt='timer'/>
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
@@ -99,40 +100,25 @@ export default function Game() {
         <div className="rankbox">
           <div className="rankbox_title">실시간 순위</div>
           <div className="rankbox_first">
-            <div className="rankbox_num">1등</div>
+            <div className="rankbox_num">1</div>
             <div style={{ width: "70%" }}>
-              <p
-                style={{
-                  background:
-                    "linear-gradient(to right, #D1A722 -10%, transparent)",
-                }}
-              >
+              <p>
                 {gameData.scores[0].userName} {gameData.scores[0].score}점
               </p>
             </div>
           </div>
           <div className="rankbox_second">
-            <div className="rankbox_num">2등</div>
-            <div style={{ width: "65%" }}>
-              <p
-                style={{
-                  background:
-                    "linear-gradient(to right, #b1abab -10%, transparent)",
-                }}
-              >
+            <div className="rankbox_num">2</div>
+            <div style={{ width: "70%" }}>
+              <p>
                 {gameData.scores[1].userName} {gameData.scores[1].score}점
               </p>
             </div>
           </div>
           <div className="rankbox_third">
-            <div className="rankbox_num">3등</div>
-            <div style={{ width: "60%" }}>
-              <p
-                style={{
-                  background:
-                    "linear-gradient(to right, #836b2e -10%, transparent)",
-                }}
-              >
+            <div className="rankbox_num">3</div>
+            <div style={{ width: "70%" }}>
+              <p>
                 {gameData.scores[2].userName} {gameData.scores[2].score}점
               </p>
             </div>
@@ -143,7 +129,7 @@ export default function Game() {
         <div className="wordbox">
           {showTimeLeftMessage && (
             <div className="time-left-message">
-              <img src="/image/alert.png" />
+              <img src="/image/alert.png" alt='alert'/>
             </div>
           )}
           {shuffleWordList.map((word, index) => (
