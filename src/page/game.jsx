@@ -1,30 +1,87 @@
 import "../style/game.css";
 import gameData from "../data/game_data.jsx";
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import { wordInput } from '../service/game_service.js';
-
-async function wordInput(){
-
-}
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { useGameActions } from "../service/game_service.js";
 
 export default function Game() {
-  const socket = io("http://localhost:8080");
+  const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
-  const [inputFocus, setInputFocus] = useState(false);
   const [selectedImage, setSelectedImage] = useState(
-    <img src="image/irumae_happy.png" />
+    <img src="image/irumae_happy.png" alt="profile" />
   );
   const [isTimeout, setIsTimeout] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
   const [hiddenWords, setHiddenWords] = useState([]);
-  const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
+  // const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
+  const showTimeLeftMessage = false;
   const [shuffleWordList, setShuffleWordList] = useState(gameData.wordList);
   const inputRef = useRef(null);
+  const [count, setCount] = useState(12);
+  const [idleTimeout, setIdleTimeout] = useState(null);
 
-  //단어장 무작위 셔플
+  // 단어 제출 처리 함수
+  async function handleSubmitWord(inputWord) {
+    const userId = localStorage.getItem("userId");
+    const roomId = localStorage.getItem("roomId");
+    const trimmedInput = inputWord.trim();
+
+    try {
+      const response = await wordInput(userId, roomId, trimmedInput);
+      if (response.success) {
+        console.log("Word processed successfully:", response);
+      }
+    } catch (error) {
+      console.error("Error submitting word:", error.message);
+    }
+  }
+
+  // 타이머 만료 시 처리 함수
+  const handleIdleTimeout = useCallback(() => {
+    console.log("No activity for 10 seconds. Ending game.");
+    alert("No activity for 10 seconds. Ending game.");
+    navigate("/waiting-room");
+  }, [navigate]);
+
+  // 타이머 해제 함수
+  const clearIdleTimer = useCallback(() => {
+    if (idleTimeout) {
+      clearTimeout(idleTimeout);
+    }
+  }, [idleTimeout]);
+
+  // 타이머 초기화 및 설정 함수
+  const resetIdleTimer = useCallback(() => {
+    clearIdleTimer(); // 기존 타이머 해제
+    setIdleTimeout(setTimeout(handleIdleTimeout, 10000)); // 10초 후 게임 종료 타이머 설정
+  }, [clearIdleTimer, handleIdleTimeout]);
+
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+    resetIdleTimer(); // 키 입력 시 타이머 리셋
+  };
+
+  const handleKeyDown = async (event) => {
+    if (event.key === "Enter") {
+      const trimmedInput = inputValue.trim();
+      if (shuffleWordList.includes(trimmedInput)) {
+        setSelectedImage(<img src="image/irumae_happy.png" alt="profile" />);
+        setHiddenWords([...hiddenWords, trimmedInput]);
+        setIsValid(false);
+
+        // 서버로 단어 제출
+        await handleSubmitWord(trimmedInput);
+      } else {
+        setSelectedImage(<img src="image/irumae_sad.png" alt="profile" />);
+        setIsValid(true);
+      }
+      setInputValue("");
+      resetIdleTimer(); // 타이머 리셋
+    }
+  };
+
+  // 단어장 무작위 셔플
   useEffect(() => {
     const shuffledList = [...gameData.wordList];
     for (let i = shuffledList.length - 1; i > 0; i--) {
@@ -32,53 +89,20 @@ export default function Game() {
       [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
     }
     setShuffleWordList(shuffledList);
-  }, [gameData.wordList]);
+  }, []);
 
-  //화면 렌더링 시 바로 inputbox에 입력 기능
+  // 화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
-    setInputFocus(true);
     if (inputRef.current) {
       inputRef.current.focus();
     }
-  }, []);
 
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+    resetIdleTimer(); // 추가된 부분: 컴포넌트가 마운트될 때 타이머 설정
 
-  const handleKeyPress = async (event) => {
-    if (event.key === 'Enter') {
-      const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) 
-      {
-         setSelectedImage(<img src="image/irumae_happy.png" />);
-        setHiddenWords([...hiddenWords, trimmedInput]);
-        setIsValid(false);
-        const userId = gameData.currentUserId; // 현재 사용자 ID
-        const roomId = gameData.currentRoomId; // 현재 방 ID
-        try {
-          const response = await wordInput(userId, roomId, trimmedInput);
-          console.log("Response from server:", response);
-      } catch (error) {
-          console.error("Error submitting word:", error.message);
-      }
-      
-      }   
-      else {
-        setSelectedImage(<img src="image/irumae_sad.png" />);
-        setIsValid(true);
-      }
-      setInputValue("");
-    }
-  };
+    return () => clearIdleTimer(); // 컴포넌트가 언마운트될 때 타이머 해제
+  }, [resetIdleTimer, clearIdleTimer]);
 
-  const [count, setCount] = useState(12);
   useEffect(() => {
-    socket.on("STARTGAME", ({ gameInfo }) => {
-      console.log(`game started`);
-      console.log(gameInfo);
-    });
-
     const id = setInterval(() => {
       setCount((count) => count - 1);
       if (count <= 11 && count > 0) {
@@ -106,7 +130,7 @@ export default function Game() {
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{gameData.currentUserName}</div>
         <div className="profile_timer">
-          <img className="timer" src="/image/timer.png" />
+          <img className="timer" src="/image/timer.png" alt="timer" />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
@@ -159,7 +183,7 @@ export default function Game() {
         <div className="wordbox">
           {showTimeLeftMessage && (
             <div className="time-left-message">
-              <img src="/image/alert.png" />
+              <img src="/image/alert.png" alt="alert" />
             </div>
           )}
           {shuffleWordList.map((word, index) => (
@@ -176,7 +200,7 @@ export default function Game() {
             ref={inputRef}
             value={inputValue}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             className={isValid ? "invalid" : ""}
           />
         </div>

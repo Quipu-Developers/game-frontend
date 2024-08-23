@@ -1,53 +1,62 @@
 import "../style/waitingRoom.css";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  sendMessage,
-  startGame,
-  kickMember,
-  deleteRoom,
-} from "../service/waitingRoom_service";
-
-async function handleSendMessage() {
-  const roomId = "room123";
-  const message = "Hello, team!";
-
-  try {
-    await sendMessage(roomId, message);
-    console.log("Message sent successfully!");
-  } catch (error) {
-    console.error("Failed to send message:", error.message);
-  }
-}
-
-async function handleKickMember() {
-  const roomId = "room123";
-  const targetId = "user456";
-
-  try {
-    await kickMember(roomId, targetId);
-    console.log("Member kicked successfully!");
-  } catch (error) {
-    console.error("Failed to kick member:", error.message);
-  }
-}
-
-async function handleDeleteRoom() {
-  const roomId = "room123";
-
-  try {
-    await deleteRoom(roomId);
-    console.log("Room deleted successfully!");
-  } catch (error) {
-    console.error("Failed to delete room:", error.message);
-  }
-}
+import { useWaitingRoomActions } from "../service/waitingRoom_service";
 
 export default function WaitingRoom() {
+  const { sendMessage, startGame, kickMember, deleteRoom } =
+    useWaitingRoomActions();
   const [isReady, setIsReady] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
+
+  async function handleSendMessage() {
+    const roomId = "room123";
+    const message = "Hello, team!";
+
+    try {
+      await sendMessage(roomId, message);
+      console.log("Message sent successfully!");
+    } catch (error) {
+      console.error("Failed to send message:", error.message);
+    }
+  }
+
+  async function handleStartGame() {
+    const roomId = "room123";
+
+    try {
+      await startGame(roomId);
+      console.log("game start successfully!");
+      navigate("/game");
+    } catch (error) {
+      console.error("Failed to game start:", error.message);
+    }
+  }
+
+  async function handleKickMember() {
+    const roomId = "room123";
+    const targetId = "user456";
+
+    try {
+      await kickMember(roomId, targetId);
+      console.log("Member kicked successfully!");
+    } catch (error) {
+      console.error("Failed to kick member:", error.message);
+    }
+  }
+
+  async function handleDeleteRoom() {
+    const roomId = "room123";
+
+    try {
+      await deleteRoom(roomId);
+      console.log("Room deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete room:", error.message);
+    }
+  }
 
   const toggleReady = () => {
     setIsReady(!isReady);
@@ -57,10 +66,6 @@ export default function WaitingRoom() {
     { message: "< 김준호 님이 입장했습니다. >", type: "system-message" },
   ]);
   const [message, setMessage] = useState("");
-
-  const startGame = () => {
-    navigate("/game");
-  };
 
   const handleClick = () => {
     if (!isActive) {
@@ -76,12 +81,12 @@ export default function WaitingRoom() {
     setChats((prevChats) => [...prevChats, { message: chat, type: type }]);
   };
 
-  const sendMessage = () => {
-    if (message) {
-      addChatMessage(`김준호 : ${message}`, "my-message");
-      setMessage("");
-    }
-  };
+  // const sendMessage = () => {
+  //   if (message) {
+  //     addChatMessage(`김준호 : ${message}`, "my-message");
+  //     setMessage("");
+  //   }
+  // };
 
   const handleChange = (e) => {
     setMessage(e.target.value);

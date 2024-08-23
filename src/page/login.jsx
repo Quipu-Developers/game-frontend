@@ -1,24 +1,21 @@
 import "../style/login.css";
 import React, { useState } from "react";
-import socket from "./socket";
-import { io } from "socket.io-client"; // socket.io 클라이언트 가져오기
-import { loginUser } from "../service/login_service";
+import { useAuthActions } from "../service/login_service";
+import { createUser } from "../service/http_service";
 
 export default function Login() {
-  const [userName, setUserName] = useState(""); // 이름 상태
-  const [phoneNumber, setPhoneNumber] = useState(""); // 전화번호 상태
+  const { loginUser } = useAuthActions();
+  const [userName, setUserName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  async function handleLogin (){
-    try{    
-      const userdata=await loginUser();
-      console.log("유저이름:", userName)
-      console.log("핸드폰 번호:", phoneNumber)
-      console.log("로그인 성공:", userdata); // 로그인 성공한 데이터 출력
+  async function handleLogin() {
+    try {
+      const userId = await loginUser(userName, phoneNumber);
+      console.log("Logged in with userId:", userId);
+    } catch (error) {
+      console.error("Login failed:", error.message);
     }
-    catch (error){
-      console.error("로그인 중 오류 발생", error);
-    }
-  };
+  }
 
   return (
     <div className="container">

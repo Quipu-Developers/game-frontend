@@ -1,40 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  fetchRooms,
-  createRoom,
-  deleteUserAccount,
-} from "../service/lobby_service";
+import { useLobbyActions } from "../service/lobby_service";
 import "../style/lobby.css";
 
-async function loadRooms() {
-  try {
-    const rooms = await fetchRooms();
-    console.log("방 목록:", rooms);
-  } catch (error) {
-    console.error("방 목록을 가져오는 중 오류 발생:", error);
-  }
-}
-
-async function createNewRoom() {
-  try {
-    const roomId = await createRoom("방 이름", "비밀번호");
-    console.log("새로 생성된 방 ID:", roomId);
-  } catch (error) {
-    console.error("방 생성 중 오류 발생:", error);
-  }
-}
-
-async function removeUserAccount() {
-  try {
-    await deleteUserAccount();
-    console.log("계정이 삭제되었습니다.");
-  } catch (error) {
-    console.error("계정 삭제 중 오류 발생:", error);
-  }
-}
-
 export default function Lobby() {
+  const { fetchRooms, createRoom, deleteUserAccount } = useLobbyActions();
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
@@ -46,6 +16,33 @@ export default function Lobby() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+
+  async function loadRooms() {
+    try {
+      const rooms = await fetchRooms();
+      console.log("방 목록:", rooms);
+    } catch (error) {
+      console.error("방 목록을 가져오는 중 오류 발생:", error);
+    }
+  }
+
+  async function createNewRoom() {
+    try {
+      const roomId = await createRoom("방 이름", "비밀번호");
+      console.log("새로 생성된 방 ID:", roomId);
+    } catch (error) {
+      console.error("방 생성 중 오류 발생:", error);
+    }
+  }
+
+  async function removeUserAccount() {
+    try {
+      await deleteUserAccount();
+      console.log("계정이 삭제되었습니다.");
+    } catch (error) {
+      console.error("계정 삭제 중 오류 발생:", error);
+    }
+  }
 
   const handleClick = () => {
     if (!isActive) {
