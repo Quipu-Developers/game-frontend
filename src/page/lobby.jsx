@@ -1,8 +1,40 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  fetchRooms,
+  createRoom,
+  deleteUserAccount,
+} from "./services/lobby_service";
 import "../style/lobby.css";
 
-export default function Start() {
+async function loadRooms() {
+  try {
+    const rooms = await fetchRooms();
+    console.log("방 목록:", rooms);
+  } catch (error) {
+    console.error("방 목록을 가져오는 중 오류 발생:", error);
+  }
+}
+
+async function createNewRoom() {
+  try {
+    const roomId = await createRoom("방 이름", "비밀번호");
+    console.log("새로 생성된 방 ID:", roomId);
+  } catch (error) {
+    console.error("방 생성 중 오류 발생:", error);
+  }
+}
+
+async function removeUserAccount() {
+  try {
+    await deleteUserAccount();
+    console.log("계정이 삭제되었습니다.");
+  } catch (error) {
+    console.error("계정 삭제 중 오류 발생:", error);
+  }
+}
+
+export default function Lobby() {
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
@@ -160,21 +192,33 @@ export default function Start() {
         </div>
       )}
       <div
-        className={`lb_rule ${isActive ? 'active' : ''}`}
+        className={`lb_rule ${isActive ? "active" : ""}`}
         onClick={handleClick}
       >
         &emsp;게임 규칙
       </div>
-      <div className={`lb_rule_content ${isVisible ? 'visible' : ''}`}>
+      <div className={`lb_rule_content ${isVisible ? "visible" : ""}`}>
         <h3>개인전이고 🌟</h3>
         <ul>
-          <li>✔️ 화면에 보이는 단어를 팀원보다 <span className="highlight">먼저 입력</span>하여 낚아채세요!</li>
-          <li>✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀 내 1등에 도전하세요 💪</li>
+          <li>
+            ✔️ 화면에 보이는 단어를 팀원보다{" "}
+            <span className="highlight">먼저 입력</span>하여 낚아채세요!
+          </li>
+          <li>
+            ✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀
+            내 1등에 도전하세요 💪
+          </li>
         </ul>
         <h3>팀전이기도 한 🏆</h3>
         <ul>
-          <li>✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로 팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘</li>
-          <li>✔️ 시간 내에 모든 단어를 제거하지 못하면 <span className="highlight">팀 전체 탈락</span>합니다! ⚠️</li>
+          <li>
+            ✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로
+            팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘
+          </li>
+          <li>
+            ✔️ 시간 내에 모든 단어를 제거하지 못하면{" "}
+            <span className="highlight">팀 전체 탈락</span>합니다! ⚠️
+          </li>
         </ul>
       </div>
     </div>
