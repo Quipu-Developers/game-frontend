@@ -1,102 +1,122 @@
 .container {
-    height: 100vh;
-    width: 100vw;
-    background-color: #9db3d6;
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
-  }
-  
-  .container::after {
-    background-color: #92a8cc;
-    content: '';
-    position: fixed;
-    margin-left: 17.5vw;
-    margin-top: 13vh;
-    width: 65vw;
-    height: 74vh;
-    border: 2px solid #abbdda;
-    box-shadow: 0 0 0 2px #63758e, 0 0 0 3px #4f6180, 0 0 0 4px #b9cbe9;
-      border-radius: 3vh;
-      z-index: 1;
-  }
-  .leftcontainer {
-    display: flex;
-    margin-top: 15vh;
-    margin-left: 19vw;
-    width: 25%;
-    height: 70%;
-    border: 1px solid #b3d0fe;
-    box-shadow: 0 0 0 1px #7f94b5, 0 0 0 2px #697fa4, 0 0 0 3px #414f65;
-    background: linear-gradient(to bottom right, #a6bcdf, #b9cbe9);
-    flex-wrap: wrap;
-    border-radius: 2vh;
-    flex-direction: column;
-    justify-content: center; /* 가운데 정렬 */
-    align-items: center; /* 가운데 정렬 */
-    z-index: 2;
-  }
-  
-  .rightcontainer {
-    margin-top: 15vh;
-    margin-left: 2vw;
-    width: 35%;
-    height: 70%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    box-shadow: 0 0 0 1px #7f94b5, 0 0 0 2px #697fa4, 0 0 0 3px #414f65;
-    border-radius: 1vh;
-    overflow: hidden;
-    z-index: 2;
-  }
-  
-  .info-section {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    letter-spacing: 0.03vw;
-    font-size: calc(0.6vh + 0.7vw);
-    width: 100%;
-    padding-left: 10px;
-    color: rgb(235, 232, 232);
-    background: linear-gradient(to bottom, #8b9dbc, #596371);
-  }
-  
-  h1 {
-    text-align: center;
-    color: #00796b;
-  }
-  
-  .leftcontainer p {
-    width: 100%;
-    text-align: center;
-    display: block;
-    margin-top: 10px;
-    font-size: 23px;
-  }
-  
-  input {
-    width: 90%;
-    padding: 10px;
-    margin-bottom: 5px;
-    border: 1px solid #00796b;
-    border-radius: 5px;
-  }
-  
-  .leftcontainer button {
-    background-color: #ff5722;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 90%;
-    height: 35px;
-  }
-  
-  .leftcontainer button:hover {
-    background-color: #e64a19;
-  }
-  
+  height: 100vh;
+  width: 100vw;
+  background-color: #9db3d6;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.container::after {
+  background-color: #92a8cc;
+  content: '';
+  position: fixed;
+  margin-left: 17.5vw;
+  margin-top: 13vh;
+  width: 65vw;
+  height: 74vh;
+  border: 2px solid #abbdda;
+  box-shadow: 0 0 0 2px #63758e, 0 0 0 3px #4f6180, 0 0 0 4px #b9cbe9;
+    border-radius: 3vh;
+    z-index: 1;
+}
+
+.leftcontainer {
+  display: flex;
+  margin-top: 15vh;
+  margin-left: 19vw;
+  width: 25%;
+  height: 70%;
+  border: 1px solid #b3d0fe;
+  box-shadow: 0 0 0 1px #7f94b5, 0 0 0 2px #697fa4, 0 0 0 3px #414f65;
+  background: linear-gradient(to bottom right, #a6bcdf, #b9cbe9);
+  flex-wrap: wrap;
+  border-radius: 2vh;
+  flex-direction: column;
+  justify-content: center; /* 가운데 정렬 */
+  align-items: center; /* 가운데 정렬 */
+  z-index: 2;
+}
+
+.leftcontainer h1 {
+  margin-bottom: 9vh;
+}
+
+.leftcontainer p {
+  padding-bottom: 10px;
+}
+
+.leftcontainer input {
+  margin-top: 2vh;
+}
+
+
+.leftcontainer button {
+  background-color: #583ce6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 90%;
+  height: 35px;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+}
+
+.leftcontainer button:hover {
+  background-color: #39097d;
+}
+
+
+.rightcontainer {
+  margin-top: 15vh;
+  margin-left: 2vw;
+  width: 35%;
+  height: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  box-shadow: 0 0 0 1px #7f94b5, 0 0 0 2px #697fa4, 0 0 0 3px #414f65;
+  border-radius: 1vh;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.info-section {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  letter-spacing: 0.03vw;
+  font-size: calc(0.6vh + 0.7vw);
+  width: 100%;
+  padding-left: 10px;
+  color: rgb(235, 232, 232);
+  background: linear-gradient(to bottom, #8b9dbc, #596371);
+}
+
+h1 {
+  text-align: center;
+  color: #00796b;
+}
+
+.leftcontainer p {
+  width: 100%;
+  text-align: center;
+  display: block;
+  margin-top: 10px;
+  font-size: 23px;
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 3vh;
+  border: 1px solid #00796b;
+  border-radius: 5px;
+}
+
+.rightcontainer h2 {
+  margin-bottom: 1vh;
+}
