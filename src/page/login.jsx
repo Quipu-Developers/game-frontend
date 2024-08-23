@@ -5,8 +5,11 @@ export default function WaitingRoom() {
 
   return (
     <div className="container">
+      <div className="content-area"></div>
+      <div className="title">
+        <p>배틀글라운드</p>
+      </div>
       <div className="leftcontainer">
-        <h1>배틀글라운드</h1>
         <p>
           이름:
           <input></input>
@@ -18,8 +21,9 @@ export default function WaitingRoom() {
         <button>로그인</button>
       </div>
       <div className="rightcontainer">
+        <div className="background-image"></div>
         <div className="info-section">
-        <h1>게임 정보</h1>
+        <h1>(중요) 게임 정보 (중요)</h1>
         <h2>✔ 이예나배 천하제일 타자 대회입니다.</h2>
         <h2>✔ 팀원과 합심하여 모든 단어를 없애보세요.</h2>
         <h2>✔ 게임 시간은 60초 입니다.</h2>
