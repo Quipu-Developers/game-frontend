@@ -1,4 +1,4 @@
-.container {
+.lg-container {
   height: 100vh;
   width: 100vw;
   background-color: #9db3d6;
@@ -8,7 +8,7 @@
   overflow: hidden; /* 회전된 이미지가 잘리지 않도록 설정 */
 }
 
-.container::before {
+.lg-container::before {
   content: '';
   position: absolute;
   top: 0;
@@ -24,21 +24,7 @@
   z-index: 0;
 }
 
-.background-image {
-  position: absolute;
-  width: 35%;
-  height: 70%;
-  /* background-image: url(../public/keyboard.jpg); */
-  background-size: cover; /* 이미지를 가득 채우도록 설정 */
-  background-position: center;
-  background-repeat: no-repeat; /* 반복하지 않도록 설정 */
-  z-index: 0; /* 배경으로 설정 */
-  mix-blend-mode: multiply; /* 흰색 부분을 투명하게 처리 */
- /* transform: rotate(-45deg); /* 중앙으로 이동 후 45도 회전 */
-  opacity: 0.1;
-}
-
-.content-area {
+.lg-content-area {
   background-color: #92a8cc;
   position: fixed;
   margin-left: 17.5vw;
@@ -51,22 +37,43 @@
   z-index: 1;
 }
 
-
-.title {
+.lg-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 10vh;
-  padding-bottom: 0vh;
+  margin-bottom: 0vh;
   z-index: 1;
 }
 
-.title p {
+.lg-title h1 {
   text-align: center;
-  color: #00796b;
+  color: black;
   font-size: 70px;
-  margin-top: 1vh;
+  margin-top: 2vh;
+  margin-bottom: 0vh;
+  /* color: transparent;
+  background-image: url(../../public/image/gukbang.jpg);
+  background-size: 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: white;
+ */
 }
 
-.leftcontainer {
+.img1 {
+  margin-top: 2vh;
+  height: 9vh;
+}
+
+.img2 {
+  margin-top: 2vh;
+  height: 9vh;
+}
+
+.lg-leftcontainer {
   display: flex;
   margin-left: 19vw;
   margin-bottom: 10vh;
@@ -83,20 +90,22 @@
   z-index: 2;
 }
 
-.leftcontainer h1 {
+.lg-leftcontainer h1 {
   margin-bottom: 9vh;
 }
 
-.leftcontainer p {
-  padding-bottom: 10px;
+.lg-leftcontainer h2 {
+  margin-bottom: 1vh;
 }
 
-.leftcontainer input {
-  margin-top: 2vh;
+.lg-leftcontainer input {
+  margin-top: 1vh;
+  margin-bottom: 3vh;
+  width: 90%;
+  height: 4vh;
 }
 
-
-.leftcontainer button {
+.lg-leftcontainer button {
   background-color: #583ce6;
   color: white;
   border: none;
@@ -104,17 +113,34 @@
   border-radius: 5px;
   cursor: pointer;
   width: 90%;
-  height: 35px;
-  margin-top: 1vh;
+  height: 5vh;
+  margin-top: 7vh;
   margin-bottom: 1vh;
+  font-family: 'Cafe24Ssurround';
 }
 
-.leftcontainer button:hover {
+.lg-leftcontainer button:hover {
   background-color: #39097d;
 }
 
+.lg-leftcontainer p {
+  width: 100%;
+  text-align: center;
+  display: block;
+  margin-top: 10px;
+  font-size: 23px;
+}
 
-.rightcontainer {
+.lg-input {
+  width: 90%;
+  padding: 10px;
+  margin-bottom: 3vh;
+  border: 1px solid #00796b;
+  border-radius: 5px;
+}
+
+.lg-rightcontainer {
+  position: relative;
   margin-left: 2vw;
   width: 35%;
   height: 70%;
@@ -127,7 +153,20 @@
   z-index: 2;
 }
 
-.info-section {
+.lg-background-image {
+  position: absolute; /* 절대 위치 설정 */
+  width: 100%; /* 전체 너비 사용 */
+  height: 100%; /* 전체 높이 사용 */
+  background-image: url(../../public/image/keyboard.jpg);
+  background-size: cover; /* 이미지를 가득 채우도록 설정 */
+  background-position: center;
+  background-repeat: no-repeat; /* 반복하지 않도록 설정 */
+  z-index: 0; /* 배경으로 설정 */
+  opacity: 0.2; /* 배경 이미지의 투명도 조정 */
+}
+
+.lg-info-section {
+  position: relative; /* 상대 위치 설정 */
   flex-grow: 1;
   display: flex;
   flex-direction: column;
@@ -136,26 +175,25 @@
   font-size: calc(0.6vh + 0.7vw);
   width: 100%;
   padding-left: 10px;
-  color: rgb(235, 232, 232);
-  background: linear-gradient(to bottom, #8b9dbc, #596371);
+  color: black;
+  background: rgba(139, 157, 188, 0.7); /* 배경색을 약간 투명하게 설정 */
+  z-index: 1; /* 텍스트가 배경 이미지 위에 오도록 설정 */
 }
 
-.leftcontainer p {
-  width: 100%;
-  text-align: center;
-  display: block;
-  margin-top: 10px;
-  font-size: 23px;
+.lg-info-section h2 strong {
+  font-size: 4vh;
+  font-weight: bold; /* 볼드체 */
+  color: white; /* 글자 색상: 빨간색 */
+  padding: 2px 4px; /* 여백 추가 */
+  border-radius: 3px; /* 모서리 둥글게 */
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
 }
 
-input {
-  width: 90%;
-  padding: 10px;
-  margin-bottom: 3vh;
-  border: 1px solid #00796b;
-  border-radius: 5px;
+.lg-rightcontainer h2 {
+  margin-bottom: 0vh;
 }
 
-.rightcontainer h2 {
-  margin-bottom: 1vh;
+.lg-info-section h1 {
+  margin-bottom: 0.5vh;
 }
