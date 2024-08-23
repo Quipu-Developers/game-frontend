@@ -4,7 +4,7 @@ import {
   fetchRooms,
   createRoom,
   deleteUserAccount,
-} from "./services/lobby_service";
+} from "../service/lobby_service";
 import "../style/lobby.css";
 
 async function loadRooms() {
