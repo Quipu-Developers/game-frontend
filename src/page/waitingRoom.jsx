@@ -6,7 +6,7 @@ import {
   startGame,
   kickMember,
   deleteRoom,
-} from "./services/waitingRoomService";
+} from "../service/waitingRoom_service";
 
 async function handleSendMessage() {
   const roomId = "room123";
