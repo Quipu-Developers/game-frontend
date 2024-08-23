@@ -1,0 +1,416 @@
+.lb_container {
+  user-select: none;
+  height: 100vh;
+  width: 100vw;
+  background-color: #9db3d6;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.lb_topcontainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.08);
+  background-image: 
+    linear-gradient(to right, transparent 0, transparent 15px, rgba(255, 255, 255, 0.08) 15px),
+    linear-gradient(to bottom, transparent 0, transparent 15px, rgba(255, 255, 255, 0.08) 15px);
+  background-size: 30px 30px;
+  opacity: 0.5;
+  z-index: 0;
+}
+
+.lb_overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 8;
+}
+
+.lb_topcontainer {
+  width: 60%;
+  height: 80%;
+  margin: 0 auto;
+  border: 2px solid #5a6c8a;  
+  box-shadow: 0 0 0 2px #5a6c8a, 0 0 0 4px #3d4d65;
+  background-color: #b9cbe9;
+  display: flex;
+  flex-direction: column;
+  border-radius: 3vh;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+.lb_roomlist {
+  width: 100%;
+  flex-grow: 1;
+  display: flex;
+  overflow-y: auto;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: baseline;
+}
+
+.lb_roomlist::-webkit-scrollbar {
+  display: none;
+}
+
+.lb_roombox {
+  height: 18vh;
+  width: 42%;
+  margin: 20px auto;
+  padding: 20px;
+  border-radius: 3vh;
+  background-color: #cfd9ec;
+  box-shadow: 0 0 0 2px #5a6c8a, 0 0 0 3px #3d4d65;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 5;
+}
+
+.lb_roombox:hover {
+  transform: translateY(-0.3vh);
+  box-shadow: 0 0 0 2px #5a6c8a, 0 0 0 4px #3d4d65;
+}
+
+.lb_roombox:nth-child(odd) {
+  margin-right: auto;
+  margin-left: 5%;
+}
+
+.lb_roombox:nth-child(even) {
+  margin-left: auto;
+  margin-right: 5%;
+}
+
+.lb_roombox_num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 6vh;
+  height: 6vh;
+  margin: 0 auto;
+  margin-top: -1vh;
+  border-radius: 50%;
+  background-color: #9db3d6;
+  font-size: calc(1.1vh + 1vw);
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 0 0 1px #99abd9, 0 0 0 3px #5a6c8a, 0 0 0 4px #3d4d65;
+}
+
+.lb_roombox_title {
+  margin-top: 1vh;
+  margin-bottom: 1.2vh;
+  font-size: calc(1vh + 1vw);
+  font-weight: bold;
+  color: #3a4a61;
+  font-family: 'Cafe24Ssurround', sans-serif;
+}
+
+.lb_roombox_admin {
+  margin-top: -0.5vh;
+  font-size: calc(0.7vh + 0.6vw);
+  color: #0e1e37;
+}
+
+.lb_botcontainer {
+  margin-top: auto;
+  display: flex;
+  height: 12vh;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  margin-left: 15%;
+  z-index: 5;
+  border-top: 5px solid #5a6c8a;
+}
+
+.lb_roomMake {
+  width: 10vw;
+  height: 60%;
+  padding: 1vh 2vh;
+  font-size: calc(1vh + 1vw);
+  font-weight: bold;
+  color: #ffffff;
+  background-color: #778eb6;
+  border: none;
+  border-radius: 2vh;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 0 0 0 2px #4d607d;
+  font-family: 'Cafe24Ssurround';
+  z-index: 5;
+}
+
+.lb_roomMake:hover {
+  background-color: rgb(89, 111, 143);
+  box-shadow: 0 0 0 2px #7288af, 0 0 0 3px #3d4d65;
+}
+
+.lb_roomMake:active {
+  transform: translateY(0);
+  background-color: #6c7fa4;
+  box-shadow: 0 0 0 2px #4d607d;
+}
+
+.lb_formcontainer, .lb_passwordContainer {
+  position: fixed;
+  width: 25%;
+  z-index: 10;
+  height: 25%;
+  font-size: 2.4vh;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background-color: #cfd9ec;
+  border-radius: 3vh;
+  border: 2px solid #5a6c8a;
+  box-shadow: 0 0 0 2px #5a6c8a, 0 0 0 3px #3d4d65;
+}
+
+.lb_inputgroup {
+  display: flex;
+  align-items: center;
+  gap: 0.7vw;
+  margin-top: 1vh;
+}
+
+.lb_inputgroup label {
+  width: 6vw;
+  text-align: right;
+  color: #3a4a61;
+  font-family: 'Cafe24Ssurround';
+}
+
+.lb_formcontainer form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  justify-content: center;
+  height: 100%;
+}
+
+.lb_roomname, .lb_roomPassword {
+  width: 18vh;
+  outline: none;
+  border: 0;
+  height: 2.3vh;
+  font-size: 1.7vh;
+  font-weight: 900;
+}
+
+.lb_passwordContainer form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1vh;
+  justify-content: center;
+  height: 100%;
+}
+
+.lb_passwordInputGroup {
+  color: #3a4a61;
+  font-family: 'Cafe24Ssurround'; 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.lb_selectedRoomName {
+  color: #354254;
+  font-size: 3.5vh;
+  margin-bottom: 3vh;
+}
+
+.lb_submit {
+  margin-top: 2.5vh;
+  padding: 0.7vh 2vw;
+  background-color: #9db3d6;
+  color: white;
+  border: none;
+  border-radius: 1.8vh;
+  font-family: 'Cafe24Ssurround';
+  font-size: calc(0.8vh + 0.8vw);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 0 2px #5a6c8a, 0 0 0 3px #3d4d65;
+}
+
+.lb_submit:hover {
+  background-color: #b9cbe9;
+  color: #3a4a61;
+  transform: translateY(-2px);
+}
+
+.lb_submit:active {
+  transform: translateY(0);
+  box-shadow: 0 0 0 1px #5a6c8a, 0 0 0 2px #3d4d65;
+}
+
+.lb_closeButton {
+  position: absolute;
+  top: 1.2vh;
+  right: 1vw;
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  color: #3a4a61;
+  font-family: 'Cafe24Ssurround';
+}
+
+.lb_error {
+  font-family: 'Cafe24Ssurround';
+  position: fixed;
+  top: 49.6vh;
+  color: rgb(211, 72, 72);
+  font-size: calc(0.7vh + 0.7vw);
+}
+
+.lb_rule {
+  position: absolute;
+  font-size: calc(1.2vh + 1.2vw);
+  letter-spacing: 0.1vw;
+  font-family: 'Cafe24Ssurround';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  right: 5vw;
+  top: 5vh;
+  width: 14vw;
+  height: 6vh;
+  border-radius: 3vh;
+  box-shadow: 0 0 0 2px #918650, 0 0 0 3px #514c26;
+  background: linear-gradient(to top, #e9de91, #e2d785, #d0c678) top, linear-gradient(to bottom, #e9de91, #e2d785, #d0c678) bottom;
+  background-size: 100% 50%;
+  background-repeat: no-repeat;
+  color: #fffff0;
+  -webkit-text-stroke: calc(0.04vh + 0.04vw) #a89d5b;
+  transition: width 0.5s ease;
+  z-index: 4;
+}
+
+.lb_rule:hover {
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #918650, 0 0 0 4px #514c26;
+}
+
+.lb_rule:active {
+  scale: 1;
+  box-shadow: 0 0 0 2px #918650, 0 0 0 3px #514c26;
+}
+
+.lb_rule.active {
+  width: 30vw;
+}
+
+.lb_rule::before {
+  position: absolute;
+  left: 0vh;
+  content: "<";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fffde8;
+  -webkit-text-stroke: calc(0.04vh + 0.04vw) #c1b76e;
+  background-color: #e4da9f;
+  box-shadow: 0 0 0 1px #ddd7b4, 0 0 0 3px #a59a4f, 0 0 0 4px #7a7240;
+  height: 4.2vh;
+  width: 4.2vh;
+  margin-left: 0.7vh;
+  border-radius: 50%;
+  float: left;
+  font-family: "VITRO";
+  font-weight: 600;
+  font-size: calc(1.8vh + 1.8vw);
+  transition: transform 0.5s ease;
+}
+
+.lb_rule:hover::before {
+  background-color: #e6dfb2;
+  border: 1px solid #fffee7;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #b4ac6a, 0 0 0 4px #918855;
+}
+
+.lb_rule.active::before {
+  transform: rotate(-180deg);
+}
+
+.lb_rule_content {
+  position: absolute;
+  right: 5vw;
+  top: 8vh;
+  width: 30vw;
+  height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: start;
+  background: linear-gradient(to bottom, #e4db7b, #efebb4);
+  border-bottom-left-radius: 3vh;
+  border-bottom-right-radius: 3vh;
+  padding: 0.7vw;
+  box-shadow: 0 0 0 2px #918650, 0 0 0 3px #514c26;
+  opacity: 0;
+  transition: opacity 1s ease;
+  z-index: 3;
+  cursor: default;
+}
+
+.lb_rule_content.visible {
+  opacity: 0.9;
+  transition: opacity 1s ease;
+}
+
+.lb_rule_content h3 {
+  font-size: calc(1vh + 1vw);
+  color: #0e2b41;
+  margin-top: 1vh;
+  width: 100%;
+  text-align: center;
+  font-family: 'Cafe24Ssurround';
+}
+
+.lb_rule_content ul {
+  list-style: none;
+  padding: 0;
+  margin-left: 1vw;
+  margin-top: 0;
+}
+
+.lb_rule_content li {
+  font-size: calc(0.65vh + 0.65vw);
+  color: #222;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+  position: relative;
+  font-weight: 400;
+  word-break: keep-all;
+  margin-top: 1vh;
+}
+
+.lb_rule_content .highlight {
+  font-weight: bold;
+  color: #c94844;
+  letter-spacing: 0.1vw;
+}

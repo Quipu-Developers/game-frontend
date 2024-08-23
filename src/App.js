@@ -1,8 +1,7 @@
 import './App.css';
-import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Start from './page/start';
-import Game from './page/game';
+import Start from './page/lobby';
+import Game from './page/waitingRoom';
 import End from './page/end';
 
 
