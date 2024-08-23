@@ -3,6 +3,11 @@ import gameData from '../data/game_data.jsx';
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
+import { wordInput } from '../service/game_service.js';
+
+async function wordInput(){
+
+}
 
 export default function Game() {
   const socket = io("http://localhost:8080");
@@ -39,23 +44,23 @@ export default function Game() {
     setInputValue(event.target.value);
   }
 
-  const handleKeyPress = (event) => {
+  const handleKeyPress = async (event) => {
     if (event.key === 'Enter') {
       const trimmedInput = inputValue.trim();
       if (shuffleWordList.includes(trimmedInput)) 
       {
-        setSelectedImage(<img src="image/irumae_happy.png" />);
+         setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
         const userId = gameData.currentUserId; // 현재 사용자 ID
         const roomId = gameData.currentRoomId; // 현재 방 ID
-        socket.emit('WORD', { userId, roomId, word: trimmedInput }, (response) => {
-          if (response.success) {
-            console.log("Word submitted successfully");
-          } else {
-            console.error("Failed to submit word");
-           }
-      });
+        try {
+          const response = await wordInput(userId, roomId, trimmedInput);
+          console.log("Response from server:", response);
+      } catch (error) {
+          console.error("Error submitting word:", error.message);
+      }
+      
       }   
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
