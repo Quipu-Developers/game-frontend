@@ -1,13 +1,9 @@
 import "../style/game.css";
 import gameData from "../data/game_data.jsx";
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
-import { wordInput } from '../service/game_service.js';
-
-async function wordInput(){
-
-}
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import { wordInput } from "../service/game_service.js";
 
 export default function Game() {
   const socket = io("http://localhost:8080");
@@ -47,12 +43,11 @@ export default function Game() {
   };
 
   const handleKeyPress = async (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       setIsValid(false);
       const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) 
-      {
-         setSelectedImage(<img src="image/irumae_happy.png" />);
+      if (shuffleWordList.includes(trimmedInput)) {
+        setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
         console.log("맞음");
@@ -61,12 +56,10 @@ export default function Game() {
         try {
           const response = await wordInput(userId, roomId, trimmedInput);
           console.log("Response from server:", response);
-      } catch (error) {
+        } catch (error) {
           console.error("Error submitting word:", error.message);
-      }
-      
-      }   
-      else {
+        }
+      } else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
         setIsValid(true);
         console.log("틀림");
@@ -76,7 +69,7 @@ export default function Game() {
         setIsValid(false);
       }, 300); // 1초 후에 isValid를 false로 설정
 
-      setInputValue('');
+      setInputValue("");
     }
   };
 
