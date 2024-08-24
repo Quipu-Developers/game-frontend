@@ -5,12 +5,13 @@ export function useWaitingRoomActions() {
 
   const sendMessage = (roomId, message) => {
     return new Promise((resolve, reject) => {
+      const userId = localStorage.getItem("userId");
       if (!socket) {
         reject(new Error("Socket is not connected"));
         return;
       }
 
-      socket.emit("CHAT", { roomId, message }, (response) => {
+      socket.emit("CHAT", { userId, roomId, message }, (response) => {
         if (response.success) {
           resolve();
         } else {
@@ -22,12 +23,13 @@ export function useWaitingRoomActions() {
 
   const startGame = (roomId) => {
     return new Promise((resolve, reject) => {
+      const userId = localStorage.getItem("userId");
       if (!socket) {
         reject(new Error("Socket is not connected"));
         return;
       }
 
-      socket.emit("STARTGAME", { roomId }, (response) => {
+      socket.emit("STARTGAME", { userId, roomId }, (response) => {
         if (response.success) {
           resolve();
         } else {
@@ -39,12 +41,13 @@ export function useWaitingRoomActions() {
 
   const kickMember = (roomId, targetId) => {
     return new Promise((resolve, reject) => {
+      const userId = localStorage.getItem("userId");
       if (!socket) {
         reject(new Error("Socket is not connected"));
         return;
       }
 
-      socket.emit("KICKMEMBER", { roomId, targetId }, (response) => {
+      socket.emit("KICKMEMBER", { userId, roomId, targetId }, (response) => {
         if (response.success) {
           resolve();
         } else {
@@ -56,12 +59,13 @@ export function useWaitingRoomActions() {
 
   const deleteRoom = (roomId) => {
     return new Promise((resolve, reject) => {
+      const userId = localStorage.getItem("userId");
       if (!socket) {
         reject(new Error("Socket is not connected"));
         return;
       }
 
-      socket.emit("DELETEROOM", { roomId }, (response) => {
+      socket.emit("DELETEROOM", { roomId, userId }, (response) => {
         if (response.success) {
           resolve();
         } else {

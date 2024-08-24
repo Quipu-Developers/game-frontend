@@ -5,12 +5,14 @@ export function useLobbyActions() {
 
   const fetchRooms = async () => {
     return new Promise((resolve, reject) => {
+      // const userId = localStorage.getItem("userId");
+      const userId = 1;
       if (!socket) {
         reject(new Error("Socket is not connected"));
         return;
       }
 
-      socket.emit("GETROOMS", {}, (response) => {
+      socket.emit("GETROOMS", { userId }, (response) => {
         if (response.success) {
           resolve(response.rooms);
         } else {
@@ -20,7 +22,7 @@ export function useLobbyActions() {
     });
   };
 
-  const createRoom = async (roomName, password) => {
+  const createRoom = async (roomName) => {
     return new Promise((resolve, reject) => {
       const userId = localStorage.getItem("userId");
       if (!socket) {
@@ -28,7 +30,7 @@ export function useLobbyActions() {
         return;
       }
 
-      socket.emit("CREATEROOM", { userId, roomName, password }, (response) => {
+      socket.emit("CREATEROOM", { userId, roomName }, (response) => {
         if (response.success) {
           resolve(response.roomId);
         } else {
@@ -38,7 +40,7 @@ export function useLobbyActions() {
     });
   };
 
-  const deleteUserAccount = async () => {
+  const deleteUserAccount = async (roomId) => {
     return new Promise((resolve, reject) => {
       const userId = localStorage.getItem("userId");
       if (!socket) {
@@ -46,7 +48,7 @@ export function useLobbyActions() {
         return;
       }
 
-      socket.emit("DELETEUSER", { userId }, (response) => {
+      socket.emit("DELETEUSER", { roomId, userId }, (response) => {
         if (response.success) {
           resolve();
         } else {

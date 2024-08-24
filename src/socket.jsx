@@ -14,6 +14,22 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     const socketIo = io.connect(BASE_URL);
+
+    // 연결 성공 시
+    socketIo.on("connect", () => {
+      console.log("Socket connected:", socketIo.id);
+    });
+
+    // 연결 해제 시
+    socketIo.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+    });
+
+    // 연결 오류 시
+    socketIo.on("connect_error", (error) => {
+      console.error("Socket connection error:", error);
+    });
+
     setSocket(socketIo);
 
     return () => {

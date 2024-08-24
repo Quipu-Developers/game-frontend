@@ -2,7 +2,7 @@ import "../style/game.css";
 import gameData from "../data/game_data.jsx";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGameActions } from "../service/game_service.js";
+import { useGameActions } from "../service/game_service";
 
 export default function Game() {
   const { wordInput } = useGameActions();
@@ -25,10 +25,10 @@ export default function Game() {
   async function handleSubmitWord(inputWord) {
     const userId = localStorage.getItem("userId");
     const roomId = localStorage.getItem("roomId");
-    const trimmedInput = inputWord.trim();
+    const word = inputWord.trim();
 
     try {
-      const response = await wordInput(userId, roomId, trimmedInput);
+      const response = await wordInput(userId, roomId, word);
       if (response.success) {
         console.log("Word processed successfully:", response);
       }

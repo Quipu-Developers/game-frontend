@@ -1,5 +1,6 @@
 import "../style/login.css";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthActions } from "../service/login_service";
 import { createUser } from "../service/http_service";
 
@@ -7,11 +8,25 @@ export default function Login() {
   const { loginUser } = useAuthActions();
   const [userName, setUserName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const navigate = useNavigate();
+
+  // async function handleLogin() {
+  //   try {
+  //     console.log(userName, phoneNumber);
+  //     const userId = await loginUser(userName, phoneNumber);
+  //     console.log("Logged in with userId:", userId);
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("Login failed:", error.message);
+  //   }
+  // }
 
   async function handleLogin() {
     try {
-      const userId = await loginUser(userName, phoneNumber);
+      console.log(userName, phoneNumber);
+      const userId = await createUser(userName, phoneNumber);
       console.log("Logged in with userId:", userId);
+      navigate("/");
     } catch (error) {
       console.error("Login failed:", error.message);
     }

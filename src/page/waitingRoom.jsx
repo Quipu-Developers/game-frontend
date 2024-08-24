@@ -1,31 +1,48 @@
 import "../style/waitingRoom.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useWaitingRoomActions } from "../service/waitingRoom_service";
+import { useSocket } from "../socket";
 
-export default function WaitingRoom() {
+export default function WaitingRoom(roomId) {
   const { sendMessage, startGame, kickMember, deleteRoom } =
     useWaitingRoomActions();
   const [isReady, setIsReady] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [chats, setChats] = useState([]);
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const socket = useSocket();
 
-  async function handleSendMessage() {
-    const roomId = "room123";
-    const message = "Hello, team!";
+  const addChatMessage = (userId, chatMessage) => {
+    setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
+  };
 
+  useEffect(() => {
+    if (socket) {
+      socket.on("CHAT", ({ userId, message }) => {
+        addChatMessage(userId, message);
+      });
+
+      return () => {
+        socket.off("CHAT");
+      };
+    }
+  }, [socket]);
+
+  async function handleSendMessage(message) {
     try {
       await sendMessage(roomId, message);
       console.log("Message sent successfully!");
+      addChatMessage("나", message);
+      setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error.message);
     }
   }
 
   async function handleStartGame() {
-    const roomId = "room123";
-
     try {
       await startGame(roomId);
       console.log("game start successfully!");
@@ -35,10 +52,7 @@ export default function WaitingRoom() {
     }
   }
 
-  async function handleKickMember() {
-    const roomId = "room123";
-    const targetId = "user456";
-
+  async function handleKickMember(targetId) {
     try {
       await kickMember(roomId, targetId);
       console.log("Member kicked successfully!");
@@ -48,8 +62,6 @@ export default function WaitingRoom() {
   }
 
   async function handleDeleteRoom() {
-    const roomId = "room123";
-
     try {
       await deleteRoom(roomId);
       console.log("Room deleted successfully!");
@@ -62,11 +74,6 @@ export default function WaitingRoom() {
     setIsReady(!isReady);
   };
 
-  const [chats, setChats] = useState([
-    { message: "< 김준호 님이 입장했습니다. >", type: "system-message" },
-  ]);
-  const [message, setMessage] = useState("");
-
   const handleClick = () => {
     if (!isActive) {
       setIsActive(true);
@@ -77,24 +84,14 @@ export default function WaitingRoom() {
     }
   };
 
-  const addChatMessage = (chat, type) => {
-    setChats((prevChats) => [...prevChats, { message: chat, type: type }]);
-  };
-
-  // const sendMessage = () => {
-  //   if (message) {
-  //     addChatMessage(`김준호 : ${message}`, "my-message");
-  //     setMessage("");
-  //   }
-  // };
-
   const handleChange = (e) => {
     setMessage(e.target.value);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      sendMessage();
+      const roomId = "example-room-id";
+      handleSendMessage(roomId, message);
     }
   };
 
@@ -139,8 +136,8 @@ export default function WaitingRoom() {
             .slice()
             .reverse()
             .map((chat, index) => (
-              <div key={index} className={`wr_chatMessage ${chat.type}`}>
-                {chat.message}
+              <div key={index} className="wr_chatMessage">
+                <strong>{chat.userId}:</strong> {chat.message}
               </div>
             ))}
         </div>
@@ -149,9 +146,12 @@ export default function WaitingRoom() {
             className="wr_input"
             value={message}
             onChange={handleChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
-          <button onClick={sendMessage} className="wr_send">
+          <button
+            onClick={() => handleSendMessage("example-room-id", message)}
+            className="wr_send"
+          >
             전송
           </button>
         </div>
