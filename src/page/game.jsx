@@ -48,12 +48,14 @@ export default function Game() {
 
   const handleKeyPress = async (event) => {
     if (event.key === 'Enter') {
+      setIsValid(false);
       const trimmedInput = inputValue.trim();
       if (shuffleWordList.includes(trimmedInput)) 
       {
          setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
+        console.log("맞음");
         const userId = gameData.currentUserId; // 현재 사용자 ID
         const roomId = gameData.currentRoomId; // 현재 방 ID
         try {
@@ -67,8 +69,14 @@ export default function Game() {
       else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
         setIsValid(true);
+        console.log("틀림");
       }
-      setInputValue("");
+
+      setTimeout(() => {
+        setIsValid(false);
+      }, 300); // 1초 후에 isValid를 false로 설정
+
+      setInputValue('');
     }
   };
 
