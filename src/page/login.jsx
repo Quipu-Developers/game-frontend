@@ -1,5 +1,8 @@
 import "../style/login.css";
 import React, { useState } from "react";
+import socket from "./socket";
+import { io } from "socket.io-client"; // socket.io 클라이언트 가져오기
+import { loginUser } from "../service/login_service";
 
 export default function WaitingRoom() {
   const [isModalOpen, setIsModalOpen] = useState(false);
