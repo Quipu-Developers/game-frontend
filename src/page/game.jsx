@@ -1,14 +1,17 @@
-import '../style/game.css';
-import gameData from '../data/game_data.jsx';
+import "../style/game.css";
+import gameData from "../data/game_data.jsx";
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from 'react-router-dom';
-import { io } from 'socket.io-client';
+import { useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import { wordInput } from "../service/game_service.js";
 
 export default function Game() {
   const socket = io("http://localhost:8080");
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [inputFocus, setInputFocus] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(<img src="image/irumae_happy.png" />);
+  const [selectedImage, setSelectedImage] = useState(
+    <img src="image/irumae_happy.png" />
+  );
   const [isTimeout, setIsTimeout] = useState(false);
   const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
@@ -25,7 +28,7 @@ export default function Game() {
       [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
     }
     setShuffleWordList(shuffledList);
-  }, [gameData.wordList]);  
+  }, [gameData.wordList]);
 
   //화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
@@ -37,44 +40,48 @@ export default function Game() {
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
-  }
+  };
 
-  const handleKeyPress = (event) => {
-    if (event.key === 'Enter') {
+  const handleKeyPress = async (event) => {
+    if (event.key === "Enter") {
+      setIsValid(false);
       const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) 
-      {
+      if (shuffleWordList.includes(trimmedInput)) {
         setSelectedImage(<img src="image/irumae_happy.png" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
+        console.log("맞음");
         const userId = gameData.currentUserId; // 현재 사용자 ID
         const roomId = gameData.currentRoomId; // 현재 방 ID
-        socket.emit('WORD', { userId, roomId, word: trimmedInput }, (response) => {
-          if (response.success) {
-            console.log("Word submitted successfully");
-          } else {
-            console.error("Failed to submit word");
-           }
-      });
-      }   
-      else {
+        try {
+          const response = await wordInput(userId, roomId, trimmedInput);
+          console.log("Response from server:", response);
+        } catch (error) {
+          console.error("Error submitting word:", error.message);
+        }
+      } else {
         setSelectedImage(<img src="image/irumae_sad.png" />);
         setIsValid(true);
+        console.log("틀림");
       }
-      setInputValue('');
+
+      setTimeout(() => {
+        setIsValid(false);
+      }, 300); // 1초 후에 isValid를 false로 설정
+
+      setInputValue("");
     }
-  }
+  };
 
   const [count, setCount] = useState(12);
   useEffect(() => {
-
     socket.on("STARTGAME", ({ gameInfo }) => {
       console.log(`game started`);
       console.log(gameInfo);
-  });
+    });
 
     const id = setInterval(() => {
-      setCount(count => count - 1);
+      setCount((count) => count - 1);
       if (count <= 11 && count > 0) {
         setIsTimeout(true);
         setTimeout(() => {
