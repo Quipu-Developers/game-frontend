@@ -44,6 +44,7 @@ export default function Lobby() {
   const [isVisible, setIsVisible] = useState(false);
   const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
   const [error, setError] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -56,6 +57,11 @@ export default function Lobby() {
       setTimeout(() => setIsActive(false), 1000);
     }
   };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
 
   const handleRoomCreate = () => {
     setShowForm(true);
@@ -107,7 +113,22 @@ export default function Lobby() {
 
   return (
     <div className="lb_container">
+      <div className={`lb_hamburger ${isSidebarOpen ? "active" : ""}`} onClick={toggleSidebar}>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+        <div className={`lb_sidebar ${isSidebarOpen ? "active" : ""}`}>
+          <div className="lb_sidebar_top">
+            <div className="lb_sidebar_profile"></div>
+            <div className="lb_sidebar_name"></div>
+            <div className="lb_sidebar_num"></div>
+            <div className="lb_sidebar_delete"></div>
+          </div>
+        </div>
+
       {(showForm || isPasswordFormVisible) && <div className="lb_overlay" />}
+
       <div className="lb_topcontainer">
         <div className="lb_roomlist">
           {rooms.map((room, index) => (
@@ -122,6 +143,7 @@ export default function Lobby() {
             </div>
           ))}
         </div>
+
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -191,6 +213,7 @@ export default function Lobby() {
           </form>
         </div>
       )}
+
       <div
         className={`lb_rule ${isActive ? "active" : ""}`}
         onClick={handleClick}
@@ -198,26 +221,16 @@ export default function Lobby() {
         &emsp;게임 규칙
       </div>
       <div className={`lb_rule_content ${isVisible ? "visible" : ""}`}>
-        <h3>개인전이고 🌟</h3>
+        <h3>🌟타자왕들의 한 판 승부!🌟</h3>
         <ul>
           <li>
-            ✔️ 화면에 보이는 단어를 팀원보다{" "}
-            <span className="highlight">먼저 입력</span>하여 낚아채세요!
+            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!
           </li>
           <li>
-            ✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀
-            내 1등에 도전하세요 💪
-          </li>
-        </ul>
-        <h3>팀전이기도 한 🏆</h3>
-        <ul>
-          <li>
-            ✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로
-            팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘
+            놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
           </li>
           <li>
-            ✔️ 시간 내에 모든 단어를 제거하지 못하면{" "}
-            <span className="highlight">팀 전체 탈락</span>합니다! ⚠️
+            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br /><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
           </li>
         </ul>
       </div>

@@ -47,6 +47,11 @@ export default function WaitingRoom() {
   const [isReady, setIsReady] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isKickVisible, setIsKickVisible] = useState(false);
+  const [kickTarget, setKickTarget] = useState("");
+  const [isPlayer2Kicked, setIsPlayer2Kicked] = useState(false);
+  const [title, setTitle] = useState("레뒤 안하면 강퇴!");
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const navigate = useNavigate();
 
   const toggleReady = () => {
@@ -93,8 +98,63 @@ export default function WaitingRoom() {
     }
   };
 
+  const toggleKickModal = (target) => {
+    setKickTarget(target);
+    setIsKickVisible(!isKickVisible);
+  };
+
+  const handleKickMember = () => {
+    if (kickTarget) {
+      console.log(`${kickTarget} was kicked`);
+      setIsKickVisible(false);
+
+      if (kickTarget === "피카츄") {
+        setIsPlayer2Kicked(true);
+      }
+    }
+  };
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const handleTitleEdit = () => {
+    setIsEditingTitle(true);
+  };
+
+  const handleTitleSubmit = () => {
+    setIsEditingTitle(false);
+  };
+
+  const handleTitleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleTitleSubmit();
+    }
+  };
+
+  const back = () => {
+    navigate("/lobby");
+  };
+
   return (
     <div className="wr_container">
+      <div className="wr_back" onClick={back} />
+      <div className="wr_topcontainer">
+        <div className="wr_title">
+          {isEditingTitle ? (
+            <input
+              type="text"
+              value={title}
+              onChange={handleTitleChange}
+              onBlur={handleTitleSubmit}
+              onKeyPress={handleTitleKeyPress}
+              autoFocus
+            />
+          ) : (
+            <span onClick={handleTitleEdit}>{title}</span>
+          )}
+        </div>
+      </div>
       <div className="wr_leftcontainer">
         <div className="wr_player1">
           <div className="wr_player1_top">
@@ -104,15 +164,32 @@ export default function WaitingRoom() {
           <div className="wr_player1_bot">방장</div>
         </div>
         <div className="wr_player2">
-          <div className="wr_player2_top">
-            <p>피카츄</p>
-          </div>
-          <img src="/image/irumae2.png" alt="irumae2" />
-          {isReady && <div className="wr_player2_bot">준비</div>}
+          {!isPlayer2Kicked ? (
+            <>
+              <div className="wr_player2_top">
+                <p>피카츄</p>
+                <div className="wr_x" onClick={() => toggleKickModal("피카츄")}>x</div>
+              </div>
+              <img src="/image/irumae2.png" alt="irumae2" />
+              {isReady && <div className="wr_player2_bot">준비</div>}
+            </>
+          ) : (
+            <div className="wr_player2_empty"></div>
+          )}
         </div>
+        {isKickVisible && (
+          <div className="wr_kick">
+            <div className="wr_kick_content">
+              <p>{kickTarget} 님을 <br />강퇴하시겠습니까?</p>
+              <button className="wr_kickbutton" onClick={handleKickMember}>강퇴하기</button>
+              <button className="wr_cancelbutton" onClick={() => setIsKickVisible(false)}>x</button>
+            </div>
+          </div>
+        )}
         <div className="wr_player3">
           <div className="wr_player3_top">
             <p>죠르디</p>
+            <div className="wr_x">x</div>
           </div>
           <img src="/image/irumae3.png" alt="irumae3" />
           <div className="wr_player3_bot">준비</div>
@@ -124,8 +201,15 @@ export default function WaitingRoom() {
             <div className="wr_bottom_left_num">3</div>
             <p>/3</p>
           </div>
-          {/* <div className="wr_bottom_start" onClick={startGame}/> */}
-          <div className="wr_bottom_ready" onClick={toggleReady} />
+          <div className="wr_bottom_start" onClick={startGame}>
+            게임 시작
+          </div>
+          <div
+            className={isReady ? "wr_bottom_ready_not" : "wr_bottom_ready"}
+            onClick={toggleReady}
+          >
+            {isReady ? "준비 취소" : "게임 준비"}
+          </div>
         </div>
       </div>
       <div className="wr_rightcontainer">
@@ -158,26 +242,16 @@ export default function WaitingRoom() {
         &emsp;게임 규칙
       </div>
       <div className={`wr_rule_content ${isVisible ? "visible" : ""}`}>
-        <h3>개인전이고 🌟</h3>
+        <h3>🌟타자왕들의 한 판 승부!🌟</h3>
         <ul>
           <li>
-            ✔️ 화면에 보이는 단어를 팀원보다{" "}
-            <span className="highlight">먼저 입력</span>하여 낚아채세요!
+            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!            
           </li>
           <li>
-            ✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀
-            내 1등에 도전하세요 💪
-          </li>
-        </ul>
-        <h3>팀전이기도 한 🏆</h3>
-        <ul>
-          <li>
-            ✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로
-            팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘
+            놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
           </li>
           <li>
-            ✔️ 시간 내에 모든 단어를 제거하지 못하면{" "}
-            <span className="highlight">팀 전체 탈락</span>합니다! ⚠️
+            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br/><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
           </li>
         </ul>
       </div>

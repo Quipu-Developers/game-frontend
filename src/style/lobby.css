@@ -11,6 +11,99 @@
   overflow: hidden;
 }
 
+.lb_hamburger {
+  position: fixed;
+  top: 4vh;
+  left: 2.5vw;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: linear-gradient(to bottom, #94a7cb, #6e7d8d);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #63758e, 0 0 0 4px #4f6180;
+  z-index: 12;
+}
+
+.lb_hamburger:hover {
+  background: linear-gradient(to bottom, #a6bcdf, #7f94b5);
+}
+
+.lb_hamburger:active {
+  background: linear-gradient(to bottom, #8090a4, #5f6b7a);
+}
+
+.lb_hamburger div {
+  width: 30px;
+  height: 5px;
+  background-color: #e7e7e7 ;
+  margin-top: 2.5px;
+  margin-bottom: 2.5px;
+  transition: all 0.3s ease;
+}
+
+.lb_hamburger:hover div {
+  background-color: #f0f0f0;
+}
+
+.lb_hamburger.active div:nth-child(1) {
+  transform: rotate(45deg) translate(7px, 7px);
+}
+
+.lb_hamburger.active div:nth-child(2) {
+  opacity: 0;
+}
+
+.lb_hamburger.active div:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+.lb_sidebar {
+  position: fixed;
+  top: 0;
+  left: -17vw;
+  width: 17vw;
+  height: 100vh;
+  background-color: #3a4a61;
+  transition: left 0.3s ease;
+  z-index: 11;
+  padding: 2vh;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.lb_sidebar.active {
+  left: 0;
+}
+
+.lb_sidebar_top {
+  border: 2px solid black;
+  height: 35vh;
+  margin-top: 13vh;
+}
+
+.lb_sidebar_profile {
+  border: 2px solid red;
+  height: 70%;
+}
+
+.lb_sidebar_name {
+  border: 2px solid orange;
+  height: 10%;
+}
+
+.lb_sidebar_num {
+  border: 2px solid yellow;
+  height: 10%;
+}
+
+.lb_sidebar_delete {
+  border: 2px solid green;
+  height: 10%;
+}
+
 .lb_topcontainer::before {
   content: '';
   position: absolute;
@@ -304,7 +397,7 @@
   background-size: 100% 50%;
   background-repeat: no-repeat;
   color: #fffff0;
-  -webkit-text-stroke: calc(0.04vh + 0.04vw) #a89d5b;
+  -webkit-text-stroke: calc(0.04vh + 0.05vw) #a89d5b;
   transition: width 0.5s ease;
   z-index: 4;
 }
@@ -361,7 +454,7 @@
   right: 5vw;
   top: 8vh;
   width: 30vw;
-  height: 50vh;
+  height: 42vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
