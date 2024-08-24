@@ -114,7 +114,7 @@
   cursor: pointer;
   width: 90%;
   height: 5vh;
-  margin-top: 7vh;
+  margin-top: 3vh;
   margin-bottom: 1vh;
   font-family: 'Cafe24Ssurround';
 }
@@ -196,4 +196,52 @@
 
 .lg-info-section h1 {
   margin-bottom: 0.5vh;
+}
+
+.lg-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  display: flex;
+  justify-content: center; /* 수평 중앙 정렬 */
+  align-items: center; /* 수직 중앙 정렬 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.lg-modal-content {
+  background-color: white; /* 모달창 배경색 */
+  padding: 20px;
+  border-radius: 8px; /* 모서리 둥글게 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  width: 400px; /* 모달창 너비 */
+  max-width: 100%; /* 최대 너비 설정 */
+}
+
+.lg-modal h4 {
+  display: block; /* 라벨을 블록 요소로 */
+  margin-bottom: 5px; /* 라벨 아래 여백 */
+}
+
+.lg-modal input {
+  width: 100%; /* 입력 필드 너비를 100%로 */
+  padding: 8px; /* 입력 필드 패딩 */
+  margin-bottom: 15px; /* 입력 필드 아래 여백 */
+  border: 1px solid #ccc; /* 경계선 */
+  border-radius: 4px; /* 모서리 둥글게 */
+}
+
+.lg-modal button {
+  padding: 10px 15px; /* 버튼 패딩 */
+  margin-right: 10px; /* 버튼 사이 여백 */
+  border: none; /* 경계선 제거 */
+  border-radius: 4px; /* 모서리 둥글게 */
+  cursor: pointer; /* 커서 포인터로 변경 */
+  margin-top: 2vh;
+}
+
+.lg-modal button:hover {
+  background-color: #f0f0f0; /* 버튼 호버 시 배경색 변경 */
 }
