@@ -11,9 +11,6 @@ export default function Lobby() {
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
-  const [error, setError] = useState("");
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
 
@@ -39,27 +36,6 @@ export default function Lobby() {
       }
     };
   }, [socket, fetchRooms]);
-
-  // async function removeUserAccount() {
-  //   try {
-  //     await deleteUserAccount();
-  //     console.log("계정이 삭제되었습니다.");
-  //     alert("계정이 삭제되었습니다.");
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.error("계정 삭제 중 오류 발생:", error);
-  //   }
-  // }
-
-  const handleClick = () => {
-    if (!isActive) {
-      setIsActive(true);
-      setTimeout(() => setIsVisible(true), 500);
-    } else {
-      setIsVisible(false);
-      setTimeout(() => setIsActive(false), 1000);
-    }
-  };
 
   const handleRoomCreate = () => {
     setShowForm(true);
@@ -101,20 +77,14 @@ export default function Lobby() {
   const handleCloseForm = () => {
     setShowForm(false);
   };
-  
-    const handleClosePasswordForm = () => {
-    setSelectedRoom(null);
-    setError("");
-    setIsPasswordFormVisible(false);
-  };
 
   const handleDeleteClick = () => {
     setShowConfirmDelete(true);
   };
 
   const handleConfirmDelete = () => {
-    navigate('/');
-    removeUserAccount();
+    navigate("/");
+    deleteUserAccount();
     setShowConfirmDelete(false);
   };
 
@@ -138,33 +108,33 @@ export default function Lobby() {
             <img src="/image/irumaelb.png" alt="irumaelb" />
           </div>
           <div className="lb_sidebar_nn">
-            <div className="lb_sidebar_name">
-              김준호
-            </div>
-            <div className="lb_sidebar_num">
-              010-1234-5678
-            </div>
+            <div className="lb_sidebar_name">김준호</div>
+            <div className="lb_sidebar_num">010-1234-5678</div>
           </div>
           <div className="lb_sidebar_delete">
             <div
               className={`lb_rule ${isActive ? "active" : ""}`}
-              onClick={handleShowRules}>
+              onClick={handleShowRules}
+            >
               게임 규칙
             </div>
-            <button className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
+            <button
+              className="lb_sidebar_delete_button"
+              onClick={handleDeleteClick}
+            >
               탈퇴하기
             </button>
           </div>
         </div>
         <div className="lb_sidebar_bottom">
           <div className="lb_sidebar_list">접속자 목록</div>
-          <div className="lb_sidebar_list_name">
+          <ul className="lb_sidebar_list_name">
             <li>김준호</li>
             <li>죠르디</li>
             <li>피카츄</li>
             <li>송승준</li>
             <li>이예나</li>
-          </div>
+          </ul>
         </div>
       </div>
 
@@ -180,11 +150,7 @@ export default function Lobby() {
         </div>
       )}
 
-      {(showForm || isPasswordFormVisible) && <div className="lb_overlay" />}
-
-      <div className="lb_titlecontainer">
-        배틀글라운드
-      </div>
+      <div className="lb_titlecontainer">배틀글라운드</div>
       <div className="lb_topcontainer">
         {rooms.length === 0 ? (
           <div className="lb_no_rooms_message">
@@ -192,25 +158,27 @@ export default function Lobby() {
           </div>
         ) : (
           <div className="lb_roomlist">
-                     {rooms.map((room, index) => (
-            <div key={index} className="lb_roombox">
-              <div className="lb_roombox_num">{room.users.length}/3</div>
-              <div className="lb_roombox_title">{room.roomName}</div>
-              <div className="lb_roombox_title">
-                {room.started ? "게임 중" : "준비 중"}
-              </div>
-              <div className="lb_roombox_title">
-                {room.users.find((user) => user.power === "leader")?.userName}
-              </div>
+            {rooms.map((room, index) => (
+              <div key={index} className="lb_roombox">
+                <div className="lb_roombox_num">{room.users.length}/3</div>
+                <div className="lb_roombox_title">{room.roomName}</div>
+                <div className="lb_roombox_title">
+                  {room.started ? "게임 중" : "준비 중"}
+                </div>
+                <div className="lb_roombox_title">
+                  {room.users.find((user) => user.power === "leader")?.userName}
+                </div>
 
-              <button
-                className="lb_submit"
-                onClick={() => handleEnterRoom(room.roomId, room.roomName)}
-              >
-                입장하기
-              </button>
+                <button
+                  className="lb_submit"
+                  onClick={() => handleEnterRoom(room.roomId, room.roomName)}
+                >
+                  입장하기
+                </button>
+              </div>
+            ))}
           </div>
-        ))}
+        )}
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -240,34 +208,6 @@ export default function Lobby() {
         </div>
       )}
 
-      {selectedRoom && (
-        <div className="lb_passwordContainer">
-          <button className="lb_closeButton" onClick={handleClosePasswordForm}>
-            X
-          </button>
-          <form onSubmit={handlePasswordSubmit}>
-            <div className="lb_passwordInputGroup">
-              <div className="lb_selectedRoomName">{selectedRoom.name}</div>
-              <div className="lb_inputGroup">
-                <label htmlFor="roomPassword">비밀번호 : </label>
-                <input
-                  className="lb_roomPassword"
-                  type="password"
-                  id="roomPassword"
-                  value={password}
-                  onChange={handleRoomPasswordChange}
-                  required
-                />
-              </div>
-            </div>
-            <button className="lb_submit" type="submit">
-              입장하기
-            </button>
-            {error && <p className="lb_error">{error}</p>}
-          </form>
-        </div>
-      )}
-
       {showRulesModal && (
         <div className="lb_rules_modal">
           <div className="lb_rule_content">
@@ -277,13 +217,19 @@ export default function Lobby() {
             <h3>게임 규칙</h3>
             <ul>
               <li>
-                화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!
+                화면에 쏟아지는 단어들을 노리는{" "}
+                <span className="highlight">1</span>분간의 치열한 격전!
               </li>
               <li>
-                놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
+                놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
+                <span className="lowlight">스피드</span>와{" "}
+                <span className="lowlight">전략</span>은 모두 필수!
               </li>
               <li>
-                60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br /><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
+                60초 동안 당신의 <span className="lowlightt">타이핑</span>{" "}
+                실력과 <span className="highlightt">눈치</span> 게임의 조화로
+                <br />
+                <span className="highlight">🏆Top 10🏆</span>에 도전하세요!
               </li>
             </ul>
           </div>

@@ -18,7 +18,7 @@ export default function WaitingRoom() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const { socket } = useSocket();
-  
+
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
   const [isPlayer2Kicked, setIsPlayer2Kicked] = useState(false);
@@ -50,7 +50,7 @@ export default function WaitingRoom() {
     }
   }, [socket]);
 
-  async function handleSendMessage(message) {
+  async function handleSendMessage() {
     try {
       await sendMessage(roomId, message);
       console.log("Message sent successfully!");
@@ -71,14 +71,16 @@ export default function WaitingRoom() {
     }
   }
 
-  async function handleKickMember(targetId) {
-    try {
-      await kickMember(roomId, targetId);
-      console.log("Member kicked successfully!");
-    } catch (error) {
-      console.error("Failed to kick member:", error.message);
+  const handleKickMemberConfirm = () => {
+    if (kickTarget) {
+      console.log(`${kickTarget} was kicked`);
+      setIsKickVisible(false);
+
+      if (kickTarget === "피카츄") {
+        setIsPlayer2Kicked(true);
+      }
     }
-  }
+  };
 
   async function handleDeleteRoom() {
     try {
@@ -109,25 +111,13 @@ export default function WaitingRoom() {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      const roomId = "example-room-id";
-      handleSendMessage(roomId, message);
+      handleSendMessage();
     }
   };
 
   const toggleKickModal = (target) => {
     setKickTarget(target);
     setIsKickVisible(!isKickVisible);
-  };
-
-  const handleKickMember = () => {
-    if (kickTarget) {
-      console.log(`${kickTarget} was kicked`);
-      setIsKickVisible(false);
-
-      if (kickTarget === "피카츄") {
-        setIsPlayer2Kicked(true);
-      }
-    }
   };
 
   const handleTitleChange = (e) => {
@@ -183,48 +173,36 @@ export default function WaitingRoom() {
             )}
             {isReady && <div className="wr_player2_bot">준비</div>}
           </div>
-          <img src="/image/irumae1.png" alt="irumae1" />
-          <div className="wr_player1_bot">방장</div>
-        </div>
-        <div className="wr_player2">
-          {!isPlayer2Kicked ? (
-            <>
-              <div className="wr_player2_top">
-                <p>피카츄</p>
-                <div className="wr_x" onClick={() => toggleKickModal("피카츄")}>x</div>
-              </div>
-              <img src="/image/irumae2.png" alt="irumae2" />
-              {isReady && <div className="wr_player2_bot">준비</div>}
-            </>
-          ) : (
-            <div className="wr_player2_empty"></div>
-          )}
-        </div>
+        ))}
         {isKickVisible && (
           <div className="wr_kick">
             <div className="wr_kick_content">
-              <p>{kickTarget} 님을 <br />강퇴하시겠습니까?</p>
-              <button className="wr_kickbutton" onClick={handleKickMember}>강퇴하기</button>
-              <button className="wr_cancelbutton" onClick={() => setIsKickVisible(false)}>x</button>
+              <p>
+                {kickTarget} 님을 <br />
+                강퇴하시겠습니까?
+              </p>
+              <button
+                className="wr_kickbutton"
+                onClick={handleKickMemberConfirm}
+              >
+                강퇴하기
+              </button>
+              <button
+                className="wr_cancelbutton"
+                onClick={() => setIsKickVisible(false)}
+              >
+                x
+              </button>
             </div>
           </div>
         )}
-        <div className="wr_player3">
-          <div className="wr_player3_top">
-            <p>죠르디</p>
-            <div className="wr_x">x</div>
-          </div>
-          <img src="/image/irumae3.png" alt="irumae3" />
-          <div className="wr_player3_bot">준비</div>
-        </div>
-        <div className="wr_player4"></div>
         <div className="wr_bottom">
           <div className="wr_bottom_left">
             <img src="/image/person.png" alt="person" />
             <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
-          <div className="wr_bottom_start" onClick={startGame}>
+          <div className="wr_bottom_start" onClick={handleStartGame}>
             게임 시작
           </div>
           <div
@@ -253,10 +231,7 @@ export default function WaitingRoom() {
             onChange={handleChange}
             onKeyDown={handleKeyPress}
           />
-          <button
-            onClick={() => handleSendMessage("example-room-id", message)}
-            className="wr_send"
-          >
+          <button onClick={handleSendMessage} className="wr_send">
             전송
           </button>
         </div>
@@ -271,13 +246,19 @@ export default function WaitingRoom() {
         <h3>🌟타자왕들의 한 판 승부!🌟</h3>
         <ul>
           <li>
-            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!            
+            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>
+            분간의 치열한 격전!
           </li>
           <li>
-            놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
+            놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
+            <span className="lowlight">스피드</span>와{" "}
+            <span className="lowlight">전략</span>은 모두 필수!
           </li>
           <li>
-            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br/><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
+            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}
+            <span className="highlightt">눈치</span> 게임의 조화로
+            <br />
+            <span className="highlight">🏆Top 10🏆</span>에 도전하세요!
           </li>
         </ul>
       </div>
