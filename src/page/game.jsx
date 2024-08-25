@@ -75,7 +75,13 @@ export default function Game() {
       } else {
         setSelectedImage(<img src="image/irumae_sad.png" alt="profile" />);
         setIsValid(true);
+        console.log("틀림");
       }
+
+      setTimeout(() => {
+        setIsValid(false);
+      }, 300); // 1초 후에 isValid를 false로 설정
+
       setInputValue("");
       resetIdleTimer(); // 타이머 리셋
     }

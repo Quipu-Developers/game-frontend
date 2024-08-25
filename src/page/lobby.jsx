@@ -12,6 +12,11 @@ export default function Lobby() {
   const [roomName, setRoomName] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
+  const [error, setError] = useState("");
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
+
   const navigate = useNavigate();
   const { socket } = useSocket();
 
@@ -96,12 +101,98 @@ export default function Lobby() {
   const handleCloseForm = () => {
     setShowForm(false);
   };
+  
+    const handleClosePasswordForm = () => {
+    setSelectedRoom(null);
+    setError("");
+    setIsPasswordFormVisible(false);
+  };
+
+  const handleDeleteClick = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = () => {
+    navigate('/');
+    removeUserAccount();
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const handleShowRules = () => {
+    setShowRulesModal(true);
+  };
+
+  const handleCloseRules = () => {
+    setShowRulesModal(false);
+  };
 
   return (
     <div className="lb_container">
+      <div className="lb_sidebar">
+        <div className="lb_sidebar_top">
+          <div className="lb_sidebar_profile">
+            <img src="/image/irumaelb.png" alt="irumaelb" />
+          </div>
+          <div className="lb_sidebar_nn">
+            <div className="lb_sidebar_name">
+              김준호
+            </div>
+            <div className="lb_sidebar_num">
+              010-1234-5678
+            </div>
+          </div>
+          <div className="lb_sidebar_delete">
+            <div
+              className={`lb_rule ${isActive ? "active" : ""}`}
+              onClick={handleShowRules}>
+              게임 규칙
+            </div>
+            <button className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
+              탈퇴하기
+            </button>
+          </div>
+        </div>
+        <div className="lb_sidebar_bottom">
+          <div className="lb_sidebar_list">접속자 목록</div>
+          <div className="lb_sidebar_list_name">
+            <li>김준호</li>
+            <li>죠르디</li>
+            <li>피카츄</li>
+            <li>송승준</li>
+            <li>이예나</li>
+          </div>
+        </div>
+      </div>
+
+      {showConfirmDelete && (
+        <div className="lb_confirm_overlay">
+          <div className="lb_confirm_dialog">
+            <p>정말 탈퇴하시겠습니까?</p>
+            <div className="lb_confirm_buttons">
+              <button onClick={handleConfirmDelete}>확인</button>
+              <button onClick={handleCancelDelete}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {(showForm || isPasswordFormVisible) && <div className="lb_overlay" />}
+
+      <div className="lb_titlecontainer">
+        배틀글라운드
+      </div>
       <div className="lb_topcontainer">
-        <div className="lb_roomlist">
-          {rooms.map((room, index) => (
+        {rooms.length === 0 ? (
+          <div className="lb_no_rooms_message">
+            (&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)
+          </div>
+        ) : (
+          <div className="lb_roomlist">
+                     {rooms.map((room, index) => (
             <div key={index} className="lb_roombox">
               <div className="lb_roombox_num">{room.users.length}/3</div>
               <div className="lb_roombox_title">{room.roomName}</div>
@@ -118,10 +209,8 @@ export default function Lobby() {
               >
                 입장하기
               </button>
-            </div>
-          ))}
-        </div>
-
+          </div>
+        ))}
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -151,36 +240,55 @@ export default function Lobby() {
         </div>
       )}
 
-      <div
-        className={`lb_rule ${isActive ? "active" : ""}`}
-        onClick={handleClick}
-      >
-        &emsp;게임 규칙
-      </div>
-      <div className={`lb_rule_content ${isVisible ? "visible" : ""}`}>
-        <h3>개인전이고 🌟</h3>
-        <ul>
-          <li>
-            ✔️ 화면에 보이는 단어를 팀원보다{" "}
-            <span className="highlight">먼저 입력</span>하여 낚아채세요!
-          </li>
-          <li>
-            ✔️ <span className="highlight">최대한 많은 단어</span>를 입력하여 팀
-            내 1등에 도전하세요 💪
-          </li>
-        </ul>
-        <h3>팀전이기도 한 🏆</h3>
-        <ul>
-          <li>
-            ✔️ 모든 단어를 없앤 <span className="highlight">남은 시간</span>대로
-            팀 순위가 결정됩니다! 최고의 팀을 구성하세요😘
-          </li>
-          <li>
-            ✔️ 시간 내에 모든 단어를 제거하지 못하면{" "}
-            <span className="highlight">팀 전체 탈락</span>합니다! ⚠️
-          </li>
-        </ul>
-      </div>
+      {selectedRoom && (
+        <div className="lb_passwordContainer">
+          <button className="lb_closeButton" onClick={handleClosePasswordForm}>
+            X
+          </button>
+          <form onSubmit={handlePasswordSubmit}>
+            <div className="lb_passwordInputGroup">
+              <div className="lb_selectedRoomName">{selectedRoom.name}</div>
+              <div className="lb_inputGroup">
+                <label htmlFor="roomPassword">비밀번호 : </label>
+                <input
+                  className="lb_roomPassword"
+                  type="password"
+                  id="roomPassword"
+                  value={password}
+                  onChange={handleRoomPasswordChange}
+                  required
+                />
+              </div>
+            </div>
+            <button className="lb_submit" type="submit">
+              입장하기
+            </button>
+            {error && <p className="lb_error">{error}</p>}
+          </form>
+        </div>
+      )}
+
+      {showRulesModal && (
+        <div className="lb_rules_modal">
+          <div className="lb_rule_content">
+            <button className="lb_closeButton" onClick={handleCloseRules}>
+              X
+            </button>
+            <h3>게임 규칙</h3>
+            <ul>
+              <li>
+                화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!
+              </li>
+              <li>
+                놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
+              </li>
+              <li>
+                60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br /><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
