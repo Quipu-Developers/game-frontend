@@ -23,12 +23,12 @@ export default function WaitingRoom() {
         <img className="img2" src="/image/irumae_sad.png" alt="Sad" />
       </div>
       <div className="lg-leftcontainer">
-        <h2>이름</h2>
+        <h2>닉네임</h2>
         <input />
         <h2>전화번호</h2>
         <input />
-        <button>로그인</button>
-        <button onClick={handleModalOpen}>회원가입</button>
+        <button className="login-button">로그인</button>
+        <button className="signup-button" onClick={handleModalOpen}>회원가입</button>
       </div>
       <div className="lg-rightcontainer">
         <div className="lg-background-image"></div>
