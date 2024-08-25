@@ -27,8 +27,8 @@ export default function WaitingRoom() {
         <input />
         <h2>전화번호</h2>
         <input />
-        <button>로그인</button>
-        <button onClick={handleModalOpen}>회원가입</button>
+        <button className="login-button">로그인</button>
+        <button className="signup-button" onClick={handleModalOpen}>회원가입</button>
       </div>
       <div className="lg-rightcontainer">
         <div className="lg-background-image"></div>
