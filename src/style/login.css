@@ -1,27 +1,18 @@
 .lg-container {
   height: 100vh;
   width: 100vw;
-  background-color: #9db3d6;
+  background:   linear-gradient(120deg, #042f63 40%, transparent 0%),
+                linear-gradient(190deg, #9eb5de 50%, transparent 0%),
+                #265b90;
+  color: #fff;
   display: flex;
   flex-wrap: wrap;
   position: relative;
-  overflow: hidden; /* 회전된 이미지가 잘리지 않도록 설정 */
+  overflow: hidden; 
 }
 
 .lg-container::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.08);
-  background-image: 
-    linear-gradient(to right, transparent 0, transparent 15px, rgba(255, 255, 255, 0.08) 15px),
-    linear-gradient(to bottom, transparent 0, transparent 15px, rgba(255, 255, 255, 0.08) 15px);
-  background-size: 30px 30px;
-  opacity: 0.5;
-  z-index: 0;
+
 }
 
 .lg-content-area {
@@ -50,9 +41,12 @@
 .lg-title h1 {
   text-align: center;
   color: black;
-  font-size: 70px;
+  font-size: 80px;
   margin-top: 2vh;
   margin-bottom: 0vh;
+  
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: white;
   /* color: transparent;
   background-image: url(../../public/image/gukbang.jpg);
   background-size: 100%;
@@ -90,11 +84,15 @@
   z-index: 2;
 }
 
-.lg-leftcontainer h1 {
+.lg-leftcontainer h1 {  
   margin-bottom: 9vh;
 }
 
 .lg-leftcontainer h2 {
+  font-size: 40px;
+  -webkit-text-stroke-width: 0.5px;
+  -webkit-text-stroke-color: white;
+  color: black;
   margin-bottom: 1vh;
 }
 
@@ -157,12 +155,12 @@
   position: absolute; /* 절대 위치 설정 */
   width: 100%; /* 전체 너비 사용 */
   height: 100%; /* 전체 높이 사용 */
-  background-image: url(../../public/image/keyboard.jpg);
+  background-image: url('https://img.freepik.com/free-photo/close-up-keyboard-button_1203-9149.jpg?w=1060&t=st=1724562941~exp=1724563541~hmac=bfa9fc5873c5569427db6d228c4f17b9eb5854fc71928fc1b8fa17942bdbfaac');
   background-size: cover; /* 이미지를 가득 채우도록 설정 */
   background-position: center;
   background-repeat: no-repeat; /* 반복하지 않도록 설정 */
   z-index: 0; /* 배경으로 설정 */
-  opacity: 0.2; /* 배경 이미지의 투명도 조정 */
+  opacity: 10.0; /* 배경 이미지의 투명도 조정 */
 }
 
 .lg-info-section {

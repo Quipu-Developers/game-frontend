@@ -23,7 +23,7 @@ export default function WaitingRoom() {
         <img className="img2" src="/image/irumae_sad.png" alt="Sad" />
       </div>
       <div className="lg-leftcontainer">
-        <h2>이름</h2>
+        <h2>닉네임</h2>
         <input />
         <h2>전화번호</h2>
         <input />
