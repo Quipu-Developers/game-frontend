@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLobbyActions } from "../service/lobby_service";
+import { useSocket } from "../socket";
 import "../style/lobby.css";
 
 export default function Lobby() {
@@ -8,30 +9,37 @@ export default function Lobby() {
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const [selectedRoom, setSelectedRoom] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
-  const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const socket = useSocket();
 
   useEffect(() => {
     const loadRooms = async () => {
       try {
         const room_list = await fetchRooms();
-        console.log(room_list);
         setRooms(room_list);
         console.log("방 목록:", room_list);
       } catch (error) {
         console.error("방 목록을 가져오는 중 오류 발생:", error);
       }
     };
+
     loadRooms();
-  }, [fetchRooms]);
+
+    return () => {
+      if (socket) {
+        socket.off("GETROOMS");
+      }
+    };
+  }, [socket, fetchRooms]);
 
   // async function removeUserAccount() {
   //   try {
   //     await deleteUserAccount();
   //     console.log("계정이 삭제되었습니다.");
+  //     alert("계정이 삭제되었습니다.");
+  //     navigate("/");
   //   } catch (error) {
   //     console.error("계정 삭제 중 오류 발생:", error);
   //   }
@@ -59,52 +67,49 @@ export default function Lobby() {
     event.preventDefault();
     if (roomName.trim() !== "") {
       try {
-        // const roomId = await createRoom(roomName);
-        // console.log("Room created with ID:", roomId);
-        await createRoom(roomName);
-        const updatedRooms = await fetchRooms();
-        setRooms(updatedRooms);
+        const roomId = await createRoom(roomName);
+        console.log("test");
+        navigate("/waiting-room", {
+          state: { roomId: roomId, roomName: roomName },
+        });
       } catch (error) {
         console.error("방 생성 중 오류 발생:", error);
       }
-      setRoomName("");
-      setShowForm(false);
     }
   };
 
-  const handleRoomClick = (room) => {
-    setSelectedRoom(room);
-    setError("");
-    setIsPasswordFormVisible(true);
+  const handleEnterRoom = async (roomId, roomName) => {
+    navigate("/waiting-room", {
+      state: { roomId: roomId, roomName: roomName },
+    });
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
   };
 
-  const handleClosePasswordForm = () => {
-    setSelectedRoom(null);
-    setError("");
-    setIsPasswordFormVisible(false);
-  };
-
   return (
     <div className="lb_container">
-      {(showForm || isPasswordFormVisible) && <div className="lb_overlay" />}
       <div className="lb_topcontainer">
         <div className="lb_roomlist">
           {rooms.map((room, index) => (
-            <div
-              key={index}
-              className="lb_roombox"
-              onClick={() => handleRoomClick(room)}
-            >
-              <div className="lb_roombox_num">1/3</div>
-              <div className="lb_roombox_title">{room.name}</div>
-              <div className="lb_roombox_admin">김준호</div>
+            <div key={index} className="lb_roombox">
+              <div className="lb_roombox_num">{room.users.length}/3</div>
+              <div className="lb_roombox_title">{room.roomName}</div>
+              <div className="lb_roombox_title">
+                {room.started ? "게임 중" : "준비 중"}
+              </div>
+
+              <button
+                className="lb_submit"
+                onClick={() => handleEnterRoom(room.roomId, room.roomName)}
+              >
+                입장하기
+              </button>
             </div>
           ))}
         </div>
+
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -119,14 +124,12 @@ export default function Lobby() {
           </button>
           <form onSubmit={handleRoomSubmit}>
             <div className="lb_inputgroup">
-              <label htmlFor="roomName">방 이름 :</label>
+              <label>방 이름 :</label>
               <input
                 className="lb_roomname"
                 id="roomName"
-                autoComplete="off"
                 value={roomName}
                 onChange={handleRoomNameChange}
-                required
               />
             </div>
             <button className="lb_submit" type="submit">
@@ -136,22 +139,6 @@ export default function Lobby() {
         </div>
       )}
 
-      {selectedRoom && (
-        <div className="lb_passwordContainer">
-          <button className="lb_closeButton" onClick={handleClosePasswordForm}>
-            X
-          </button>
-          <form>
-            <div className="lb_passwordInputGroup">
-              <div className="lb_selectedRoomName">{selectedRoom.name}</div>
-            </div>
-            <button className="lb_submit" type="submit">
-              입장하기
-            </button>
-            {error && <p className="lb_error">{error}</p>}
-          </form>
-        </div>
-      )}
       <div
         className={`lb_rule ${isActive ? "active" : ""}`}
         onClick={handleClick}

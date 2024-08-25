@@ -1,10 +1,13 @@
 import "../style/waitingRoom.css";
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useWaitingRoomActions } from "../service/waitingRoom_service";
 import { useSocket } from "../socket";
 
-export default function WaitingRoom(roomId) {
+export default function WaitingRoom() {
+  const location = useLocation();
+  const { roomId, roomName } = location.state || {};
+  console.log(roomId, roomName);
   const { sendMessage, startGame, kickMember, deleteRoom } =
     useWaitingRoomActions();
   const [isReady, setIsReady] = useState(false);

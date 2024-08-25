@@ -10,25 +10,19 @@ export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
 
-  // async function handleLogin() {
-  //   try {
-  //     console.log(userName, phoneNumber);
-  //     const userId = await loginUser(userName, phoneNumber);
-  //     console.log("Logged in with userId:", userId);
-  //     navigate("/");
-  //   } catch (error) {
-  //     console.error("Login failed:", error.message);
-  //   }
-  // }
-
   async function handleLogin() {
     try {
       console.log(userName, phoneNumber);
-      const userId = await createUser(userName, phoneNumber);
-      console.log("Logged in with userId:", userId);
-      navigate("/");
+
+      // const userId = await createUser(userName, phoneNumber);
+      // console.log("User created with userId:", userId);
+
+      const userId = await loginUser(userName, phoneNumber);
+      console.log(userId);
+
+      navigate("/lobby");
     } catch (error) {
-      console.error("Login failed:", error.message);
+      console.error("Login or account creation failed:", error.message);
     }
   }
 
@@ -39,7 +33,6 @@ export default function Login() {
         <p>
           이름:
           <input
-            type="text"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
           />
@@ -47,7 +40,6 @@ export default function Login() {
         <p>
           전화번호:
           <input
-            type="text"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
