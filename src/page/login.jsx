@@ -10,6 +10,16 @@ export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
   const navigate = useNavigate();
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
   async function handleLogin() {
     try {
       console.log(userName, phoneNumber);
@@ -26,17 +36,6 @@ export default function Login() {
     }
   }
 
-export default function WaitingRoom() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const handleModalOpen = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
   return (
     <div className="lg-container">
       <div className="lg-content-area"></div>
@@ -47,17 +46,18 @@ export default function WaitingRoom() {
       </div>
       <div className="lg-leftcontainer">
         <h2>닉네임</h2>
-        <input
-            value={userName}
-            onChange={(e) => setUserName(e.target.value)}
-          />
+        <input value={userName} onChange={(e) => setUserName(e.target.value)} />
         <h2>전화번호</h2>
-       <input
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-          />
-        <button className="login-button" onClick={handleLogin}>로그인</button>
-        <button className="signup-button" onClick={handleModalOpen}>회원가입</button>
+        <input
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+        <button className="login-button" onClick={handleLogin}>
+          로그인
+        </button>
+        <button className="signup-button" onClick={handleModalOpen}>
+          회원가입
+        </button>
       </div>
       <div className="lg-rightcontainer">
         <div className="lg-background-image"></div>
