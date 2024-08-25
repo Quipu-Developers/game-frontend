@@ -2,12 +2,12 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useWaitingRoomActions() {
-  const socket = useSocket();
+  const { socket, storage } = useSocket();
 
   const sendMessage = useCallback(
     (roomId, message) => {
       return new Promise((resolve, reject) => {
-        const userId = localStorage.getItem("userId");
+        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
@@ -22,13 +22,13 @@ export function useWaitingRoomActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   const startGame = useCallback(
     (roomId) => {
       return new Promise((resolve, reject) => {
-        const userId = localStorage.getItem("userId");
+        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
@@ -43,13 +43,13 @@ export function useWaitingRoomActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   const kickMember = useCallback(
     (roomId, targetId) => {
       return new Promise((resolve, reject) => {
-        const userId = localStorage.getItem("userId");
+        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
@@ -64,13 +64,13 @@ export function useWaitingRoomActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   const deleteRoom = useCallback(
     (roomId) => {
       return new Promise((resolve, reject) => {
-        const userId = localStorage.getItem("userId");
+        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
@@ -85,7 +85,7 @@ export function useWaitingRoomActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   return { sendMessage, startGame, kickMember, deleteRoom };

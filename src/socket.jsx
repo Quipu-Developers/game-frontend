@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import io from "socket.io-client";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
+const storage =
+  process.env.NODE_ENV === "production" ? localStorage : sessionStorage;
 
 const SocketContext = createContext();
 
@@ -38,6 +40,8 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{ socket, storage }}>
+      {children}
+    </SocketContext.Provider>
   );
 };

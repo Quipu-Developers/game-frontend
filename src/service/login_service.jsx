@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useAuthActions() {
-  const socket = useSocket();
+  const { socket, storage } = useSocket();
 
   const loginUser = useCallback(
     async (userName, phoneNumber) => {
@@ -14,7 +14,7 @@ export function useAuthActions() {
 
         socket.emit("LOGIN", { userName, phoneNumber }, (response) => {
           if (response && response.userId) {
-            localStorage.setItem("userId", response.userId);
+            storage.setItem("userId", response.userId);
             resolve(response.userId);
           } else {
             reject(new Error("Failed to login user"));
@@ -22,7 +22,7 @@ export function useAuthActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   return { loginUser };

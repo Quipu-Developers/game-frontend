@@ -2,11 +2,11 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useGameActions() {
-  const socket = useSocket();
+  const { socket, storage } = useSocket();
 
   const wordInput = useCallback(
     async (roomId, word) => {
-      const userId = localStorage.getItem("userId");
+      const userId = storage.getItem("userId");
 
       return new Promise((resolve, reject) => {
         if (!socket) {
@@ -25,7 +25,7 @@ export function useGameActions() {
         });
       });
     },
-    [socket]
+    [socket, storage]
   );
 
   return { wordInput };

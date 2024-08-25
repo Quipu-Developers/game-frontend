@@ -6,17 +6,18 @@ import { useSocket } from "../socket";
 
 export default function WaitingRoom() {
   const location = useLocation();
-  const { roomId, roomName } = location.state || {};
-  console.log(roomId, roomName);
+  const { roomId, roomName, users } = location.state || {};
+  console.log(roomId, roomName, users);
   const { sendMessage, startGame, kickMember, deleteRoom } =
     useWaitingRoomActions();
   const [isReady, setIsReady] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [chats, setChats] = useState([]);
+  const [players, setPlayers] = useState(users);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   const addChatMessage = (userId, chatMessage) => {
     setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
@@ -24,12 +25,21 @@ export default function WaitingRoom() {
 
   useEffect(() => {
     if (socket) {
-      socket.on("CHAT", ({ userId, message }) => {
+      const handleChat = ({ userId, message }) => {
         addChatMessage(userId, message);
-      });
+      };
+
+      const handleJoinUser = ({ user }) => {
+        console.log(user);
+        setPlayers((prevPlayers) => [...prevPlayers, user]);
+      };
+
+      socket.on("CHAT", handleChat);
+      socket.on("JOINUSER", handleJoinUser);
 
       return () => {
-        socket.off("CHAT");
+        socket.off("CHAT", handleChat);
+        socket.off("JOINUSER", handleJoinUser);
       };
     }
   }, [socket]);
@@ -101,32 +111,22 @@ export default function WaitingRoom() {
   return (
     <div className="wr_container">
       <div className="wr_leftcontainer">
-        <div className="wr_player1">
-          <div className="wr_player1_top">
-            <p>김준호</p>
+        {players.map((player, index) => (
+          <div key={index} className="wr_player1">
+            <div className="wr_player1_top">
+              <p>{player.userName}</p>
+            </div>
+            <img src={`/image/irumae${index + 1}.png`} alt="profile" />
+            {player.power === "leader" && (
+              <div className="wr_player1_bot">방장</div>
+            )}
+            {isReady && <div className="wr_player2_bot">준비</div>}
           </div>
-          <img src="/image/irumae1.png" alt="irumae1" />
-          <div className="wr_player1_bot">방장</div>
-        </div>
-        <div className="wr_player2">
-          <div className="wr_player2_top">
-            <p>피카츄</p>
-          </div>
-          <img src="/image/irumae2.png" alt="irumae2" />
-          {isReady && <div className="wr_player2_bot">준비</div>}
-        </div>
-        <div className="wr_player3">
-          <div className="wr_player3_top">
-            <p>죠르디</p>
-          </div>
-          <img src="/image/irumae3.png" alt="irumae3" />
-          <div className="wr_player3_bot">준비</div>
-        </div>
-        <div className="wr_player4"></div>
+        ))}
         <div className="wr_bottom">
           <div className="wr_bottom_left">
             <img src="/image/person.png" alt="person" />
-            <div className="wr_bottom_left_num">3</div>
+            <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
           {/* <div className="wr_bottom_start" onClick={startGame}/> */}

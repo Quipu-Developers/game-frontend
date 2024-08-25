@@ -5,14 +5,15 @@ import { useSocket } from "../socket";
 import "../style/lobby.css";
 
 export default function Lobby() {
-  const { fetchRooms, createRoom, deleteUserAccount } = useLobbyActions();
+  const { fetchRooms, createRoom, enterRoom, deleteUserAccount } =
+    useLobbyActions();
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -67,10 +68,13 @@ export default function Lobby() {
     event.preventDefault();
     if (roomName.trim() !== "") {
       try {
-        const roomId = await createRoom(roomName);
-        console.log("test");
+        const room = await createRoom(roomName);
         navigate("/waiting-room", {
-          state: { roomId: roomId, roomName: roomName },
+          state: {
+            roomId: room.roomId,
+            roomName: room.roomName,
+            users: room.users,
+          },
         });
       } catch (error) {
         console.error("방 생성 중 오류 발생:", error);
@@ -79,9 +83,14 @@ export default function Lobby() {
   };
 
   const handleEnterRoom = async (roomId, roomName) => {
-    navigate("/waiting-room", {
-      state: { roomId: roomId, roomName: roomName },
-    });
+    try {
+      const users = await enterRoom(roomId);
+      navigate("/waiting-room", {
+        state: { roomId: roomId, roomName: roomName, users: users },
+      });
+    } catch (error) {
+      console.error("방 입장 중 오류 발생:", error);
+    }
   };
 
   const handleCloseForm = () => {
@@ -98,6 +107,9 @@ export default function Lobby() {
               <div className="lb_roombox_title">{room.roomName}</div>
               <div className="lb_roombox_title">
                 {room.started ? "게임 중" : "준비 중"}
+              </div>
+              <div className="lb_roombox_title">
+                {room.users.find((user) => user.power === "leader")?.userName}
               </div>
 
               <button
