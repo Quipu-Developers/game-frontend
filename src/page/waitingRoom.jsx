@@ -174,6 +174,22 @@ export default function WaitingRoom() {
             {isReady && <div className="wr_player2_bot">준비</div>}
           </div>
         ))}
+        <div className="wr_player2">
+          {!isPlayer2Kicked ? (
+            <>
+              <div className="wr_player2_top">
+                <p>피카츄</p>
+                <div className="wr_x" onClick={() => toggleKickModal("피카츄")}>
+                  x
+                </div>
+              </div>
+              <img src="/image/irumae2.png" alt="irumae2" />
+              {isReady && <div className="wr_player2_bot">준비</div>}
+            </>
+          ) : (
+            <div className="wr_player2_empty"></div>
+          )}
+        </div>
         {isKickVisible && (
           <div className="wr_kick">
             <div className="wr_kick_content">
