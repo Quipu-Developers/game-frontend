@@ -44,7 +44,8 @@ export default function Lobby() {
   const [isVisible, setIsVisible] = useState(false);
   const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
   const [error, setError] = useState("");
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [showRulesModal, setShowRulesModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -57,11 +58,6 @@ export default function Lobby() {
       setTimeout(() => setIsActive(false), 1000);
     }
   };
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
-
 
   const handleRoomCreate = () => {
     setShowForm(true);
@@ -111,39 +107,103 @@ export default function Lobby() {
     setIsPasswordFormVisible(false);
   };
 
+  const handleDeleteClick = () => {
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = () => {
+    navigate('/');
+    removeUserAccount();
+    setShowConfirmDelete(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+  };
+
+  const handleShowRules = () => {
+    setShowRulesModal(true);
+  };
+
+  const handleCloseRules = () => {
+    setShowRulesModal(false);
+  };
+
   return (
     <div className="lb_container">
-      <div className={`lb_hamburger ${isSidebarOpen ? "active" : ""}`} onClick={toggleSidebar}>
-        <div></div>
-        <div></div>
-        <div></div>
-      </div>
-        <div className={`lb_sidebar ${isSidebarOpen ? "active" : ""}`}>
-          <div className="lb_sidebar_top">
-            <div className="lb_sidebar_profile"></div>
-            <div className="lb_sidebar_name"></div>
-            <div className="lb_sidebar_num"></div>
-            <div className="lb_sidebar_delete"></div>
+      <div className="lb_sidebar">
+        <div className="lb_sidebar_top">
+          <div className="lb_sidebar_profile">
+            <img src="/image/irumaelb.png" alt="irumaelb" />
+          </div>
+          <div className="lb_sidebar_nn">
+            <div className="lb_sidebar_name">
+              김준호
+            </div>
+            <div className="lb_sidebar_num">
+              010-1234-5678
+            </div>
+          </div>
+          <div className="lb_sidebar_delete">
+            <div
+              className={`lb_rule ${isActive ? "active" : ""}`}
+              onClick={handleShowRules}>
+              게임 규칙
+            </div>
+            <button className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
+              탈퇴하기
+            </button>
           </div>
         </div>
+        <div className="lb_sidebar_bottom">
+          <div className="lb_sidebar_list">접속자 목록</div>
+          <div className="lb_sidebar_list_name">
+            <li>김준호</li>
+            <li>죠르디</li>
+            <li>피카츄</li>
+            <li>송승준</li>
+            <li>이예나</li>
+          </div>
+        </div>
+      </div>
+
+      {showConfirmDelete && (
+        <div className="lb_confirm_overlay">
+          <div className="lb_confirm_dialog">
+            <p>정말 탈퇴하시겠습니까?</p>
+            <div className="lb_confirm_buttons">
+              <button onClick={handleConfirmDelete}>확인</button>
+              <button onClick={handleCancelDelete}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {(showForm || isPasswordFormVisible) && <div className="lb_overlay" />}
 
+      <div className="lb_titlecontainer">
+        배틀글라운드
+      </div>
       <div className="lb_topcontainer">
-        <div className="lb_roomlist">
-          {rooms.map((room, index) => (
-            <div
-              key={index}
-              className="lb_roombox"
-              onClick={() => handleRoomClick(room)}
-            >
-              <div className="lb_roombox_num">1/3</div>
-              <div className="lb_roombox_title">{room.name}</div>
-              <div className="lb_roombox_admin">김준호</div>
-            </div>
-          ))}
-        </div>
-
+        {rooms.length === 0 ? (
+          <div className="lb_no_rooms_message">
+            (&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)
+          </div>
+        ) : (
+          <div className="lb_roomlist">
+            {rooms.map((room, index) => (
+              <div
+                key={index}
+                className="lb_roombox"
+                onClick={() => handleRoomClick(room)}
+              >
+                <div className="lb_roombox_num">1/3</div>
+                <div className="lb_roombox_title">{room.name}</div>
+                <div className="lb_roombox_admin">김준호</div>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -214,26 +274,27 @@ export default function Lobby() {
         </div>
       )}
 
-      <div
-        className={`lb_rule ${isActive ? "active" : ""}`}
-        onClick={handleClick}
-      >
-        &emsp;게임 규칙
-      </div>
-      <div className={`lb_rule_content ${isVisible ? "visible" : ""}`}>
-        <h3>🌟타자왕들의 한 판 승부!🌟</h3>
-        <ul>
-          <li>
-            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!
-          </li>
-          <li>
-            놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
-          </li>
-          <li>
-            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br /><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
-          </li>
-        </ul>
-      </div>
+      {showRulesModal && (
+        <div className="lb_rules_modal">
+          <div className="lb_rule_content">
+            <button className="lb_closeButton" onClick={handleCloseRules}>
+              X
+            </button>
+            <h3>게임 규칙</h3>
+            <ul>
+              <li>
+                화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한 격전!
+              </li>
+              <li>
+                놓친 단어는 <span className="highlight">라이벌</span>의 것! <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두 필수!
+              </li>
+              <li>
+                60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과 <span className="highlightt">눈치</span> 게임의 조화로<br /><span className="highlight">🏆Top 10🏆</span>에 도전하세요!
+              </li>
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
