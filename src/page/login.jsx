@@ -1,7 +1,30 @@
 import "../style/login.css";
 import React, { useState } from "react";
-import { io } from "socket.io-client"; // socket.io 클라이언트 가져오기
-import { loginUser } from "../service/login_service";
+import { useNavigate } from "react-router-dom";
+import { useAuthActions } from "../service/login_service";
+import { createUser } from "../service/http_service";
+
+export default function Login() {
+  const { loginUser } = useAuthActions();
+  const [userName, setUserName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const navigate = useNavigate();
+
+  async function handleLogin() {
+    try {
+      console.log(userName, phoneNumber);
+
+      // const userId = await createUser(userName, phoneNumber);
+      // console.log("User created with userId:", userId);
+
+      const userId = await loginUser(userName, phoneNumber);
+      console.log(userId);
+
+      navigate("/lobby");
+    } catch (error) {
+      console.error("Login or account creation failed:", error.message);
+    }
+  }
 
 export default function WaitingRoom() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,10 +47,16 @@ export default function WaitingRoom() {
       </div>
       <div className="lg-leftcontainer">
         <h2>닉네임</h2>
-        <input />
+        <input
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
+          />
         <h2>전화번호</h2>
-        <input />
-        <button className="login-button">로그인</button>
+       <input
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+          />
+        <button className="login-button" onClick={handleLogin}>로그인</button>
         <button className="signup-button" onClick={handleModalOpen}>회원가입</button>
       </div>
       <div className="lg-rightcontainer">

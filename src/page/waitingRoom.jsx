@@ -1,70 +1,96 @@
 import "../style/waitingRoom.css";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  sendMessage,
-  startGame,
-  kickMember,
-  deleteRoom,
-} from "../service/waitingRoom_service";
-
-async function handleSendMessage() {
-  const roomId = "room123";
-  const message = "Hello, team!";
-
-  try {
-    await sendMessage(roomId, message);
-    console.log("Message sent successfully!");
-  } catch (error) {
-    console.error("Failed to send message:", error.message);
-  }
-}
-
-async function handleKickMember() {
-  const roomId = "room123";
-  const targetId = "user456";
-
-  try {
-    await kickMember(roomId, targetId);
-    console.log("Member kicked successfully!");
-  } catch (error) {
-    console.error("Failed to kick member:", error.message);
-  }
-}
-
-async function handleDeleteRoom() {
-  const roomId = "room123";
-
-  try {
-    await deleteRoom(roomId);
-    console.log("Room deleted successfully!");
-  } catch (error) {
-    console.error("Failed to delete room:", error.message);
-  }
-}
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useWaitingRoomActions } from "../service/waitingRoom_service";
+import { useSocket } from "../socket";
 
 export default function WaitingRoom() {
+  const location = useLocation();
+  const { roomId, roomName, users } = location.state || {};
+  console.log(roomId, roomName, users);
+  const { sendMessage, startGame, kickMember, deleteRoom } =
+    useWaitingRoomActions();
   const [isReady, setIsReady] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [chats, setChats] = useState([]);
+  const [players, setPlayers] = useState(users);
+  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
+  const { socket } = useSocket();
+  
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
   const [isPlayer2Kicked, setIsPlayer2Kicked] = useState(false);
   const [title, setTitle] = useState("레뒤 안하면 강퇴!");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const navigate = useNavigate();
+
+  const addChatMessage = (userId, chatMessage) => {
+    setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
+  };
+
+  useEffect(() => {
+    if (socket) {
+      const handleChat = ({ userId, message }) => {
+        addChatMessage(userId, message);
+      };
+
+      const handleJoinUser = ({ user }) => {
+        console.log(user);
+        setPlayers((prevPlayers) => [...prevPlayers, user]);
+      };
+
+      socket.on("CHAT", handleChat);
+      socket.on("JOINUSER", handleJoinUser);
+
+      return () => {
+        socket.off("CHAT", handleChat);
+        socket.off("JOINUSER", handleJoinUser);
+      };
+    }
+  }, [socket]);
+
+  async function handleSendMessage(message) {
+    try {
+      await sendMessage(roomId, message);
+      console.log("Message sent successfully!");
+      addChatMessage("나", message);
+      setMessage("");
+    } catch (error) {
+      console.error("Failed to send message:", error.message);
+    }
+  }
+
+  async function handleStartGame() {
+    try {
+      await startGame(roomId);
+      console.log("game start successfully!");
+      navigate("/game");
+    } catch (error) {
+      console.error("Failed to game start:", error.message);
+    }
+  }
+
+  async function handleKickMember(targetId) {
+    try {
+      await kickMember(roomId, targetId);
+      console.log("Member kicked successfully!");
+    } catch (error) {
+      console.error("Failed to kick member:", error.message);
+    }
+  }
+
+  async function handleDeleteRoom() {
+    try {
+      await deleteRoom(roomId);
+      console.log("Room deleted successfully!");
+    } catch (error) {
+      console.error("Failed to delete room:", error.message);
+    }
+  }
 
   const toggleReady = () => {
     setIsReady(!isReady);
-  };
-
-  const [chats, setChats] = useState([
-    { message: "< 김준호 님이 입장했습니다. >", type: "system-message" },
-  ]);
-  const [message, setMessage] = useState("");
-
-  const startGame = () => {
-    navigate("/game");
   };
 
   const handleClick = () => {
@@ -77,24 +103,14 @@ export default function WaitingRoom() {
     }
   };
 
-  const addChatMessage = (chat, type) => {
-    setChats((prevChats) => [...prevChats, { message: chat, type: type }]);
-  };
-
-  const sendMessage = () => {
-    if (message) {
-      addChatMessage(`김준호 : ${message}`, "my-message");
-      setMessage("");
-    }
-  };
-
   const handleChange = (e) => {
     setMessage(e.target.value);
   };
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      sendMessage();
+      const roomId = "example-room-id";
+      handleSendMessage(roomId, message);
     }
   };
 
@@ -156,9 +172,16 @@ export default function WaitingRoom() {
         </div>
       </div>
       <div className="wr_leftcontainer">
-        <div className="wr_player1">
-          <div className="wr_player1_top">
-            <p>김준호</p>
+        {players.map((player, index) => (
+          <div key={index} className="wr_player1">
+            <div className="wr_player1_top">
+              <p>{player.userName}</p>
+            </div>
+            <img src={`/image/irumae${index + 1}.png`} alt="profile" />
+            {player.power === "leader" && (
+              <div className="wr_player1_bot">방장</div>
+            )}
+            {isReady && <div className="wr_player2_bot">준비</div>}
           </div>
           <img src="/image/irumae1.png" alt="irumae1" />
           <div className="wr_player1_bot">방장</div>
@@ -198,7 +221,7 @@ export default function WaitingRoom() {
         <div className="wr_bottom">
           <div className="wr_bottom_left">
             <img src="/image/person.png" alt="person" />
-            <div className="wr_bottom_left_num">3</div>
+            <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
           <div className="wr_bottom_start" onClick={startGame}>
@@ -218,8 +241,8 @@ export default function WaitingRoom() {
             .slice()
             .reverse()
             .map((chat, index) => (
-              <div key={index} className={`wr_chatMessage ${chat.type}`}>
-                {chat.message}
+              <div key={index} className="wr_chatMessage">
+                <strong>{chat.userId}:</strong> {chat.message}
               </div>
             ))}
         </div>
@@ -228,9 +251,12 @@ export default function WaitingRoom() {
             className="wr_input"
             value={message}
             onChange={handleChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
           />
-          <button onClick={sendMessage} className="wr_send">
+          <button
+            onClick={() => handleSendMessage("example-room-id", message)}
+            className="wr_send"
+          >
             전송
           </button>
         </div>

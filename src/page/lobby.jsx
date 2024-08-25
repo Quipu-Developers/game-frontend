@@ -1,45 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  fetchRooms,
-  createRoom,
-  deleteUserAccount,
-} from "../service/lobby_service";
+import { useLobbyActions } from "../service/lobby_service";
+import { useSocket } from "../socket";
 import "../style/lobby.css";
 
-async function loadRooms() {
-  try {
-    const rooms = await fetchRooms();
-    console.log("방 목록:", rooms);
-  } catch (error) {
-    console.error("방 목록을 가져오는 중 오류 발생:", error);
-  }
-}
-
-async function createNewRoom() {
-  try {
-    const roomId = await createRoom("방 이름", "비밀번호");
-    console.log("새로 생성된 방 ID:", roomId);
-  } catch (error) {
-    console.error("방 생성 중 오류 발생:", error);
-  }
-}
-
-async function removeUserAccount() {
-  try {
-    await deleteUserAccount();
-    console.log("계정이 삭제되었습니다.");
-  } catch (error) {
-    console.error("계정 삭제 중 오류 발생:", error);
-  }
-}
-
 export default function Lobby() {
+  const { fetchRooms, createRoom, enterRoom, deleteUserAccount } =
+    useLobbyActions();
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const [selectedRoom, setSelectedRoom] = useState(null);
-  const [password, setPassword] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isPasswordFormVisible, setIsPasswordFormVisible] = useState(false);
@@ -48,6 +18,38 @@ export default function Lobby() {
   const [showRulesModal, setShowRulesModal] = useState(false);
 
   const navigate = useNavigate();
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    const loadRooms = async () => {
+      try {
+        const room_list = await fetchRooms();
+        setRooms(room_list);
+        console.log("방 목록:", room_list);
+      } catch (error) {
+        console.error("방 목록을 가져오는 중 오류 발생:", error);
+      }
+    };
+
+    loadRooms();
+
+    return () => {
+      if (socket) {
+        socket.off("GETROOMS");
+      }
+    };
+  }, [socket, fetchRooms]);
+
+  // async function removeUserAccount() {
+  //   try {
+  //     await deleteUserAccount();
+  //     console.log("계정이 삭제되었습니다.");
+  //     alert("계정이 삭제되었습니다.");
+  //     navigate("/");
+  //   } catch (error) {
+  //     console.error("계정 삭제 중 오류 발생:", error);
+  //   }
+  // }
 
   const handleClick = () => {
     if (!isActive) {
@@ -67,41 +69,40 @@ export default function Lobby() {
     setRoomName(event.target.value);
   };
 
-  const handleRoomPasswordChange = (event) => {
-    setPassword(event.target.value);
-  };
-
-  const handleRoomSubmit = (event) => {
+  const handleRoomSubmit = async (event) => {
     event.preventDefault();
-    if (roomName.trim() !== "" && password.trim() !== "") {
-      setRooms([...rooms, { name: roomName, password: password }]);
-      setRoomName("");
-      setPassword("");
-      setShowForm(false);
+    if (roomName.trim() !== "") {
+      try {
+        const room = await createRoom(roomName);
+        navigate("/waiting-room", {
+          state: {
+            roomId: room.roomId,
+            roomName: room.roomName,
+            users: room.users,
+          },
+        });
+      } catch (error) {
+        console.error("방 생성 중 오류 발생:", error);
+      }
     }
   };
 
-  const handleRoomClick = (room) => {
-    setSelectedRoom(room);
-    setPassword("");
-    setError("");
-    setIsPasswordFormVisible(true);
-  };
-
-  const handlePasswordSubmit = (event) => {
-    event.preventDefault();
-    if (password === selectedRoom.password) {
-      navigate("/game");
-    } else {
-      setError("(비밀번호가 틀렸습니다.)");
+  const handleEnterRoom = async (roomId, roomName) => {
+    try {
+      const users = await enterRoom(roomId);
+      navigate("/waiting-room", {
+        state: { roomId: roomId, roomName: roomName, users: users },
+      });
+    } catch (error) {
+      console.error("방 입장 중 오류 발생:", error);
     }
   };
 
   const handleCloseForm = () => {
     setShowForm(false);
   };
-
-  const handleClosePasswordForm = () => {
+  
+    const handleClosePasswordForm = () => {
     setSelectedRoom(null);
     setError("");
     setIsPasswordFormVisible(false);
@@ -191,19 +192,25 @@ export default function Lobby() {
           </div>
         ) : (
           <div className="lb_roomlist">
-            {rooms.map((room, index) => (
-              <div
-                key={index}
-                className="lb_roombox"
-                onClick={() => handleRoomClick(room)}
-              >
-                <div className="lb_roombox_num">1/3</div>
-                <div className="lb_roombox_title">{room.name}</div>
-                <div className="lb_roombox_admin">김준호</div>
+                     {rooms.map((room, index) => (
+            <div key={index} className="lb_roombox">
+              <div className="lb_roombox_num">{room.users.length}/3</div>
+              <div className="lb_roombox_title">{room.roomName}</div>
+              <div className="lb_roombox_title">
+                {room.started ? "게임 중" : "준비 중"}
               </div>
-            ))}
+              <div className="lb_roombox_title">
+                {room.users.find((user) => user.power === "leader")?.userName}
+              </div>
+
+              <button
+                className="lb_submit"
+                onClick={() => handleEnterRoom(room.roomId, room.roomName)}
+              >
+                입장하기
+              </button>
           </div>
-        )}
+        ))}
         <div className="lb_botcontainer">
           <button className="lb_roomMake" onClick={handleRoomCreate}>
             방 만들기
@@ -218,25 +225,12 @@ export default function Lobby() {
           </button>
           <form onSubmit={handleRoomSubmit}>
             <div className="lb_inputgroup">
-              <label htmlFor="roomName">방 이름 :</label>
+              <label>방 이름 :</label>
               <input
                 className="lb_roomname"
                 id="roomName"
-                autoComplete="off"
                 value={roomName}
                 onChange={handleRoomNameChange}
-                required
-              />
-            </div>
-            <div className="lb_inputgroup">
-              <label htmlFor="roomPassword">비밀번호 :</label>
-              <input
-                className="lb_roomPassword"
-                type="password"
-                id="roomPassword"
-                value={password}
-                onChange={handleRoomPasswordChange}
-                required
               />
             </div>
             <button className="lb_submit" type="submit">

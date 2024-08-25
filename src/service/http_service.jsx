@@ -5,7 +5,7 @@ const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 // /game-end API 호출
 export const getGameEndInfo = async (userId) => {
   try {
-    const response = await axios.get(`${BASE_URL}/game-end`, {
+    const response = await axios.get(`${BASE_URL}/api/game-end`, {
       params: { userId },
       headers: {
         Accept: "application/json",
@@ -27,9 +27,10 @@ export const getGameEndInfo = async (userId) => {
 
 // /create-user API 호출
 export const createUser = async (userName, phoneNumber) => {
+  console.log(userName, phoneNumber);
   try {
     const response = await axios.post(
-      `${BASE_URL}/create-user`,
+      `${BASE_URL}/api/create-user`,
       { userName, phoneNumber },
       {
         headers: {
@@ -38,6 +39,9 @@ export const createUser = async (userName, phoneNumber) => {
         },
       }
     );
+    if (response.data.userId) {
+      localStorage.setItem("userId", response.data.userId);
+    }
     return response.data; // 성공 시 JSON 데이터 반환 (예: { userId: 123 })
   } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
@@ -53,7 +57,7 @@ export const createUser = async (userName, phoneNumber) => {
 export const deleteUser = async (userId) => {
   try {
     const response = await axios.post(
-      `${BASE_URL}/delete-user`,
+      `${BASE_URL}/api/delete-user`,
       { userId },
       {
         headers: {
@@ -77,7 +81,7 @@ export const deleteUser = async (userId) => {
 export const updateUser = async (userId, info) => {
   try {
     const response = await axios.post(
-      `${BASE_URL}/update-user`,
+      `${BASE_URL}/api/update-user`,
       { userId, info },
       {
         headers: {
