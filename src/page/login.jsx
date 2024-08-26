@@ -30,7 +30,9 @@ export default function Login() {
       const userId = await loginUser(userName, phoneNumber);
       console.log(userId);
 
-      navigate("/lobby");
+      navigate("/lobby", {
+        state: { userName: userName, phoneNumber: phoneNumber },
+      });
     } catch (error) {
       console.error("Login or account creation failed:", error.message);
     }

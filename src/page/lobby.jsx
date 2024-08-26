@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useLobbyActions } from "../service/lobby_service";
 import { useSocket } from "../socket";
 import "../style/lobby.css";
@@ -13,9 +13,10 @@ export default function Lobby() {
   const [isActive, setIsActive] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
-
+  const location = useLocation();
   const navigate = useNavigate();
   const { socket } = useSocket();
+  const { userName, phoneNumber } = location.state || {};
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -108,8 +109,8 @@ export default function Lobby() {
             <img src="/image/irumaelb.png" alt="irumaelb" />
           </div>
           <div className="lb_sidebar_nn">
-            <div className="lb_sidebar_name">김준호</div>
-            <div className="lb_sidebar_num">010-1234-5678</div>
+            <div className="lb_sidebar_name">{userName}</div>
+            <div className="lb_sidebar_num">{phoneNumber}</div>
           </div>
           <div className="lb_sidebar_delete">
             <div
@@ -165,7 +166,7 @@ export default function Lobby() {
                 <div className="lb_roombox_title">
                   {room.started ? "게임 중" : "준비 중"}
                 </div>
-                <div className="lb_roombox_title">
+                <div className="lb_roombox_admin">
                   {room.users.find((user) => user.power === "leader")?.userName}
                 </div>
 

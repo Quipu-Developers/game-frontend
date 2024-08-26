@@ -7,23 +7,24 @@ import { useSocket } from "../socket";
 export default function WaitingRoom() {
   const location = useLocation();
   const { roomId, roomName, users } = location.state || {};
-  console.log(roomId, roomName, users);
   const { sendMessage, startGame, kickMember, deleteRoom } =
     useWaitingRoomActions();
-  const [isReady, setIsReady] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [chats, setChats] = useState([]);
-  const [players, setPlayers] = useState(users);
+  const [players, setPlayers] = useState(
+    users.map((user) => ({ ...user, isReady: false }))
+  );
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const { socket } = useSocket();
-
+  const { socket, storage } = useSocket();
+  const userId = storage.getItem("userId");
+  console.log(users, userId);
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
   const [isPlayer2Kicked, setIsPlayer2Kicked] = useState(false);
   const [title, setTitle] = useState("레뒤 안하면 강퇴!");
   const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
   const addChatMessage = (userId, chatMessage) => {
     setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
@@ -37,7 +38,10 @@ export default function WaitingRoom() {
 
       const handleJoinUser = ({ user }) => {
         console.log(user);
-        setPlayers((prevPlayers) => [...prevPlayers, user]);
+        setPlayers((prevPlayers) => [
+          ...prevPlayers,
+          { ...user, isReady: false },
+        ]);
       };
 
       socket.on("CHAT", handleChat);
@@ -92,7 +96,14 @@ export default function WaitingRoom() {
   }
 
   const toggleReady = () => {
-    setIsReady(!isReady);
+    setPlayers((prevPlayers) =>
+      prevPlayers.map((player) =>
+        player.userId === userId
+          ? { ...player, isReady: !player.isReady }
+          : player
+      )
+    );
+    console.log("players :", players);
   };
 
   const handleClick = () => {
@@ -166,30 +177,22 @@ export default function WaitingRoom() {
           <div key={index} className="wr_player1">
             <div className="wr_player1_top">
               <p>{player.userName}</p>
+              <div
+                className="wr_x"
+                onClick={() => toggleKickModal(player.userName)}
+              >
+                x
+              </div>
             </div>
             <img src={`/image/irumae${index + 1}.png`} alt="profile" />
             {player.power === "leader" && (
               <div className="wr_player1_bot">방장</div>
             )}
-            {isReady && <div className="wr_player2_bot">준비</div>}
+            {player.isReady && player.userId === userId && (
+              <div className="wr_player2_bot">준비</div>
+            )}
           </div>
         ))}
-        <div className="wr_player2">
-          {!isPlayer2Kicked ? (
-            <>
-              <div className="wr_player2_top">
-                <p>피카츄</p>
-                <div className="wr_x" onClick={() => toggleKickModal("피카츄")}>
-                  x
-                </div>
-              </div>
-              <img src="/image/irumae2.png" alt="irumae2" />
-              {isReady && <div className="wr_player2_bot">준비</div>}
-            </>
-          ) : (
-            <div className="wr_player2_empty"></div>
-          )}
-        </div>
         {isKickVisible && (
           <div className="wr_kick">
             <div className="wr_kick_content">
@@ -222,10 +225,16 @@ export default function WaitingRoom() {
             게임 시작
           </div>
           <div
-            className={isReady ? "wr_bottom_ready_not" : "wr_bottom_ready"}
+            className={
+              players.find((player) => player.userId === userId)?.isReady
+                ? "wr_bottom_ready_not"
+                : "wr_bottom_ready"
+            }
             onClick={toggleReady}
           >
-            {isReady ? "준비 취소" : "게임 준비"}
+            {players.find((player) => player.userId === userId)?.isReady
+              ? "준비 취소"
+              : "게임 준비"}
           </div>
         </div>
       </div>
