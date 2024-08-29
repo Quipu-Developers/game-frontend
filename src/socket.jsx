@@ -13,6 +13,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
+  const [isConnected, setIsConnected] = useState(false); // 연결 상태 관리
 
   useEffect(() => {
     const socketIo = io.connect(BASE_URL);
@@ -20,16 +21,19 @@ export const SocketProvider = ({ children }) => {
     // 연결 성공 시
     socketIo.on("connect", () => {
       console.log("Socket connected:", socketIo.id);
+      setIsConnected(true); // 연결 상태 업데이트
     });
 
     // 연결 해제 시
     socketIo.on("disconnect", (reason) => {
       console.log("Socket disconnected:", reason);
+      setIsConnected(false); // 연결 상태 업데이트
     });
 
     // 연결 오류 시
     socketIo.on("connect_error", (error) => {
       console.error("Socket connection error:", error);
+      setIsConnected(false); // 연결 상태 업데이트
     });
 
     setSocket(socketIo);
@@ -40,7 +44,7 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, storage }}>
+    <SocketContext.Provider value={{ socket, storage, isConnected }}>
       {children}
     </SocketContext.Provider>
   );

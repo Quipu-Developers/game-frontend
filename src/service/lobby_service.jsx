@@ -52,6 +52,8 @@ export function useLobbyActions() {
           return;
         }
 
+        console.log("roomId", roomId);
+
         socket.emit("JOINROOM", { userId, roomId }, (response) => {
           if (response.success) {
             resolve(response.users);

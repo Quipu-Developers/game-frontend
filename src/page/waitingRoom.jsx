@@ -2,6 +2,7 @@ import "../style/waitingRoom.css";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWaitingRoomActions } from "../service/waitingRoom_service";
+import { useLobbyActions } from "../service/lobby_service";
 import { useSocket } from "../socket";
 
 export default function WaitingRoom() {
@@ -9,50 +10,43 @@ export default function WaitingRoom() {
   const { roomId, roomName, users } = location.state || {};
   const { sendMessage, startGame, kickMember, deleteRoom } =
     useWaitingRoomActions();
+  const { enterRoom } = useLobbyActions();
   const [chats, setChats] = useState([]);
-  const [players, setPlayers] = useState(
-    users.map((user) => ({ ...user, isReady: false }))
-  );
+  const [players, setPlayers] = useState(users); // 빈 배열로 초기화
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
-  const { socket, storage } = useSocket();
-  const userId = storage.getItem("userId");
-  console.log(users, userId);
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
-  const [isPlayer2Kicked, setIsPlayer2Kicked] = useState(false);
-  const [title, setTitle] = useState("레뒤 안하면 강퇴!");
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
+  const { socket, storage, isConnected } = useSocket();
+  const userId = storage.getItem("userId");
+
+  useEffect(() => {
+    if (socket) {
+      const handleJoinUser = (user) => {
+        console.log("새로운 유저가 들어왔습니다:", user);
+        setPlayers((prevPlayers) => {
+          if (!prevPlayers.some((p) => p.userId === user.userId)) {
+            return [...prevPlayers, user];
+          }
+          return prevPlayers;
+        });
+      };
+
+      // 이벤트 리스너를 추가하기 전에 기존 리스너 제거
+      socket.off("JOINUSER", handleJoinUser);
+      socket.on("JOINUSER", handleJoinUser);
+
+      return () => {
+        socket.off("JOINUSER", handleJoinUser); // 컴포넌트 언마운트 시 이벤트 리스너 제거
+      };
+    }
+  }, [socket]); // socket 의존성에 따라 한 번만 실행되도록 설정
 
   const addChatMessage = (userId, chatMessage) => {
     setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
   };
-
-  useEffect(() => {
-    if (socket) {
-      const handleChat = ({ userId, message }) => {
-        addChatMessage(userId, message);
-      };
-
-      const handleJoinUser = ({ user }) => {
-        console.log(user);
-        setPlayers((prevPlayers) => [
-          ...prevPlayers,
-          { ...user, isReady: false },
-        ]);
-      };
-
-      socket.on("CHAT", handleChat);
-      socket.on("JOINUSER", handleJoinUser);
-
-      return () => {
-        socket.off("CHAT", handleChat);
-        socket.off("JOINUSER", handleJoinUser);
-      };
-    }
-  }, [socket]);
 
   async function handleSendMessage() {
     try {
@@ -74,37 +68,6 @@ export default function WaitingRoom() {
       console.error("Failed to game start:", error.message);
     }
   }
-
-  const handleKickMemberConfirm = () => {
-    if (kickTarget) {
-      console.log(`${kickTarget} was kicked`);
-      setIsKickVisible(false);
-
-      if (kickTarget === "피카츄") {
-        setIsPlayer2Kicked(true);
-      }
-    }
-  };
-
-  async function handleDeleteRoom() {
-    try {
-      await deleteRoom(roomId);
-      console.log("Room deleted successfully!");
-    } catch (error) {
-      console.error("Failed to delete room:", error.message);
-    }
-  }
-
-  const toggleReady = () => {
-    setPlayers((prevPlayers) =>
-      prevPlayers.map((player) =>
-        player.userId === userId
-          ? { ...player, isReady: !player.isReady }
-          : player
-      )
-    );
-    console.log("players :", players);
-  };
 
   const handleClick = () => {
     if (!isActive) {
@@ -131,46 +94,22 @@ export default function WaitingRoom() {
     setIsKickVisible(!isKickVisible);
   };
 
-  const handleTitleChange = (e) => {
-    setTitle(e.target.value);
-  };
-
-  const handleTitleEdit = () => {
-    setIsEditingTitle(true);
-  };
-
-  const handleTitleSubmit = () => {
-    setIsEditingTitle(false);
-  };
-
-  const handleTitleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleTitleSubmit();
-    }
-  };
-
   const back = () => {
     navigate("/lobby");
+  };
+
+  const handleKickMemberConfirm = () => {
+    if (kickTarget) {
+      console.log(`${kickTarget} was kicked`);
+      setIsKickVisible(false);
+    }
   };
 
   return (
     <div className="wr_container">
       <div className="wr_back" onClick={back} />
       <div className="wr_topcontainer">
-        <div className="wr_title">
-          {isEditingTitle ? (
-            <input
-              type="text"
-              value={title}
-              onChange={handleTitleChange}
-              onBlur={handleTitleSubmit}
-              onKeyPress={handleTitleKeyPress}
-              autoFocus
-            />
-          ) : (
-            <span onClick={handleTitleEdit}>{title}</span>
-          )}
-        </div>
+        <div className="wr_title">{roomName}</div>
       </div>
       <div className="wr_leftcontainer">
         {players.map((player, index) => (
@@ -187,9 +126,6 @@ export default function WaitingRoom() {
             <img src={`/image/irumae${index + 1}.png`} alt="profile" />
             {player.power === "leader" && (
               <div className="wr_player1_bot">방장</div>
-            )}
-            {player.isReady && player.userId === userId && (
-              <div className="wr_player2_bot">준비</div>
             )}
           </div>
         ))}
@@ -223,18 +159,6 @@ export default function WaitingRoom() {
           </div>
           <div className="wr_bottom_start" onClick={handleStartGame}>
             게임 시작
-          </div>
-          <div
-            className={
-              players.find((player) => player.userId === userId)?.isReady
-                ? "wr_bottom_ready_not"
-                : "wr_bottom_ready"
-            }
-            onClick={toggleReady}
-          >
-            {players.find((player) => player.userId === userId)?.isReady
-              ? "준비 취소"
-              : "게임 준비"}
           </div>
         </div>
       </div>
