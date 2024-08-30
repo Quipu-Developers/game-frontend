@@ -2,72 +2,134 @@ import "../style/waitingRoom.css";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWaitingRoomActions } from "../service/waitingRoom_service";
-import { useLobbyActions } from "../service/lobby_service";
 import { useSocket } from "../socket";
 
 export default function WaitingRoom() {
   const location = useLocation();
   const { roomId, roomName, users } = location.state || {};
-  const { sendMessage, startGame, kickMember, deleteRoom } =
-    useWaitingRoomActions();
-  const { enterRoom } = useLobbyActions();
-  const [chats, setChats] = useState([]);
-  const [players, setPlayers] = useState(users); // 빈 배열로 초기화
+  const { startGame, kickMember, deleteRoom } = useWaitingRoomActions();
   const [message, setMessage] = useState("");
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
-  const { socket, storage, isConnected } = useSocket();
+  const { socket, storage } = useSocket();
   const userId = storage.getItem("userId");
+  const [chats, setChats] = useState(() => {
+    const storedChats = storage.getItem(`chats_${roomId}`);
+    return storedChats ? JSON.parse(storedChats) : [];
+  });
+
+  const [players, setPlayers] = useState(() => {
+    const storedPlayers = storage.getItem(`players_${roomId}`);
+    return storedPlayers ? JSON.parse(storedPlayers) : users;
+  });
+
+  const leader = players.find((player) => player.power === "leader"); //방장 찾기
 
   useEffect(() => {
-    if (socket) {
-      const handleJoinUser = (user) => {
-        console.log("새로운 유저가 들어왔습니다:", user);
-        setPlayers((prevPlayers) => {
-          if (!prevPlayers.some((p) => p.userId === user.userId)) {
-            return [...prevPlayers, user];
-          }
-          return prevPlayers;
-        });
-      };
+    if (!socket) return;
 
-      // 이벤트 리스너를 추가하기 전에 기존 리스너 제거
-      socket.off("JOINUSER", handleJoinUser);
-      socket.on("JOINUSER", handleJoinUser);
+    const getJoinUser = (user) => {
+      console.log("새로운 유저가 들어왔습니다:", user);
+      setPlayers((prevPlayers) => {
+        const updatedPlayers = [...prevPlayers, user];
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
+    };
 
-      return () => {
-        socket.off("JOINUSER", handleJoinUser); // 컴포넌트 언마운트 시 이벤트 리스너 제거
-      };
+    const getChatMessage = ({ userName, message }) => {
+      console.log("새로운 메시지:", message);
+      setChats((prevChats) => {
+        const updatedChats = [...prevChats, { userName, message }];
+        storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
+        return updatedChats;
+      });
+    };
+
+    const getDeleteRoom = () => {
+      alert("방이 삭제되었습니다.");
+      navigate("/lobby");
+    };
+
+    const getStartGame = () => {
+      navigate("/game");
+    };
+
+    const setupSocketListeners = () => {
+      socket.on("JOINUSER", getJoinUser);
+      socket.on("CHAT", getChatMessage);
+      socket.on("DELETEROOM", getDeleteRoom);
+      socket.on("STARTGAME", getStartGame);
+    };
+
+    if (socket.connected) {
+      setupSocketListeners();
+    } else {
+      socket.connect();
+      socket.once("connect", setupSocketListeners);
     }
-  }, [socket]); // socket 의존성에 따라 한 번만 실행되도록 설정
 
-  const addChatMessage = (userId, chatMessage) => {
-    setChats((prevChats) => [...prevChats, { userId, message: chatMessage }]);
+    // 컴포넌트 언마운트 시 방 삭제
+    return () => {
+      socket.off("JOINUSER", getJoinUser);
+      socket.off("CHAT", getChatMessage);
+      socket.off("DELETEROOM", getDeleteRoom);
+      socket.off("STARTGAME", getStartGame);
+    };
+  }, [socket, roomId, storage, navigate, leader, userId]);
+
+  const addChatMessage = (userName, chatMessage) => {
+    setChats((prevChats) => {
+      const updatedChats = [...prevChats, { userName, message: chatMessage }];
+      storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
+      return updatedChats;
+    });
   };
 
-  async function handleSendMessage() {
+  const handleSendMessage = () => {
     try {
-      await sendMessage(roomId, message);
-      console.log("Message sent successfully!");
+      const chatPacket = {
+        userId,
+        roomId,
+        message,
+      };
+
       addChatMessage("나", message);
+
+      socket.emit("CHAT", chatPacket, (response) => {
+        if (!response.success) {
+          console.error("Failed to send message.");
+        }
+      });
+
       setMessage("");
     } catch (error) {
       console.error("Failed to send message:", error.message);
     }
-  }
+  };
 
-  async function handleStartGame() {
+  const handleStartGame = async () => {
     try {
       await startGame(roomId);
       console.log("game start successfully!");
       navigate("/game");
     } catch (error) {
-      console.error("Failed to game start:", error.message);
+      console.error("Failed to start game:", error.message);
     }
-  }
+  };
+
+  const handleDeleteRoom = async () => {
+    try {
+      await deleteRoom(roomId);
+      alert("방이 삭제되었습니다.");
+      navigate("/lobby");
+    } catch (error) {
+      console.error("Failed to delete room", error.message);
+    }
+  };
 
   const handleClick = () => {
     if (!isActive) {
@@ -110,18 +172,21 @@ export default function WaitingRoom() {
       <div className="wr_back" onClick={back} />
       <div className="wr_topcontainer">
         <div className="wr_title">{roomName}</div>
+        {String(leader.userId) === userId && (
+          <button onClick={handleDeleteRoom}>방 삭제하기</button>
+        )}
       </div>
       <div className="wr_leftcontainer">
         {players.map((player, index) => (
           <div key={index} className="wr_player1">
             <div className="wr_player1_top">
               <p>{player.userName}</p>
-              <div
+              {/* <div
                 className="wr_x"
                 onClick={() => toggleKickModal(player.userName)}
               >
                 x
-              </div>
+              </div> */}
             </div>
             <img src={`/image/irumae${index + 1}.png`} alt="profile" />
             {player.power === "leader" && (
@@ -129,7 +194,8 @@ export default function WaitingRoom() {
             )}
           </div>
         ))}
-        {isKickVisible && (
+
+        {/* {isKickVisible && (
           <div className="wr_kick">
             <div className="wr_kick_content">
               <p>
@@ -150,16 +216,21 @@ export default function WaitingRoom() {
               </button>
             </div>
           </div>
-        )}
+        )} */}
         <div className="wr_bottom">
           <div className="wr_bottom_left">
             <img src="/image/person.png" alt="person" />
             <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
-          <div className="wr_bottom_start" onClick={handleStartGame}>
-            게임 시작
-          </div>
+          {String(leader.userId) === userId && (
+            <div className="wr_bottom_start" onClick={handleStartGame}>
+              게임 시작
+            </div>
+          )}
+          {/* {String(leader.userId) !== userId && (
+            <div className="wr_bottom_ready">게임 준비</div>
+          )} */}
         </div>
       </div>
       <div className="wr_rightcontainer">
@@ -169,7 +240,7 @@ export default function WaitingRoom() {
             .reverse()
             .map((chat, index) => (
               <div key={index} className="wr_chatMessage">
-                <strong>{chat.userId}:</strong> {chat.message}
+                <strong>{chat.userName}:</strong> {chat.message}
               </div>
             ))}
         </div>

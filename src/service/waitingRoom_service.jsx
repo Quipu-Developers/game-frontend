@@ -4,27 +4,6 @@ import { useSocket } from "../socket";
 export function useWaitingRoomActions() {
   const { socket, storage } = useSocket();
 
-  const sendMessage = useCallback(
-    (roomId, message) => {
-      return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
-        if (!socket) {
-          reject(new Error("Socket is not connected"));
-          return;
-        }
-
-        socket.emit("CHAT", { userId, roomId, message }, (response) => {
-          if (response.success) {
-            resolve();
-          } else {
-            reject(new Error("Failed to send message"));
-          }
-        });
-      });
-    },
-    [socket, storage]
-  );
-
   const startGame = useCallback(
     (roomId) => {
       return new Promise((resolve, reject) => {
@@ -88,5 +67,5 @@ export function useWaitingRoomActions() {
     [socket, storage]
   );
 
-  return { sendMessage, startGame, kickMember, deleteRoom };
+  return { startGame, kickMember, deleteRoom };
 }
