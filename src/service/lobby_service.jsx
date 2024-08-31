@@ -6,13 +6,9 @@ export function useLobbyActions() {
 
   const fetchRooms = useCallback(async () => {
     return new Promise((resolve, reject) => {
-      const userId = storage.getItem("userId");
-      if (!socket) {
-        reject(new Error("Socket is not connected"));
-        return;
-      }
+      if (!socket) return reject(new Error("Socket is not connected"));
 
-      socket.emit("GETROOMS", { userId }, (response) => {
+      socket.emit("GETROOMS", {}, (response) => {
         if (response.success) {
           resolve(response.rooms);
         } else {
@@ -25,13 +21,12 @@ export function useLobbyActions() {
   const createRoom = useCallback(
     async (roomName) => {
       return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
         }
 
-        socket.emit("CREATEROOM", { userId, roomName }, (response) => {
+        socket.emit("CREATEROOM", { roomName }, (response) => {
           if (response.room) {
             resolve(response.room);
           } else {
@@ -46,15 +41,12 @@ export function useLobbyActions() {
   const enterRoom = useCallback(
     (roomId) => {
       return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
         }
 
-        console.log("roomId", roomId);
-
-        socket.emit("JOINROOM", { userId, roomId }, (response) => {
+        socket.emit("JOINROOM", { roomId }, (response) => {
           if (response.success) {
             resolve(response.users);
           } else {
@@ -66,26 +58,22 @@ export function useLobbyActions() {
     [socket, storage]
   );
 
-  const deleteUserAccount = useCallback(
-    async (roomId) => {
-      return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
-        if (!socket) {
-          reject(new Error("Socket is not connected"));
-          return;
-        }
+  const deleteUserAccount = useCallback(async () => {
+    return new Promise((resolve, reject) => {
+      if (!socket) {
+        reject(new Error("Socket is not connected"));
+        return;
+      }
 
-        socket.emit("DELETEUSER", { roomId, userId }, (response) => {
-          if (response.success) {
-            resolve();
-          } else {
-            reject(new Error("Failed to delete user account"));
-          }
-        });
+      socket.emit("DELETEUSER", {}, (response) => {
+        if (response.success) {
+          resolve();
+        } else {
+          reject(new Error("Failed to delete user account"));
+        }
       });
-    },
-    [socket, storage]
-  );
+    });
+  }, [socket, storage]);
 
   return { fetchRooms, createRoom, enterRoom, deleteUserAccount };
 }

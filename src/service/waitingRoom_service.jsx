@@ -4,37 +4,32 @@ import { useSocket } from "../socket";
 export function useWaitingRoomActions() {
   const { socket, storage } = useSocket();
 
-  const startGame = useCallback(
-    (roomId) => {
-      return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
-        if (!socket) {
-          reject(new Error("Socket is not connected"));
-          return;
-        }
+  const startGame = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (!socket) {
+        reject(new Error("Socket is not connected"));
+        return;
+      }
 
-        socket.emit("STARTGAME", { userId, roomId }, (response) => {
-          if (response.success) {
-            resolve();
-          } else {
-            reject(new Error("Failed to start game"));
-          }
-        });
+      socket.emit("STARTGAME", {}, (response) => {
+        if (response.success) {
+          resolve();
+        } else {
+          reject(new Error("Failed to start game"));
+        }
       });
-    },
-    [socket, storage]
-  );
+    });
+  }, [socket, storage]);
 
   const kickMember = useCallback(
-    (roomId, targetId) => {
+    (targetId) => {
       return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
         }
 
-        socket.emit("KICKMEMBER", { userId, roomId, targetId }, (response) => {
+        socket.emit("KICKMEMBER", { targetId }, (response) => {
           if (response.success) {
             resolve();
           } else {
@@ -46,26 +41,39 @@ export function useWaitingRoomActions() {
     [socket, storage]
   );
 
-  const deleteRoom = useCallback(
-    (roomId) => {
-      return new Promise((resolve, reject) => {
-        const userId = storage.getItem("userId");
-        if (!socket) {
-          reject(new Error("Socket is not connected"));
-          return;
+  const deleteRoom = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (!socket) {
+        reject(new Error("Socket is not connected"));
+        return;
+      }
+
+      socket.emit("DELETEROOM", {}, (response) => {
+        if (response.success) {
+          resolve();
+        } else {
+          reject(new Error("Failed to delete room"));
         }
-
-        socket.emit("DELETEROOM", { roomId, userId }, (response) => {
-          if (response.success) {
-            resolve();
-          } else {
-            reject(new Error("Failed to delete room"));
-          }
-        });
       });
-    },
-    [socket, storage]
-  );
+    });
+  }, [socket, storage]);
 
-  return { startGame, kickMember, deleteRoom };
+  const leaveRoom = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (!socket) {
+        reject(new Error("Socket is not connected"));
+        return;
+      }
+
+      socket.emit("LEAVEROOM", {}, (response) => {
+        if (response.success) {
+          resolve();
+        } else {
+          reject(new Error("Failed to delete room"));
+        }
+      });
+    });
+  }, [socket, storage]);
+
+  return { startGame, kickMember, deleteRoom, leaveRoom };
 }

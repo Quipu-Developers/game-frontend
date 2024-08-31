@@ -5,8 +5,7 @@ import { useSocket } from "../socket";
 import "../style/lobby.css";
 
 export default function Lobby() {
-  const { fetchRooms, createRoom, enterRoom, deleteUserAccount } =
-    useLobbyActions();
+  const { fetchRooms, createRoom, enterRoom, deleteUserAccount, leaveRoom } = useLobbyActions();
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
@@ -17,6 +16,8 @@ export default function Lobby() {
   const navigate = useNavigate();
   const { socket } = useSocket();
   const { userName, phoneNumber } = location.state || {};
+
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const loadRooms = async () => {
@@ -31,9 +32,29 @@ export default function Lobby() {
 
     loadRooms();
 
+    socket.on("CREATEROOM", (room) => {
+      setRooms((prevRooms) => [...prevRooms, room]);
+    });
+    socket.on("DELETEROOM", ({ roomId }) => {
+      setRooms((prevRooms) => prevRooms.filter((room) => room.roomId !== roomId));
+    });
+
+    socket.on("JOINLOBBY", (user) => {
+      console.log(`user ${user.userName} joined`);
+      setUsers((prevUsers) => [...prevUsers, user]);
+    });
+    socket.on("LEAVELOBBY", (userId) => {
+      console.log(`user ${userId} left`);
+      setUsers((prevUsers) => prevUsers.filter((user) => user.userId !== userId));
+    });
+
     return () => {
       if (socket) {
+        socket.off("CREATEROOM");
         socket.off("GETROOMS");
+        socket.off("JOINLOBBY");
+        socket.off("LEAVELOBBY");
+        socket.off("DELETEROOM");
       }
     };
   }, [socket, fetchRooms]);
@@ -113,16 +134,10 @@ export default function Lobby() {
             <div className="lb_sidebar_num">{phoneNumber}</div>
           </div>
           <div className="lb_sidebar_delete">
-            <div
-              className={`lb_rule ${isActive ? "active" : ""}`}
-              onClick={handleShowRules}
-            >
+            <div className={`lb_rule ${isActive ? "active" : ""}`} onClick={handleShowRules}>
               게임 규칙
             </div>
-            <button
-              className="lb_sidebar_delete_button"
-              onClick={handleDeleteClick}
-            >
+            <button className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
               탈퇴하기
             </button>
           </div>
@@ -130,11 +145,9 @@ export default function Lobby() {
         <div className="lb_sidebar_bottom">
           <div className="lb_sidebar_list">접속자 목록</div>
           <ul className="lb_sidebar_list_name">
-            <li>김준호</li>
-            <li>죠르디</li>
-            <li>피카츄</li>
-            <li>송승준</li>
-            <li>이예나</li>
+            {users.map((user) => (
+              <li key={user.userId}>{user.userName}</li>
+            ))}
           </ul>
         </div>
       </div>
@@ -154,18 +167,14 @@ export default function Lobby() {
       <div className="lb_titlecontainer">배틀글라운드</div>
       <div className="lb_topcontainer">
         {rooms.length === 0 ? (
-          <div className="lb_no_rooms_message">
-            (&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)
-          </div>
+          <div className="lb_no_rooms_message">(&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)</div>
         ) : (
           <div className="lb_roomlist">
             {rooms.map((room, index) => (
               <div key={index} className="lb_roombox">
                 <div className="lb_roombox_num">{room.users.length}/3</div>
                 <div className="lb_roombox_title">{room.roomName}</div>
-                <div className="lb_roombox_title">
-                  {room.started ? "게임 중" : "준비 중"}
-                </div>
+                <div className="lb_roombox_title">{room.started ? "게임 중" : "준비 중"}</div>
                 <div className="lb_roombox_admin">
                   {room.users.find((user) => user.power === "leader")?.userName}
                 </div>
@@ -218,17 +227,17 @@ export default function Lobby() {
             <h3>게임 규칙</h3>
             <ul>
               <li>
-                화면에 쏟아지는 단어들을 노리는{" "}
-                <span className="highlight">1</span>분간의 치열한 격전!
+                화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한
+                격전!
               </li>
               <li>
                 놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
-                <span className="lowlight">스피드</span>와{" "}
-                <span className="lowlight">전략</span>은 모두 필수!
+                <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은
+                모두 필수!
               </li>
               <li>
-                60초 동안 당신의 <span className="lowlightt">타이핑</span>{" "}
-                실력과 <span className="highlightt">눈치</span> 게임의 조화로
+                60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}
+                <span className="highlightt">눈치</span> 게임의 조화로
                 <br />
                 <span className="highlight">🏆Top 10🏆</span>에 도전하세요!
               </li>

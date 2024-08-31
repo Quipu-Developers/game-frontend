@@ -7,7 +7,7 @@ import { useSocket } from "../socket";
 export default function WaitingRoom() {
   const location = useLocation();
   const { roomId, roomName, users } = location.state || {};
-  const { startGame, kickMember, deleteRoom } = useWaitingRoomActions();
+  const { startGame, leaveRoom, deleteRoom } = useWaitingRoomActions();
   const [message, setMessage] = useState("");
   const [isKickVisible, setIsKickVisible] = useState(false);
   const [kickTarget, setKickTarget] = useState("");
@@ -92,8 +92,6 @@ export default function WaitingRoom() {
   const handleSendMessage = () => {
     try {
       const chatPacket = {
-        userId,
-        roomId,
         message,
       };
 
@@ -113,7 +111,7 @@ export default function WaitingRoom() {
 
   const handleStartGame = async () => {
     try {
-      await startGame(roomId);
+      await startGame();
       console.log("game start successfully!");
       navigate("/game");
     } catch (error) {
@@ -156,7 +154,9 @@ export default function WaitingRoom() {
     setIsKickVisible(!isKickVisible);
   };
 
-  const back = () => {
+  const back = async () => {
+    await leaveRoom();
+
     navigate("/lobby");
   };
 
@@ -189,9 +189,7 @@ export default function WaitingRoom() {
               </div> */}
             </div>
             <img src={`/image/irumae${index + 1}.png`} alt="profile" />
-            {player.power === "leader" && (
-              <div className="wr_player1_bot">방장</div>
-            )}
+            {player.power === "leader" && <div className="wr_player1_bot">방장</div>}
           </div>
         ))}
 
@@ -256,10 +254,7 @@ export default function WaitingRoom() {
           </button>
         </div>
       </div>
-      <div
-        className={`wr_rule ${isActive ? "active" : ""}`}
-        onClick={handleClick}
-      >
+      <div className={`wr_rule ${isActive ? "active" : ""}`} onClick={handleClick}>
         &emsp;게임 규칙
       </div>
       <div className={`wr_rule_content ${isVisible ? "visible" : ""}`}>
@@ -271,8 +266,8 @@ export default function WaitingRoom() {
           </li>
           <li>
             놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
-            <span className="lowlight">스피드</span>와{" "}
-            <span className="lowlight">전략</span>은 모두 필수!
+            <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두
+            필수!
           </li>
           <li>
             60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}
