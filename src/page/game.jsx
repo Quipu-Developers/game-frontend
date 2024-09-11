@@ -1,10 +1,15 @@
 import "../style/game.css";
 import gameData from "../data/game_data.jsx";
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
+import { useSocket } from "../socket";
 
 export default function Game() {
+  const { socket, storage } = useSocket();
+  const location = useLocation();
+  const { roomId, roomName, users } = location.state || {};
+
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
   const [selectedImage, setSelectedImage] = useState(
@@ -18,17 +23,34 @@ export default function Game() {
   const showTimeLeftMessage = false;
   const [shuffleWordList, setShuffleWordList] = useState(gameData.wordList);
   const inputRef = useRef(null);
-  const [count, setCount] = useState(12);
+  const [count, setCount] = useState(60);
   const [idleTimeout, setIdleTimeout] = useState(null);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const getWord = ({ userId, success, word }) => {
+      console.log("전달받은 단어: ", word);
+    };
+
+    const setupSocketListeners = () => {
+      socket.on("WORD", getWord);
+    };
+
+    if (socket.connected) {
+      setupSocketListeners();
+    } else {
+      socket.connect();
+      socket.once("connect", setupSocketListeners);
+    }
+  }, [socket]);
 
   // 단어 제출 처리 함수
   async function handleSubmitWord(inputWord) {
-    const userId = localStorage.getItem("userId");
-    const roomId = localStorage.getItem("roomId");
     const word = inputWord.trim();
 
     try {
-      const response = await wordInput(userId, roomId, word);
+      const response = await wordInput(word);
       if (response.success) {
         console.log("Word processed successfully:", response);
       }
@@ -41,8 +63,8 @@ export default function Game() {
   const handleIdleTimeout = useCallback(() => {
     console.log("No activity for 10 seconds. Ending game.");
     alert("No activity for 10 seconds. Ending game.");
-    navigate("/waiting-room");
-  }, [navigate]);
+    navigate("/end");
+  }, []);
 
   // 타이머 해제 함수
   const clearIdleTimer = useCallback(() => {
@@ -54,8 +76,8 @@ export default function Game() {
   // 타이머 초기화 및 설정 함수
   const resetIdleTimer = useCallback(() => {
     clearIdleTimer(); // 기존 타이머 해제
-    setIdleTimeout(setTimeout(handleIdleTimeout, 10000)); // 10초 후 게임 종료 타이머 설정
-  }, [clearIdleTimer, handleIdleTimeout]);
+    setIdleTimeout(setTimeout(handleIdleTimeout, 60000)); // 10초 후 게임 종료 타이머 설정
+  }, []);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -106,7 +128,7 @@ export default function Game() {
     resetIdleTimer(); // 추가된 부분: 컴포넌트가 마운트될 때 타이머 설정
 
     return () => clearIdleTimer(); // 컴포넌트가 언마운트될 때 타이머 해제
-  }, [resetIdleTimer, clearIdleTimer]);
+  }, []);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -149,8 +171,7 @@ export default function Game() {
             <div style={{ width: "70%" }}>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #D1A722 -10%, transparent)",
+                  background: "linear-gradient(to right, #D1A722 -10%, transparent)",
                 }}
               >
                 {gameData.scores[0].userName} {gameData.scores[0].score}점
@@ -162,8 +183,7 @@ export default function Game() {
             <div style={{ width: "65%" }}>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #b1abab -10%, transparent)",
+                  background: "linear-gradient(to right, #b1abab -10%, transparent)",
                 }}
               >
                 {gameData.scores[1].userName} {gameData.scores[1].score}점
@@ -175,8 +195,7 @@ export default function Game() {
             <div style={{ width: "60%" }}>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #836b2e -10%, transparent)",
+                  background: "linear-gradient(to right, #836b2e -10%, transparent)",
                 }}
               >
                 {gameData.scores[2].userName} {gameData.scores[2].score}점
@@ -193,10 +212,7 @@ export default function Game() {
             </div>
           )}
           {shuffleWordList.map((word, index) => (
-            <div
-              key={index}
-              className={hiddenWords.includes(word) ? "hidden-word" : ""}
-            >
+            <div key={index} className={hiddenWords.includes(word) ? "hidden-word" : ""}>
               <u className="text">{word}</u>
             </div>
           ))}

@@ -5,16 +5,14 @@ export function useGameActions() {
   const { socket, storage } = useSocket();
 
   const wordInput = useCallback(
-    async (roomId, word) => {
-      const userId = storage.getItem("userId");
-
+    async (word) => {
       return new Promise((resolve, reject) => {
         if (!socket) {
           reject(new Error("Socket is not connected"));
           return;
         }
 
-        socket.emit("WORD", { userId, roomId, word }, (response) => {
+        socket.emit("WORD", { word }, (response) => {
           if (response.success) {
             console.log("Word submitted successfully");
             resolve(response);

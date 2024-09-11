@@ -1,26 +1,12 @@
-import axios from "axios";
 import "../style/end.css";
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import scoreData from "../data/score_data.jsx";
+import React, { useState } from "react";
 
 const End = () => {
-  const [teamRankings, setTeamRankings] = useState([]);
-  const [top10GlobalRankings, setTop10GlobalRankings] = useState([]);
+  const [teamRankings, setTeamRankings] = useState(scoreData.teamRankings);
+  const [top10GlobalRankings, setTop10GlobalRankings] = useState(scoreData.top10GlobalRankings);
   const navigate = useNavigate();
-
-  const fetchRankings = async () => {
-    try {
-      const response = await axios.get("http://localhost:8080/api/scoredata");
-      setTeamRankings(response.data.teamRankings);
-      setTop10GlobalRankings(response.data.top10GlobalRankings);
-    } catch (error) {
-      console.error("Error fetching rankings:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchRankings(); // 컴포넌트가 마운트될 때 데이터 가져오기
-  }, []);
 
   const handleStartClick = () => {
     navigate("/");
@@ -48,27 +34,15 @@ const End = () => {
               {teamRankings.length > 0 ? (
                 <>
                   <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/first.png"
-                    />
+                    <img className="first" alt="트로피" src="/image/first.png" />
                     {teamRankings[0].userName}
                   </div>
                   <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/second.png"
-                    />
+                    <img className="first" alt="트로피" src="/image/second.png" />
                     {teamRankings[1].userName}
                   </div>
                   <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/third.png"
-                    />
+                    <img className="first" alt="트로피" src="/image/third.png" />
                     {teamRankings[2].userName}
                   </div>
                 </>
@@ -89,11 +63,7 @@ const End = () => {
                 {top10GlobalRankings[0].userName}
               </div>
               <div className="ranking-number">
-                <img
-                  className="teamicon"
-                  alt="트로피"
-                  src="/image/second.png"
-                />{" "}
+                <img className="teamicon" alt="트로피" src="/image/second.png" />{" "}
                 {top10GlobalRankings[1].userName}
               </div>
               <div className="ranking-number">
@@ -101,34 +71,27 @@ const End = () => {
                 {top10GlobalRankings[2].userName}
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[3].rank}위{" "}
-                {top10GlobalRankings[3].userName}
+                {top10GlobalRankings[3].rank}위 {top10GlobalRankings[3].userName}
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[4].rank}위{" "}
-                {top10GlobalRankings[4].userName}
+                {top10GlobalRankings[4].rank}위 {top10GlobalRankings[4].userName}
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[5].rank}위{" "}
-                {top10GlobalRankings[5].userName}
+                {top10GlobalRankings[5].rank}위 {top10GlobalRankings[5].userName}
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[6].rank}위{" "}
-                {top10GlobalRankings[6].userName}
+                {top10GlobalRankings[6].rank}위 {top10GlobalRankings[6].userName}
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[7].rank}위{" "}
-                {top10GlobalRankings[7].userName}
+                {top10GlobalRankings[7].rank}위 {top10GlobalRankings[7].userName}
               </div>
               <div className="ranking-number">
                 <span className="username">
-                  {top10GlobalRankings[8].rank}위{" "}
-                  {top10GlobalRankings[8].userName}
+                  {top10GlobalRankings[8].rank}위 {top10GlobalRankings[8].userName}
                 </span>
               </div>
               <div className="ranking-number">
-                {top10GlobalRankings[9].rank}위{" "}
-                {top10GlobalRankings[9].userName}
+                {top10GlobalRankings[9].rank}위 {top10GlobalRankings[9].userName}
               </div>
             </div>
           </div>

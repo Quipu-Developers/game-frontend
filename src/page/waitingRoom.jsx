@@ -55,7 +55,9 @@ export default function WaitingRoom() {
     };
 
     const getStartGame = () => {
-      navigate("/game");
+      navigate("/game", {
+        state: { roomId: roomId, roomName: roomName, users: users },
+      });
     };
 
     const setupSocketListeners = () => {
