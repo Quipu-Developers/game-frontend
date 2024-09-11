@@ -15,6 +15,7 @@ export default function WaitingRoom() {
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
   const { socket, storage } = useSocket();
+  const userName = storage.getItem("userName");
   const userId = storage.getItem("userId");
   const [chats, setChats] = useState(() => {
     const storedChats = storage.getItem(`chats_${roomId}`);
@@ -32,12 +33,12 @@ export default function WaitingRoom() {
     if (!socket) return;
 
     const getJoinUser = (user) => {
-      console.log("새로운 유저가 들어왔습니다:", user);
       setPlayers((prevPlayers) => {
-        const updatedPlayers = [...prevPlayers, user];
+        const updatedPlayers = [...prevPlayers, user.user];
         storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
         return updatedPlayers;
       });
+      console.log(players);
     };
 
     const getChatMessage = ({ userName, message }) => {
@@ -54,9 +55,26 @@ export default function WaitingRoom() {
       navigate("/lobby");
     };
 
-    const getStartGame = () => {
+    const removeUser = (response) => {
+      console.log("Removing user:", response.user);
+      console.log(players);
+      setPlayers((prevPlayers) => {
+        const updatedPlayers = prevPlayers.filter(
+          (player) => player.userId !== response.user.userId
+        );
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
+    };
+
+    const getStartGame = ({ gameInfo }) => {
+      console.log(gameInfo);
       navigate("/game", {
-        state: { roomId: roomId, roomName: roomName, users: users },
+        state: {
+          roomId: roomId,
+          roomName: roomName,
+          words: gameInfo.words,
+        },
       });
     };
 
@@ -64,6 +82,7 @@ export default function WaitingRoom() {
       socket.on("JOINUSER", getJoinUser);
       socket.on("CHAT", getChatMessage);
       socket.on("DELETEROOM", getDeleteRoom);
+      socket.on("LEAVEUSER", removeUser);
       socket.on("STARTGAME", getStartGame);
     };
 
@@ -79,6 +98,7 @@ export default function WaitingRoom() {
       socket.off("JOINUSER", getJoinUser);
       socket.off("CHAT", getChatMessage);
       socket.off("DELETEROOM", getDeleteRoom);
+      socket.off("LEAVEUSER", removeUser);
       socket.off("STARTGAME", getStartGame);
     };
   }, [socket, roomId, storage, navigate, leader, userId]);
@@ -123,7 +143,7 @@ export default function WaitingRoom() {
 
   const handleDeleteRoom = async () => {
     try {
-      await deleteRoom(roomId);
+      await deleteRoom();
       alert("방이 삭제되었습니다.");
       navigate("/lobby");
     } catch (error) {
@@ -156,10 +176,14 @@ export default function WaitingRoom() {
     setIsKickVisible(!isKickVisible);
   };
 
-  const back = async () => {
-    await leaveRoom();
-
-    navigate("/lobby");
+  const handleBack = async () => {
+    try {
+      await leaveRoom();
+      alert("로비로 이동합니다.");
+      navigate("/lobby");
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   const handleKickMemberConfirm = () => {
@@ -171,13 +195,15 @@ export default function WaitingRoom() {
 
   return (
     <div className="wr_container">
-      <div className="wr_back" onClick={back} />
+      {String(leader.userId) !== userId && (
+        <div className="wr_back" onClick={handleBack} />
+      )}
       <div className="wr_topcontainer">
         <div className="wr_title">{roomName}</div>
-        {String(leader.userId) === userId && (
-          <button onClick={handleDeleteRoom}>방 삭제하기</button>
-        )}
       </div>
+      {String(leader.userId) === userId && (
+        <button onClick={handleDeleteRoom}>방 삭제하기</button>
+      )}
       <div className="wr_leftcontainer">
         {players.map((player, index) => (
           <div key={index} className="wr_player1">
@@ -191,7 +217,9 @@ export default function WaitingRoom() {
               </div> */}
             </div>
             <img src={`/image/irumae${index + 1}.png`} alt="profile" />
-            {player.power === "leader" && <div className="wr_player1_bot">방장</div>}
+            {player.power === "leader" && (
+              <div className="wr_player1_bot">방장</div>
+            )}
           </div>
         ))}
 
@@ -256,7 +284,10 @@ export default function WaitingRoom() {
           </button>
         </div>
       </div>
-      <div className={`wr_rule ${isActive ? "active" : ""}`} onClick={handleClick}>
+      <div
+        className={`wr_rule ${isActive ? "active" : ""}`}
+        onClick={handleClick}
+      >
         &emsp;게임 규칙
       </div>
       <div className={`wr_rule_content ${isVisible ? "visible" : ""}`}>
@@ -268,8 +299,8 @@ export default function WaitingRoom() {
           </li>
           <li>
             놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
-            <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은 모두
-            필수!
+            <span className="lowlight">스피드</span>와{" "}
+            <span className="lowlight">전략</span>은 모두 필수!
           </li>
           <li>
             60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}

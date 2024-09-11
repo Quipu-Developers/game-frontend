@@ -1,5 +1,4 @@
 import "../style/game.css";
-import gameData from "../data/game_data.jsx";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
@@ -8,10 +7,11 @@ import { useSocket } from "../socket";
 export default function Game() {
   const { socket, storage } = useSocket();
   const location = useLocation();
-  const { roomId, roomName, users } = location.state || {};
-
+  const { roomId, roomName, words } = location.state || {};
+  const userName = storage.getItem("userName");
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
+  const [gameInfo, setGameInfo] = useState([]);
   const [selectedImage, setSelectedImage] = useState(
     <img src="image/irumae_happy.png" alt="profile" />
   );
@@ -21,7 +21,6 @@ export default function Game() {
   const [hiddenWords, setHiddenWords] = useState([]);
   // const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
   const showTimeLeftMessage = false;
-  const [shuffleWordList, setShuffleWordList] = useState(gameData.wordList);
   const inputRef = useRef(null);
   const [count, setCount] = useState(60);
   const [idleTimeout, setIdleTimeout] = useState(null);
@@ -29,8 +28,10 @@ export default function Game() {
   useEffect(() => {
     if (!socket) return;
 
-    const getWord = ({ userId, success, word }) => {
+    const getWord = ({ userId, success, word, gameInfo }) => {
       console.log("전달받은 단어: ", word);
+      console.log(gameInfo);
+      setGameInfo(gameInfo);
     };
 
     const setupSocketListeners = () => {
@@ -61,8 +62,6 @@ export default function Game() {
 
   // 타이머 만료 시 처리 함수
   const handleIdleTimeout = useCallback(() => {
-    console.log("No activity for 10 seconds. Ending game.");
-    alert("No activity for 10 seconds. Ending game.");
     navigate("/end");
   }, []);
 
@@ -76,7 +75,7 @@ export default function Game() {
   // 타이머 초기화 및 설정 함수
   const resetIdleTimer = useCallback(() => {
     clearIdleTimer(); // 기존 타이머 해제
-    setIdleTimeout(setTimeout(handleIdleTimeout, 60000)); // 10초 후 게임 종료 타이머 설정
+    setIdleTimeout(setTimeout(handleIdleTimeout, 600000)); // 10초 후 게임 종료 타이머 설정
   }, []);
 
   const handleInputChange = (event) => {
@@ -87,7 +86,7 @@ export default function Game() {
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
       const trimmedInput = inputValue.trim();
-      if (shuffleWordList.includes(trimmedInput)) {
+      if (words.includes(trimmedInput)) {
         setSelectedImage(<img src="image/irumae_happy.png" alt="profile" />);
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
@@ -108,16 +107,6 @@ export default function Game() {
       resetIdleTimer(); // 타이머 리셋
     }
   };
-
-  // 단어장 무작위 셔플
-  useEffect(() => {
-    const shuffledList = [...gameData.wordList];
-    for (let i = shuffledList.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffledList[i], shuffledList[j]] = [shuffledList[j], shuffledList[i]];
-    }
-    setShuffleWordList(shuffledList);
-  }, []);
 
   // 화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
@@ -156,7 +145,7 @@ export default function Game() {
       {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
-        <div className="profile_name">{gameData.currentUserName}</div>
+        <div className="profile_name">{userName}</div>
         <div className="profile_timer">
           <img className="timer" src="/image/timer.png" alt="timer" />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
@@ -171,10 +160,11 @@ export default function Game() {
             <div style={{ width: "70%" }}>
               <p
                 style={{
-                  background: "linear-gradient(to right, #D1A722 -10%, transparent)",
+                  background:
+                    "linear-gradient(to right, #D1A722 -10%, transparent)",
                 }}
               >
-                {gameData.scores[0].userName} {gameData.scores[0].score}점
+                {gameInfo.users[0].userName} {gameInfo.users[0].score}점
               </p>
             </div>
           </div>
@@ -183,10 +173,11 @@ export default function Game() {
             <div style={{ width: "65%" }}>
               <p
                 style={{
-                  background: "linear-gradient(to right, #b1abab -10%, transparent)",
+                  background:
+                    "linear-gradient(to right, #b1abab -10%, transparent)",
                 }}
               >
-                {gameData.scores[1].userName} {gameData.scores[1].score}점
+                {gameInfo.users[1].userName} {gameInfo.users[1].score}점
               </p>
             </div>
           </div>
@@ -195,10 +186,11 @@ export default function Game() {
             <div style={{ width: "60%" }}>
               <p
                 style={{
-                  background: "linear-gradient(to right, #836b2e -10%, transparent)",
+                  background:
+                    "linear-gradient(to right, #836b2e -10%, transparent)",
                 }}
               >
-                {gameData.scores[2].userName} {gameData.scores[2].score}점
+                {gameInfo.users[2].userName} {gameInfo.users[2].score}점
               </p>
             </div>
           </div>
@@ -211,8 +203,11 @@ export default function Game() {
               <img src="/image/alert.png" alt="alert" />
             </div>
           )}
-          {shuffleWordList.map((word, index) => (
-            <div key={index} className={hiddenWords.includes(word) ? "hidden-word" : ""}>
+          {words.map((word, index) => (
+            <div
+              key={index}
+              className={hiddenWords.includes(word) ? "hidden-word" : ""}
+            >
               <u className="text">{word}</u>
             </div>
           ))}

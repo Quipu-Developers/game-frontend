@@ -69,7 +69,7 @@ export function useWaitingRoomActions() {
         if (response.success) {
           resolve();
         } else {
-          reject(new Error("Failed to delete room"));
+          reject(new Error("Failed to leave room"));
         }
       });
     });

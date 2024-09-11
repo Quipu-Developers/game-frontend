@@ -15,6 +15,8 @@ export function useAuthActions() {
         socket.emit("LOGIN", { userName, phoneNumber }, (response) => {
           if (response && response.success) {
             storage.setItem("userId", response.user.userId);
+            storage.setItem("userName", userName);
+            storage.setItem("phoneNumber", phoneNumber);
           }
           resolve(response);
         });
