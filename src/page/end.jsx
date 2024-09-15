@@ -1,18 +1,39 @@
 import "../style/end.css";
 import { useNavigate } from "react-router-dom";
-import scoreData from "../data/score_data.jsx";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getGameEndInfo } from "../service/http_service";
+import { useSocket } from "../socket";
 
 const End = () => {
-  const [teamRankings, setTeamRankings] = useState(scoreData.teamRankings);
-  const [top10GlobalRankings, setTop10GlobalRankings] = useState(
-    scoreData.top10GlobalRankings
-  );
+  const { socket, storage } = useSocket();
+  const [gameEndInfo, setGameEndInfo] = useState(null); // 초기 상태는 null로 설정
+  const userId = storage.getItem("userId");
   const navigate = useNavigate();
 
   const handleStartClick = () => {
-    navigate("/lobby");
+    navigate("/");
   };
+
+  useEffect(() => {
+    const fetchGameEndInfo = async () => {
+      try {
+        const fetchedGameEndInfo = await getGameEndInfo(userId); // 비동기 데이터 가져오기
+        console.log(fetchedGameEndInfo);
+        setGameEndInfo(fetchedGameEndInfo); // 가져온 데이터를 상태에 저장
+      } catch (error) {
+        console.error("Error fetching game end info:", error);
+      }
+    };
+
+    fetchGameEndInfo(); // 데이터 가져오는 함수 호출
+  }, [userId]);
+
+  // 데이터를 받아오기 전에는 로딩 상태를 표시
+  if (!gameEndInfo) {
+    return <div>Loading...</div>;
+  }
+
+  const { personalRank, top10 } = gameEndInfo;
 
   return (
     <div className="game-result-screen">
@@ -25,44 +46,19 @@ const End = () => {
       <div className="header">
         <h1>GAME RESULT</h1>
       </div>
+
       <div className="content">
         <div className="wrap">
           <div className="team-ranking">
             <div className="logo">
-              <h2>TEAM</h2>
-              <h2>RANKING</h2>
+              <h2>MY</h2>
+              <h2>RANK</h2>
             </div>
             <div className="ranking-item">
-              {teamRankings.length > 0 ? (
-                <>
-                  <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/first.png"
-                    />
-                    {teamRankings[0].userName}
-                  </div>
-                  <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/second.png"
-                    />
-                    {teamRankings[1].userName}
-                  </div>
-                  <div className="ranking-number">
-                    <img
-                      className="first"
-                      alt="트로피"
-                      src="/image/third.png"
-                    />
-                    {teamRankings[2].userName}
-                  </div>
-                </>
-              ) : (
-                <div>랭킹 데이터가 없습니다.</div>
-              )}
+              <div className="ranking-number">
+                {personalRank.rank}위 {personalRank.userName}{" "}
+                {personalRank.score}
+              </div>
             </div>
           </div>
 
@@ -72,56 +68,37 @@ const End = () => {
               <h2>RANKING</h2>
             </div>
             <div className="ranking-item1">
-              <div className="ranking-number">
-                <img className="teamicon" alt="트로피" src="/image/first.png" />{" "}
-                {top10GlobalRankings[0].userName}
-              </div>
-              <div className="ranking-number">
-                <img
-                  className="teamicon"
-                  alt="트로피"
-                  src="/image/second.png"
-                />{" "}
-                {top10GlobalRankings[1].userName}
-              </div>
-              <div className="ranking-number">
-                <img className="teamicon" alt="트로피" src="/image/third.png" />{" "}
-                {top10GlobalRankings[2].userName}
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[3].rank}위{" "}
-                {top10GlobalRankings[3].userName}
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[4].rank}위{" "}
-                {top10GlobalRankings[4].userName}
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[5].rank}위{" "}
-                {top10GlobalRankings[5].userName}
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[6].rank}위{" "}
-                {top10GlobalRankings[6].userName}
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[7].rank}위{" "}
-                {top10GlobalRankings[7].userName}
-              </div>
-              <div className="ranking-number">
-                <span className="username">
-                  {top10GlobalRankings[8].rank}위{" "}
-                  {top10GlobalRankings[8].userName}
-                </span>
-              </div>
-              <div className="ranking-number">
-                {top10GlobalRankings[9].rank}위{" "}
-                {top10GlobalRankings[9].userName}
-              </div>
+              {top10.map((player, index) => (
+                <div key={player.userId} className="ranking-number">
+                  <img
+                    className="teamicon"
+                    alt={
+                      index === 0
+                        ? "1st"
+                        : index === 1
+                        ? "2nd"
+                        : index === 2
+                        ? "3rd"
+                        : "Rank"
+                    }
+                    src={`/image/${
+                      index === 0
+                        ? "first"
+                        : index === 1
+                        ? "second"
+                        : index === 2
+                        ? "third"
+                        : ""
+                    }.png`}
+                  />
+                  {index + 1}위 {player.userName} {player.score}
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
+
       <div className="home-button">
         <button onClick={handleStartClick}>
           <img className="back" alt="버튼" src="/image/back.png" />

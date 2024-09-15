@@ -2,16 +2,17 @@ import "../style/game.css";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
+import { gameEnd } from "../service/http_service";
 import { useSocket } from "../socket";
 
 export default function Game() {
   const { socket, storage } = useSocket();
   const location = useLocation();
-  const { roomId, roomName, words } = location.state || {};
+  const { roomId, roomName, words: initialWords, users } = location.state || {};
+  const userId = Number(storage.getItem("userId")); // 내 userId 가져오기 (Number로 변환)
   const userName = storage.getItem("userName");
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
-  const [gameInfo, setGameInfo] = useState([]);
   const [selectedImage, setSelectedImage] = useState(
     <img src="image/irumae_happy.png" alt="profile" />
   );
@@ -19,23 +20,39 @@ export default function Game() {
   const [isValid, setIsValid] = useState(false);
   const navigate = useNavigate();
   const [hiddenWords, setHiddenWords] = useState([]);
-  // const [showTimeLeftMessage, setShowTimeLeftMessage] = useState(false);
+  const [userScore, setUserScore] = useState([0, 0, 0]);
+  const [myRank, setMyRank] = useState(0); // 나의 등수 상태 추가
+  const [words, setWords] = useState(initialWords); // 단어장 상태로 관리
+  const [gameInfo, setGameInfo] = useState({ users: [] });
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
   const [count, setCount] = useState(60);
   const [idleTimeout, setIdleTimeout] = useState(null);
 
+  // 서버에서 단어 입력 및 새로운 단어장 갱신 이벤트 받는 함수
   useEffect(() => {
     if (!socket) return;
 
     const getWord = ({ userId, success, word, gameInfo }) => {
-      console.log("전달받은 단어: ", word);
-      console.log(gameInfo);
+      setHiddenWords([...hiddenWords, word]);
+      setUserScore([
+        gameInfo.users[0].score,
+        gameInfo.users[1].score,
+        gameInfo.users[2].score,
+      ]);
       setGameInfo(gameInfo);
+
+      // 내 등수 계산
+      calculateMyRank(gameInfo.users);
+    };
+
+    const handleNewWords = ({ words: newWords }) => {
+      setWords(newWords); // 새로운 단어장으로 업데이트
     };
 
     const setupSocketListeners = () => {
       socket.on("WORD", getWord);
+      socket.on("NEWWORDS", handleNewWords); // 새로운 단어장을 받아옴
     };
 
     if (socket.connected) {
@@ -44,7 +61,14 @@ export default function Game() {
       socket.connect();
       socket.once("connect", setupSocketListeners);
     }
-  }, [socket]);
+  }, [socket, hiddenWords, userId]);
+
+  // 나의 등수 계산 함수
+  const calculateMyRank = (users) => {
+    const sortedUsers = [...users].sort((a, b) => b.score - a.score); // 점수 기준으로 정렬
+    const myUser = sortedUsers.findIndex((user) => user.userId === userId); // 내 userId로 내 위치 찾기
+    setMyRank(myUser + 1); // 나의 등수 설정 (1등부터 시작하도록)
+  };
 
   // 단어 제출 처리 함수
   async function handleSubmitWord(inputWord) {
@@ -54,6 +78,16 @@ export default function Game() {
       const response = await wordInput(word);
       if (response.success) {
         console.log("Word processed successfully:", response);
+        setUserScore([
+          response.gameInfo.users[0].score,
+          response.gameInfo.users[1].score,
+          response.gameInfo.users[2].score,
+        ]);
+
+        setGameInfo(response.gameInfo);
+
+        // 내 등수 계산
+        calculateMyRank(response.gameInfo.users);
       }
     } catch (error) {
       console.error("Error submitting word:", error.message);
@@ -61,9 +95,15 @@ export default function Game() {
   }
 
   // 타이머 만료 시 처리 함수
-  const handleIdleTimeout = useCallback(() => {
-    navigate("/end");
-  }, []);
+  const handleIdleTimeout = useCallback(async () => {
+    try {
+      // 게임이 끝날 때 gameEnd 호출하여 최신 gameInfo.users 전송
+      await gameEnd(roomId, gameInfo.users);
+      navigate("/end"); // 데이터 전송 후 결과 페이지로 이동
+    } catch (error) {
+      console.error("Failed to send game end data:", error);
+    }
+  }, [navigate, roomId, gameInfo.users]);
 
   // 타이머 해제 함수
   const clearIdleTimer = useCallback(() => {
@@ -74,13 +114,13 @@ export default function Game() {
 
   // 타이머 초기화 및 설정 함수
   const resetIdleTimer = useCallback(() => {
-    clearIdleTimer(); // 기존 타이머 해제
-    setIdleTimeout(setTimeout(handleIdleTimeout, 600000)); // 10초 후 게임 종료 타이머 설정
-  }, []);
+    clearIdleTimer();
+    setIdleTimeout(setTimeout(handleIdleTimeout, 60000));
+  }, [clearIdleTimer, handleIdleTimeout]);
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
-    resetIdleTimer(); // 키 입력 시 타이머 리셋
+    resetIdleTimer();
   };
 
   const handleKeyDown = async (event) => {
@@ -101,10 +141,10 @@ export default function Game() {
 
       setTimeout(() => {
         setIsValid(false);
-      }, 300); // 1초 후에 isValid를 false로 설정
+      }, 300);
 
       setInputValue("");
-      resetIdleTimer(); // 타이머 리셋
+      resetIdleTimer();
     }
   };
 
@@ -114,10 +154,10 @@ export default function Game() {
       inputRef.current.focus();
     }
 
-    resetIdleTimer(); // 추가된 부분: 컴포넌트가 마운트될 때 타이머 설정
+    resetIdleTimer();
 
-    return () => clearIdleTimer(); // 컴포넌트가 언마운트될 때 타이머 해제
-  }, []);
+    return () => clearIdleTimer();
+  }, [resetIdleTimer, clearIdleTimer]);
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -151,12 +191,12 @@ export default function Game() {
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
-          <div className="ranking_number">3</div>
+          <div className="ranking_number">{myRank}등</div>
         </div>
         <div className="rankbox">
           <div className="rankbox_title">실시간 순위</div>
+
           <div className="rankbox_first">
-            <div className="rankbox_num">1등</div>
             <div style={{ width: "70%" }}>
               <p
                 style={{
@@ -164,12 +204,12 @@ export default function Game() {
                     "linear-gradient(to right, #D1A722 -10%, transparent)",
                 }}
               >
-                {gameInfo.users[0].userName} {gameInfo.users[0].score}점
+                {users[0]?.userName} {userScore[0]}점
               </p>
             </div>
           </div>
+
           <div className="rankbox_second">
-            <div className="rankbox_num">2등</div>
             <div style={{ width: "65%" }}>
               <p
                 style={{
@@ -177,12 +217,12 @@ export default function Game() {
                     "linear-gradient(to right, #b1abab -10%, transparent)",
                 }}
               >
-                {gameInfo.users[1].userName} {gameInfo.users[1].score}점
+                {users[1]?.userName} {userScore[1]}점
               </p>
             </div>
           </div>
+
           <div className="rankbox_third">
-            <div className="rankbox_num">3등</div>
             <div style={{ width: "60%" }}>
               <p
                 style={{
@@ -190,12 +230,13 @@ export default function Game() {
                     "linear-gradient(to right, #836b2e -10%, transparent)",
                 }}
               >
-                {gameInfo.users[2].userName} {gameInfo.users[2].score}점
+                {users[2]?.userName} {userScore[2]}점
               </p>
             </div>
           </div>
         </div>
       </div>
+
       <div className="rightcontainer">
         <div className="wordbox">
           {showTimeLeftMessage && (
@@ -203,7 +244,7 @@ export default function Game() {
               <img src="/image/alert.png" alt="alert" />
             </div>
           )}
-          {words.map((word, index) => (
+          {words?.map((word, index) => (
             <div
               key={index}
               className={hiddenWords.includes(word) ? "hidden-word" : ""}

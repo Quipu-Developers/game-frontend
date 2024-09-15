@@ -2,6 +2,34 @@ import axios from "axios";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 
+export const gameEnd = async (roomId, users) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/api/end-game`,
+      {
+        roomId,
+        users,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+    return response.data; // 성공 시 JSON 데이터 반환
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response) {
+      console.error(
+        "Error fetching game end info:",
+        error.response.data.message
+      );
+    } else {
+      console.error("Unknown error:", error.message);
+    }
+    return null;
+  }
+};
+
 // /game-end API 호출
 export const getGameEndInfo = async (userId) => {
   try {

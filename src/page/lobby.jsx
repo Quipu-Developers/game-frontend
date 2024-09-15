@@ -32,33 +32,28 @@ export default function Lobby() {
 
     loadRooms();
 
-    socket.on("CREATEROOM", (room) => {
-      setRooms((prevRooms) => [...prevRooms, room]);
-    });
-    socket.on("DELETEROOM", ({ roomId }) => {
-      setRooms((prevRooms) =>
-        prevRooms.filter((room) => room.roomId !== roomId)
-      );
+    socket.on("CREATEROOM", async () => {
+      await loadRooms();
     });
 
-    socket.on("JOINLOBBY", (user) => {
-      console.log(`user ${user.userName} joined`);
-      setUsers((prevUsers) => [...prevUsers, user]);
+    socket.on("DELETEROOM", async () => {
+      await loadRooms();
     });
-    socket.on("LEAVELOBBY", (userId) => {
-      console.log(`user ${userId} left`);
-      setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.userId !== userId)
-      );
+
+    socket.on("JOINUSER", async () => {
+      await loadRooms();
+    });
+
+    socket.on("LEAVEUSER", async () => {
+      await loadRooms();
     });
 
     return () => {
       if (socket) {
         socket.off("CREATEROOM");
-        socket.off("GETROOMS");
-        socket.off("JOINLOBBY");
-        socket.off("LEAVELOBBY");
         socket.off("DELETEROOM");
+        socket.off("JOINUSER");
+        socket.off("LEAVEUSER");
       }
     };
   }, [socket, fetchRooms]);

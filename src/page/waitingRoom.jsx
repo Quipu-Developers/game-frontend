@@ -74,6 +74,7 @@ export default function WaitingRoom() {
           roomId: roomId,
           roomName: roomName,
           words: gameInfo.words,
+          users: gameInfo.users,
         },
       });
     };
@@ -132,12 +133,23 @@ export default function WaitingRoom() {
   };
 
   const handleStartGame = async () => {
-    try {
-      await startGame();
-      console.log("game start successfully!");
-      navigate("/game");
-    } catch (error) {
-      console.error("Failed to start game:", error.message);
+    if (players.length === 3) {
+      try {
+        const gameInfo = await startGame();
+        console.log("game start successfully!");
+        navigate("/game", {
+          state: {
+            roomId: roomId,
+            roomName: roomName,
+            words: gameInfo.words,
+            users: gameInfo.users,
+          },
+        });
+      } catch (error) {
+        console.error("Failed to start game:", error.message);
+      }
+    } else {
+      alert("플레이어 인원이 3명일 때 게임을 시작합니다.");
     }
   };
 

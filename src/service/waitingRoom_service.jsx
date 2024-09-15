@@ -13,7 +13,7 @@ export function useWaitingRoomActions() {
 
       socket.emit("STARTGAME", {}, (response) => {
         if (response.success) {
-          resolve();
+          resolve(response.gameInfo);
         } else {
           reject(new Error("Failed to start game"));
         }
