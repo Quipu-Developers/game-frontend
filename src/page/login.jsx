@@ -89,7 +89,11 @@ export default function Login() {
           {/* <img className="img1" src="/image/irumae_happy.png" alt="Happy" /> */}
           <h1>배틀글라운드</h1>
           <div>&nbsp;&nbsp;&nbsp;︻╦╤── -</div>
-          <img className="img2" src="/image/irumae_sad.png" alt="Sad" />
+          <img
+            className="img2"
+            src={process.env.PUBLIC_URL + "/image/irumae_sad.png"}
+            alt="Sad"
+          />
         </div>
         <div className="lg-rule">
           <li>

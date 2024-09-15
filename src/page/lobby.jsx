@@ -132,7 +132,10 @@ export default function Lobby() {
       <div className="lb_sidebar">
         <div className="lb_sidebar_top">
           <div className="lb_sidebar_profile">
-            <img src="/image/irumaelb.png" alt="irumaelb" />
+            <img
+              src={process.env.PUBLIC_URL + "/image/irumaelb.png"}
+              alt="irumaelb"
+            />
           </div>
           <div className="lb_sidebar_nn">
             <div className="lb_sidebar_name">{userName}</div>

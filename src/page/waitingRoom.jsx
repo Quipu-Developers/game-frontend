@@ -228,7 +228,10 @@ export default function WaitingRoom() {
                 x
               </div> */}
             </div>
-            <img src={`/image/irumae${index + 1}.png`} alt="profile" />
+            <img
+              src={process.env.PUBLIC_URL + `/image/irumae${index + 1}.png`}
+              alt="profile"
+            />
             {player.power === "leader" && (
               <div className="wr_player1_bot">방장</div>
             )}

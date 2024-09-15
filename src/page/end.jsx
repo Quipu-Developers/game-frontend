@@ -38,10 +38,18 @@ const End = () => {
   return (
     <div className="game-result-screen">
       <div className="rocket">
-        <img className="trophyimage" alt="트로피" src="/image/trophy.png" />
+        <img
+          className="trophyimage"
+          alt="트로피"
+          src={process.env.PUBLIC_URL + "/image/trophy.png"}
+        />
       </div>
       <div className="rocket1">
-        <img className="trophyimage1" alt="트로피" src="/image/trophy.png" />
+        <img
+          className="trophyimage1"
+          alt="트로피"
+          src={process.env.PUBLIC_URL + "/image/trophy.png"}
+        />
       </div>
       <div className="header">
         <h1>GAME RESULT</h1>
@@ -81,15 +89,18 @@ const End = () => {
                         ? "3rd"
                         : "Rank"
                     }
-                    src={`/image/${
-                      index === 0
-                        ? "first"
-                        : index === 1
-                        ? "second"
-                        : index === 2
-                        ? "third"
-                        : ""
-                    }.png`}
+                    src={
+                      process.env.PUBLIC_URL +
+                      `/image/${
+                        index === 0
+                          ? "first"
+                          : index === 1
+                          ? "second"
+                          : index === 2
+                          ? "third"
+                          : ""
+                      }.png`
+                    }
                   />
                   {index + 1}위 {player.userName} {player.score}
                 </div>
@@ -101,7 +112,11 @@ const End = () => {
 
       <div className="home-button">
         <button onClick={handleStartClick}>
-          <img className="back" alt="버튼" src="/image/back.png" />
+          <img
+            className="back"
+            alt="버튼"
+            src={process.env.PUBLIC_URL + "/image/back.png"}
+          />
         </button>
       </div>
     </div>

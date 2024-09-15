@@ -14,7 +14,10 @@ export default function Game() {
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
   const [selectedImage, setSelectedImage] = useState(
-    <img src="image/irumae_happy.png" alt="profile" />
+    <img
+      src={process.env.PUBLIC_URL + "image/irumae_happy.png"}
+      alt="profile"
+    />
   );
   const [isTimeout, setIsTimeout] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -127,14 +130,24 @@ export default function Game() {
     if (event.key === "Enter") {
       const trimmedInput = inputValue.trim();
       if (words.includes(trimmedInput)) {
-        setSelectedImage(<img src="image/irumae_happy.png" alt="profile" />);
+        setSelectedImage(
+          <img
+            src={process.env.PUBLIC_URL + "image/irumae_happy.png"}
+            alt="profile"
+          />
+        );
         setHiddenWords([...hiddenWords, trimmedInput]);
         setIsValid(false);
 
         // 서버로 단어 제출
         await handleSubmitWord(trimmedInput);
       } else {
-        setSelectedImage(<img src="image/irumae_sad.png" alt="profile" />);
+        setSelectedImage(
+          <img
+            src={process.env.PUBLIC_URL + "image/irumae_sad.png"}
+            alt="profile"
+          />
+        );
         setIsValid(true);
         console.log("틀림");
       }
@@ -187,7 +200,11 @@ export default function Game() {
         <div className="profile">{selectedImage}</div>
         <div className="profile_name">{userName}</div>
         <div className="profile_timer">
-          <img className="timer" src="/image/timer.png" alt="timer" />
+          <img
+            className="timer"
+            src={process.env.PUBLIC_URL + "/image/timer.png"}
+            alt="timer"
+          />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
@@ -241,7 +258,10 @@ export default function Game() {
         <div className="wordbox">
           {showTimeLeftMessage && (
             <div className="time-left-message">
-              <img src="/image/alert.png" alt="alert" />
+              <img
+                src={process.env.PUBLIC_URL + "/image/alert.png"}
+                alt="alert"
+              />
             </div>
           )}
           {words?.map((word, index) => (
