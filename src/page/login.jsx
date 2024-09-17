@@ -7,7 +7,6 @@ export default function Login() {
   const { loginUser, register } = useAuthActions();
   const [userName, setUserName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,11 +17,6 @@ export default function Login() {
 
   async function handleLogin() {
     try {
-      console.log(userName, phoneNumber);
-
-      // const userId = await createUser(userName, phoneNumber);
-      // console.log("User created with userId:", userId);
-
       const response = await loginUser(userName, phoneNumber);
       if (response.success) {
         navigate("/lobby", {
@@ -30,8 +24,7 @@ export default function Login() {
         });
       } else alert(`로그인에 실패했습니다. ${response.errMsg}`);
     } catch (error) {
-      console.error("Login or account creation failed:", error.message);
-      setError(true);
+      alert("일시적인 오류가 발생했습니다. 나중에 다시 시도해주세요.");
     }
   }
 
@@ -86,7 +79,6 @@ export default function Login() {
     <div className="lg-container">
       <div className="lg-leftcontainer">
         <div className="lg-title">
-          {/* <img className="img1" src="/image/irumae_happy.png" alt="Happy" /> */}
           <h1>배틀글라운드</h1>
           <div>&nbsp;&nbsp;&nbsp;︻╦╤── -</div>
           <img
@@ -138,9 +130,6 @@ export default function Login() {
             required
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
-          {error && (
-            <div className="lg-error">닉네임과 전화번호가 틀렸습니다.</div>
-          )}
           <button className="login-button" onClick={handleLogin}>
             로그인
           </button>

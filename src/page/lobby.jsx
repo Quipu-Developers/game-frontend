@@ -2,61 +2,53 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLobbyActions } from "../service/lobby_service";
 import { useSocket } from "../socket";
+import { useAuthActions } from "../service/login_service";
 import "../style/lobby.css";
 
 export default function Lobby() {
-  const { fetchRooms, createRoom, enterRoom, deleteUserAccount, leaveRoom } =
-    useLobbyActions();
+  const { fetchRooms, createRoom, enterRoom } = useLobbyActions();
+  const { logoutUser } = useAuthActions();
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const [isActive, setIsActive] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
   const navigate = useNavigate();
-  const { socket, storage } = useSocket();
+  const { user, socket, storage, isConnected } = useSocket();
   const userName = storage.getItem("userName");
   const phoneNumber = storage.getItem("phoneNumber");
-  const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const loadRooms = async () => {
-      try {
-        const room_list = await fetchRooms();
-        setRooms(room_list);
-        console.log("방 목록:", room_list);
-      } catch (error) {
-        console.error("방 목록을 가져오는 중 오류 발생:", error);
+      if (isConnected) {
+        try {
+          const room_list = await fetchRooms();
+          setRooms(room_list);
+        } catch (error) {
+          console.error("방 목록을 가져오는 중 오류 발생:", error);
+        }
       }
     };
 
     loadRooms();
 
-    socket.on("CREATEROOM", async () => {
-      await loadRooms();
-    });
-
-    socket.on("DELETEROOM", async () => {
-      await loadRooms();
-    });
-
-    socket.on("JOINUSER", async () => {
-      await loadRooms();
-    });
-
-    socket.on("LEAVEUSER", async () => {
-      await loadRooms();
-    });
+    // 소켓 이벤트 리스너 등록
+    if (socket && isConnected) {
+      socket.on("CREATEROOM", loadRooms);
+      socket.on("DELETEROOM", loadRooms);
+      socket.on("JOINUSER", loadRooms);
+      socket.on("LEAVEUSER", loadRooms);
+    }
 
     return () => {
       if (socket) {
-        socket.off("CREATEROOM");
-        socket.off("DELETEROOM");
-        socket.off("JOINUSER");
-        socket.off("LEAVEUSER");
+        socket.off("CREATEROOM", loadRooms);
+        socket.off("DELETEROOM", loadRooms);
+        socket.off("JOINUSER", loadRooms);
+        socket.off("LEAVEUSER", loadRooms);
       }
     };
-  }, [socket, fetchRooms]);
+  }, [socket, isConnected, fetchRooms]);
 
   const handleRoomCreate = () => {
     setShowForm(true);
@@ -68,7 +60,7 @@ export default function Lobby() {
 
   const handleRoomSubmit = async (event) => {
     event.preventDefault();
-    if (roomName.trim() !== "") {
+    if (roomName.trim() !== "" && isConnected) {
       try {
         const room = await createRoom(roomName);
         navigate("/waiting-room", {
@@ -84,20 +76,26 @@ export default function Lobby() {
     }
   };
 
-  const handleEnterRoom = async (roomId, roomName) => {
-    try {
-      const users = await enterRoom(roomId);
-      navigate("/waiting-room", {
-        state: {
-          roomId: roomId,
-          roomName: roomName,
-          userName: userName,
-          phoneNumber: phoneNumber,
-          users: users,
-        },
-      });
-    } catch (error) {
-      console.error("방 입장 중 오류 발생:", error);
+  const handleEnterRoom = async (length, roomId, roomName) => {
+    if (length >= 3) {
+      alert("방이 모두 차 입장할 수 없습니다.");
+      return;
+    }
+    if (isConnected) {
+      try {
+        const users = await enterRoom(roomId);
+        navigate("/waiting-room", {
+          state: {
+            roomId: roomId,
+            roomName: roomName,
+            userName: user?.userName, // user에서 userName 가져옴
+            phoneNumber: user?.phoneNumber, // user에서 phoneNumber 가져옴
+            users: users,
+          },
+        });
+      } catch (error) {
+        console.error("방 입장 중 오류 발생:", error);
+      }
     }
   };
 
@@ -105,14 +103,27 @@ export default function Lobby() {
     setShowForm(false);
   };
 
-  const handleDeleteClick = () => {
-    setShowConfirmDelete(true);
-  };
+  // const handleDeleteClick = () => {
+  //   setShowConfirmDelete(true);
+  // };
 
-  const handleConfirmDelete = () => {
-    navigate("/");
-    deleteUserAccount();
-    setShowConfirmDelete(false);
+  // const handleConfirmDelete = async () => {
+  //   try {
+  //     await deleteUserAccount(); // Call the logoutUser function to log out the user
+  //     navigate("/"); // Redirect to the home page after logout
+  //   } catch (error) {
+  //     console.error("탈퇴 실패:", error.message);
+  //   }
+  //   setShowConfirmDelete(false);
+  // };
+
+  const handleLogoutClick = async () => {
+    try {
+      await logoutUser(); // Call the logoutUser function to log out the user
+      navigate("/"); // Redirect to the home page after logout
+    } catch (error) {
+      console.error("로그아웃 실패:", error.message);
+    }
   };
 
   const handleCancelDelete = () => {
@@ -141,32 +152,29 @@ export default function Lobby() {
             <div className="lb_sidebar_name">{userName}</div>
             <div className="lb_sidebar_num">{phoneNumber}</div>
           </div>
-          <div className="lb_sidebar_delete">
-            <div
-              className={`lb_rule ${isActive ? "active" : ""}`}
-              onClick={handleShowRules}
-            >
+          <div className="lb_sidebar_logout">
+            <button className="lb_rule" onClick={handleShowRules}>
               게임 규칙
-            </div>
+            </button>
             <button
-              className="lb_sidebar_delete_button"
-              onClick={handleDeleteClick}
+              className="lb_sidebar_logout_button"
+              onClick={handleLogoutClick}
             >
-              탈퇴하기
+              로그아웃
             </button>
           </div>
         </div>
-        {/* <div className="lb_sidebar_bottom">
-          <div className="lb_sidebar_list">접속자 목록</div>
-          <ul className="lb_sidebar_list_name">
-            {users.map((user) => (
-              <li key={user.userId}>{user.userName}</li>
-            ))}
-          </ul>
+        <div className="lb_botcontainer">
+          <button className="lb_roomMake" onClick={handleRoomCreate}>
+            방 만들기
+          </button>
+        </div>
+        {/* <div className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
+          회원탈퇴
         </div> */}
       </div>
 
-      {showConfirmDelete && (
+      {/* {showConfirmDelete && (
         <div className="lb_confirm_overlay">
           <div className="lb_confirm_dialog">
             <p>정말 탈퇴하시겠습니까?</p>
@@ -176,7 +184,7 @@ export default function Lobby() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="lb_titlecontainer">배틀글라운드</div>
       <div className="lb_topcontainer">
@@ -190,16 +198,27 @@ export default function Lobby() {
               <div key={index} className="lb_roombox">
                 <div className="lb_roombox_num">{room.users.length}/3</div>
                 <div className="lb_roombox_title">{room.roomName}</div>
-                <div className="lb_roombox_title">
-                  {room.started ? "게임 중" : "준비 중"}
+                <div className="lb_roombox_bottom">
+                  <div className="lb_roombox_started">
+                    {room.started ? "게임 중" : "준비 중"}
+                  </div>
+                  <div className="lb_roombox_admin">
+                    👑&nbsp;
+                    {
+                      room.users.find((user) => user.power === "leader")
+                        ?.userName
+                    }
+                  </div>
                 </div>
-                <div className="lb_roombox_admin">
-                  {room.users.find((user) => user.power === "leader")?.userName}
-                </div>
-
                 <button
                   className="lb_submit"
-                  onClick={() => handleEnterRoom(room.roomId, room.roomName)}
+                  onClick={() =>
+                    handleEnterRoom(
+                      room.users.length,
+                      room.roomId,
+                      room.roomName
+                    )
+                  }
                 >
                   입장하기
                 </button>
@@ -207,11 +226,6 @@ export default function Lobby() {
             ))}
           </div>
         )}
-        <div className="lb_botcontainer">
-          <button className="lb_roomMake" onClick={handleRoomCreate}>
-            방 만들기
-          </button>
-        </div>
       </div>
 
       {showForm && (
@@ -236,6 +250,7 @@ export default function Lobby() {
         </div>
       )}
 
+      {/* 게임 규칙 모달 */}
       {showRulesModal && (
         <div className="lb_rules_modal">
           <div className="lb_rule_content">

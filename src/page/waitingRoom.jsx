@@ -13,10 +13,9 @@ export default function WaitingRoom() {
   const [kickTarget, setKickTarget] = useState("");
   const [isActive, setIsActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
-  const { socket, storage } = useSocket();
-  const userName = storage.getItem("userName");
-  const userId = storage.getItem("userId");
+  const { socket, user, storage } = useSocket();
   const [chats, setChats] = useState(() => {
     const storedChats = storage.getItem(`chats_${roomId}`);
     return storedChats ? JSON.parse(storedChats) : [];
@@ -27,22 +26,37 @@ export default function WaitingRoom() {
     return storedPlayers ? JSON.parse(storedPlayers) : users;
   });
 
-  const leader = players.find((player) => player.power === "leader"); //방장 찾기
+  const leader = players.find((player) => player.power === "leader");
 
   useEffect(() => {
-    if (!socket) return;
+    if (!socket || !user) return;
 
-    const getJoinUser = (user) => {
+    const getJoinUser = (newUser) => {
       setPlayers((prevPlayers) => {
-        const updatedPlayers = [...prevPlayers, user.user];
+        const isUserAlreadyInRoom = prevPlayers.some(
+          (player) => player.userId === newUser.user.userId
+        );
+        if (isUserAlreadyInRoom) {
+          return prevPlayers;
+        }
+
+        const updatedPlayers = [...prevPlayers, newUser.user];
         storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
         return updatedPlayers;
       });
-      console.log(players);
+    };
+
+    const getReconnectUser = (reconnectedUser) => {
+      setPlayers((prevPlayers) => {
+        const updatedPlayers = prevPlayers.map((player) =>
+          player.userId === reconnectedUser.userId ? reconnectedUser : player
+        );
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
     };
 
     const getChatMessage = ({ userName, message }) => {
-      console.log("새로운 메시지:", message);
       setChats((prevChats) => {
         const updatedChats = [...prevChats, { userName, message }];
         storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
@@ -56,8 +70,6 @@ export default function WaitingRoom() {
     };
 
     const removeUser = (response) => {
-      console.log("Removing user:", response.user);
-      console.log(players);
       setPlayers((prevPlayers) => {
         const updatedPlayers = prevPlayers.filter(
           (player) => player.userId !== response.user.userId
@@ -68,23 +80,46 @@ export default function WaitingRoom() {
     };
 
     const getStartGame = ({ gameInfo }) => {
-      console.log(gameInfo);
-      navigate("/game", {
-        state: {
-          roomId: roomId,
-          roomName: roomName,
-          words: gameInfo.words,
-          users: gameInfo.users,
-        },
-      });
+      setCountdown(5);
+
+      const interval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(interval);
+            navigate("/game", {
+              state: {
+                roomId: roomId,
+                roomName: roomName,
+                words: gameInfo.words,
+                users: gameInfo.users,
+              },
+            });
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 2000);
     };
 
     const setupSocketListeners = () => {
-      socket.on("JOINUSER", getJoinUser);
-      socket.on("CHAT", getChatMessage);
-      socket.on("DELETEROOM", getDeleteRoom);
-      socket.on("LEAVEUSER", removeUser);
-      socket.on("STARTGAME", getStartGame);
+      if (!socket.hasListeners("JOINUSER")) {
+        socket.on("JOINUSER", getJoinUser);
+      }
+      if (!socket.hasListeners("RECONNECT")) {
+        socket.on("RECONNECT", getReconnectUser);
+      }
+      if (!socket.hasListeners("CHAT")) {
+        socket.on("CHAT", getChatMessage);
+      }
+      if (!socket.hasListeners("DELETEROOM")) {
+        socket.on("DELETEROOM", getDeleteRoom);
+      }
+      if (!socket.hasListeners("LEAVEUSER")) {
+        socket.on("LEAVEUSER", removeUser);
+      }
+      if (!socket.hasListeners("STARTGAME")) {
+        socket.on("STARTGAME", getStartGame);
+      }
     };
 
     if (socket.connected) {
@@ -94,15 +129,15 @@ export default function WaitingRoom() {
       socket.once("connect", setupSocketListeners);
     }
 
-    // 컴포넌트 언마운트 시 방 삭제
     return () => {
       socket.off("JOINUSER", getJoinUser);
+      socket.off("RECONNECT", getReconnectUser);
       socket.off("CHAT", getChatMessage);
       socket.off("DELETEROOM", getDeleteRoom);
       socket.off("LEAVEUSER", removeUser);
       socket.off("STARTGAME", getStartGame);
     };
-  }, [socket, roomId, storage, navigate, leader, userId]);
+  }, [socket, roomId, storage, navigate, leader, user]);
 
   const addChatMessage = (userName, chatMessage) => {
     setChats((prevChats) => {
@@ -114,9 +149,7 @@ export default function WaitingRoom() {
 
   const handleSendMessage = () => {
     try {
-      const chatPacket = {
-        message,
-      };
+      const chatPacket = { message };
 
       addChatMessage("나", message);
 
@@ -133,23 +166,15 @@ export default function WaitingRoom() {
   };
 
   const handleStartGame = async () => {
-    if (players.length === 3) {
-      try {
-        const gameInfo = await startGame();
-        console.log("game start successfully!");
-        navigate("/game", {
-          state: {
-            roomId: roomId,
-            roomName: roomName,
-            words: gameInfo.words,
-            users: gameInfo.users,
-          },
-        });
-      } catch (error) {
-        console.error("Failed to start game:", error.message);
-      }
-    } else {
-      alert("플레이어 인원이 3명일 때 게임을 시작합니다.");
+    try {
+      const gameInfo = await startGame();
+      socket.emit("STARTGAME", { gameInfo }, (response) => {
+        if (!response.success) {
+          console.error("Failed to start game.");
+        }
+      });
+    } catch (error) {
+      console.error("Failed to start game:", error.message);
     }
   };
 
@@ -207,26 +232,22 @@ export default function WaitingRoom() {
 
   return (
     <div className="wr_container">
-      {String(leader.userId) !== userId && (
+      {String(leader?.userId) !== String(user?.userId) && (
         <div className="wr_back" onClick={handleBack} />
+      )}
+      {String(leader?.userId) === String(user?.userId) && (
+        <button className="wr_delete" onClick={handleDeleteRoom}>
+          방 삭제하기
+        </button>
       )}
       <div className="wr_topcontainer">
         <div className="wr_title">{roomName}</div>
       </div>
-      {String(leader.userId) === userId && (
-        <button onClick={handleDeleteRoom}>방 삭제하기</button>
-      )}
       <div className="wr_leftcontainer">
         {players.map((player, index) => (
           <div key={index} className="wr_player1">
             <div className="wr_player1_top">
               <p>{player.userName}</p>
-              {/* <div
-                className="wr_x"
-                onClick={() => toggleKickModal(player.userName)}
-              >
-                x
-              </div> */}
             </div>
             <img
               src={process.env.PUBLIC_URL + `/image/irumae${index + 1}.png`}
@@ -237,43 +258,35 @@ export default function WaitingRoom() {
             )}
           </div>
         ))}
-
-        {/* {isKickVisible && (
-          <div className="wr_kick">
-            <div className="wr_kick_content">
-              <p>
-                {kickTarget} 님을 <br />
-                강퇴하시겠습니까?
-              </p>
-              <button
-                className="wr_kickbutton"
-                onClick={handleKickMemberConfirm}
-              >
-                강퇴하기
-              </button>
-              <button
-                className="wr_cancelbutton"
-                onClick={() => setIsKickVisible(false)}
-              >
-                x
-              </button>
-            </div>
-          </div>
-        )} */}
         <div className="wr_bottom">
           <div className="wr_bottom_left">
-            <img src="/image/person.png" alt="person" />
+            <img
+              src={process.env.PUBLIC_URL + "/image/person.png"}
+              alt="person"
+            />
             <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
-          {String(leader.userId) === userId && (
-            <div className="wr_bottom_start" onClick={handleStartGame}>
-              게임 시작
+          {String(leader?.userId) === String(user?.userId) && (
+            <div
+              className={`wr_bottom_start ${
+                players.length !== 3 ? "disabled" : ""
+              }`}
+              onClick={players.length === 3 ? handleStartGame : null}
+              style={{
+                backgroundColor: players.length === 3 ? "#28a745" : "#ccc",
+                cursor: players.length === 3 ? "pointer" : "not-allowed",
+              }}
+            >
+              {countdown > 0 ? `게임 시작 ${countdown}` : "게임 시작"}
             </div>
           )}
-          {/* {String(leader.userId) !== userId && (
-            <div className="wr_bottom_ready">게임 준비</div>
-          )} */}
+
+          {String(leader?.userId) !== String(user?.userId) && (
+            <div className="wr_bottom_start_count">
+              {countdown > 0 ? `게임 시작 ${countdown}` : ""}
+            </div>
+          )}
         </div>
       </div>
       <div className="wr_rightcontainer">
@@ -298,32 +311,6 @@ export default function WaitingRoom() {
             전송
           </button>
         </div>
-      </div>
-      <div
-        className={`wr_rule ${isActive ? "active" : ""}`}
-        onClick={handleClick}
-      >
-        &emsp;게임 규칙
-      </div>
-      <div className={`wr_rule_content ${isVisible ? "visible" : ""}`}>
-        <h3>🌟타자왕들의 한 판 승부!🌟</h3>
-        <ul>
-          <li>
-            화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>
-            분간의 치열한 격전!
-          </li>
-          <li>
-            놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
-            <span className="lowlight">스피드</span>와{" "}
-            <span className="lowlight">전략</span>은 모두 필수!
-          </li>
-          <li>
-            60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}
-            <span className="highlightt">눈치</span> 게임의 조화로
-            <br />
-            <span className="highlight">🏆Top 10🏆</span>에 도전하세요!
-          </li>
-        </ul>
       </div>
     </div>
   );

@@ -6,16 +6,14 @@ import { gameEnd } from "../service/http_service";
 import { useSocket } from "../socket";
 
 export default function Game() {
-  const { socket, storage } = useSocket();
+  const { socket, user } = useSocket();
   const location = useLocation();
   const { roomId, roomName, words: initialWords, users } = location.state || {};
-  const userId = Number(storage.getItem("userId")); // 내 userId 가져오기 (Number로 변환)
-  const userName = storage.getItem("userName");
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
   const [selectedImage, setSelectedImage] = useState(
     <img
-      src={process.env.PUBLIC_URL + "image/irumae_happy.png"}
+      src={process.env.PUBLIC_URL + "/image/irumae_happy.png"}
       alt="profile"
     />
   );
@@ -37,7 +35,7 @@ export default function Game() {
     if (!socket) return;
 
     const getWord = ({ userId, success, word, gameInfo }) => {
-      setHiddenWords([...hiddenWords, word]);
+      setHiddenWords((prev) => [...prev, word]);
       setUserScore([
         gameInfo.users[0].score,
         gameInfo.users[1].score,
@@ -64,12 +62,14 @@ export default function Game() {
       socket.connect();
       socket.once("connect", setupSocketListeners);
     }
-  }, [socket, hiddenWords, userId]);
+  }, [socket, hiddenWords]);
 
   // 나의 등수 계산 함수
   const calculateMyRank = (users) => {
     const sortedUsers = [...users].sort((a, b) => b.score - a.score); // 점수 기준으로 정렬
-    const myUser = sortedUsers.findIndex((user) => user.userId === userId); // 내 userId로 내 위치 찾기
+    const myUser = sortedUsers.findIndex(
+      (userObj) => userObj.userId === user?.userId
+    ); // 내 userId로 내 위치 찾기
     setMyRank(myUser + 1); // 나의 등수 설정 (1등부터 시작하도록)
   };
 
@@ -80,7 +80,6 @@ export default function Game() {
     try {
       const response = await wordInput(word);
       if (response.success) {
-        console.log("Word processed successfully:", response);
         setUserScore([
           response.gameInfo.users[0].score,
           response.gameInfo.users[1].score,
@@ -132,11 +131,11 @@ export default function Game() {
       if (words.includes(trimmedInput)) {
         setSelectedImage(
           <img
-            src={process.env.PUBLIC_URL + "image/irumae_happy.png"}
+            src={process.env.PUBLIC_URL + "/image/irumae_happy.png"}
             alt="profile"
           />
         );
-        setHiddenWords([...hiddenWords, trimmedInput]);
+        setHiddenWords((prev) => [...prev, trimmedInput]);
         setIsValid(false);
 
         // 서버로 단어 제출
@@ -144,7 +143,7 @@ export default function Game() {
       } else {
         setSelectedImage(
           <img
-            src={process.env.PUBLIC_URL + "image/irumae_sad.png"}
+            src={process.env.PUBLIC_URL + "/image/irumae_sad.png"}
             alt="profile"
           />
         );
@@ -198,7 +197,8 @@ export default function Game() {
       {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
-        <div className="profile_name">{userName}</div>
+        <div className="profile_name">{user?.userName}</div>{" "}
+        {/* user 객체에서 userName 가져옴 */}
         <div className="profile_timer">
           <img
             className="timer"
@@ -208,17 +208,17 @@ export default function Game() {
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
-          <div className="ranking_number">{myRank}등</div>
+          <div className="ranking_number">{myRank} 등</div>
         </div>
         <div className="rankbox">
-          <div className="rankbox_title">실시간 순위</div>
+          <div className="rankbox_title">실시간 점수</div>
 
           <div className="rankbox_first">
-            <div style={{ width: "70%" }}>
+            <div>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #D1A722 -10%, transparent)",
+                  border:
+                    users[0]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[0]?.userName} {userScore[0]}점
@@ -227,11 +227,11 @@ export default function Game() {
           </div>
 
           <div className="rankbox_second">
-            <div style={{ width: "65%" }}>
+            <div>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #b1abab -10%, transparent)",
+                  border:
+                    users[1]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[1]?.userName} {userScore[1]}점
@@ -240,11 +240,11 @@ export default function Game() {
           </div>
 
           <div className="rankbox_third">
-            <div style={{ width: "60%" }}>
+            <div>
               <p
                 style={{
-                  background:
-                    "linear-gradient(to right, #836b2e -10%, transparent)",
+                  border:
+                    users[2]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[2]?.userName} {userScore[2]}점
