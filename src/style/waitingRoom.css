@@ -588,15 +588,18 @@
   flex-direction: column-reverse;
   overflow: hidden;
   letter-spacing: 0.03vw;
-  font-size: calc(0.6vh + 0.7vw);
+  font-size: 14px;
   width: 100%;
   color: rgb(235, 232, 232);
   background: linear-gradient(to bottom, #8b9dbc, #596371);
+  overflow: auto;
 }
 
 .wr_chatMessage {
   margin-left: 0.2vw;
   margin-bottom: 0.1vh;
+  font-family: "Arial";
+  margin: 2px;
 }
 
 .system-message {

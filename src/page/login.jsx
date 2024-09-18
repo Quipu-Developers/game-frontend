@@ -56,7 +56,7 @@ export default function Login() {
               </h2>
               <input
                 value={userName}
-                placeholder="닉네임"
+                placeholder="이름"
                 required
                 onChange={(e) => setUserName(e.target.value)}
               />
@@ -120,7 +120,7 @@ export default function Login() {
         <div className="login-form">
           <input
             value={userName}
-            placeholder="닉네임"
+            placeholder="이름"
             required
             onChange={(e) => setUserName(e.target.value)}
           />

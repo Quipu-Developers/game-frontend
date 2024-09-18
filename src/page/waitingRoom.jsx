@@ -9,7 +9,9 @@ export default function WaitingRoom() {
   const { roomId, roomName, users } = location.state || {};
   const { startGame, leaveRoom, deleteRoom } = useWaitingRoomActions();
   const [message, setMessage] = useState("");
+  const [inputValue, setInputValue] = useState(""); // inputValue 상태 정의
   const [countdown, setCountdown] = useState(0);
+  const [isComposing, setIsComposing] = useState(false); // 한글 입력 상태
   const navigate = useNavigate();
   const { socket, user, storage } = useSocket();
   const [chats, setChats] = useState(() => {
@@ -136,8 +138,8 @@ export default function WaitingRoom() {
 
   const handleSendMessage = () => {
     try {
-      const chatPacket = { message };
-      addChatMessage("나", message);
+      const chatPacket = { message: inputValue };
+      addChatMessage("나", inputValue);
 
       socket.emit("CHAT", chatPacket, (response) => {
         if (!response.success) {
@@ -145,7 +147,7 @@ export default function WaitingRoom() {
         }
       });
 
-      setMessage("");
+      setInputValue(""); // 메시지 전송 후 input 초기화
     } catch (error) {
       console.error("Failed to send message:", error.message);
     }
@@ -185,13 +187,21 @@ export default function WaitingRoom() {
   };
 
   const handleChange = (e) => {
-    setMessage(e.target.value);
+    setInputValue(e.target.value); // input 값 업데이트
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
+    if (e.key === "Enter" && !isComposing) {
       handleSendMessage();
     }
+  };
+
+  const handleCompositionStart = () => {
+    setIsComposing(true); // 한글 입력 중일 때
+  };
+
+  const handleCompositionEnd = () => {
+    setIsComposing(false); // 한글 입력 완료 후
   };
 
   return (
@@ -267,9 +277,11 @@ export default function WaitingRoom() {
         <div className="wr_inputContainer">
           <input
             className="wr_input"
-            value={message}
+            value={inputValue}
             onChange={handleChange}
             onKeyDown={handleKeyPress}
+            onCompositionStart={handleCompositionStart}
+            onCompositionEnd={handleCompositionEnd}
           />
           <button onClick={handleSendMessage} className="wr_send">
             전송

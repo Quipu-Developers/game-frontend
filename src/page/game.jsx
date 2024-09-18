@@ -1,5 +1,5 @@
 import "../style/game.css";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
 import { useSocket } from "../socket";
@@ -21,16 +21,22 @@ export default function Game() {
   const navigate = useNavigate();
   const [hiddenWords, setHiddenWords] = useState([]);
   const [userScore, setUserScore] = useState([0, 0, 0]);
-  const [myRank, setMyRank] = useState(0); // 나의 등수 상태 추가
-  const [words, setWords] = useState(initialWords); // 단어장 상태로 관리
+  const [myRank, setMyRank] = useState(0);
+  const [words, setWords] = useState(initialWords);
   const [gameInfo, setGameInfo] = useState({ users: [] });
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
   const [count, setCount] = useState(60);
 
-  // 서버에서 단어 입력 및 새로운 단어장 갱신 이벤트 받는 함수
   useEffect(() => {
     if (!socket) return;
+
+    // 기존 리스너 제거 후 새로 등록
+    const removeAllListeners = () => {
+      socket.off("WORD");
+      socket.off("ENDGAME");
+      socket.off("NEWWORDS");
+    };
 
     const getWord = ({ userId, success, word, gameInfo }) => {
       setHiddenWords((prev) => [...prev, word]);
@@ -40,21 +46,21 @@ export default function Game() {
         gameInfo.users[2].score,
       ]);
       setGameInfo(gameInfo);
-
-      // 내 등수 계산
       calculateMyRank(gameInfo.users);
     };
 
     const handleNewWords = ({ words: newWords }) => {
-      setWords(newWords); // 새로운 단어장으로 업데이트
+      setWords(newWords);
+      setHiddenWords([]);
     };
 
     const setupSocketListeners = () => {
+      removeAllListeners(); // 기존 리스너 제거
       socket.on("WORD", getWord);
       socket.on("ENDGAME", () => {
-        navigate("/end"); // 데이터 전송 후 결과 페이지로 이동
+        navigate("/end");
       });
-      socket.on("NEWWORDS", handleNewWords); // 새로운 단어장을 받아옴
+      socket.on("NEWWORDS", handleNewWords);
     };
 
     if (socket.connected) {
@@ -63,23 +69,29 @@ export default function Game() {
       socket.connect();
       socket.once("connect", setupSocketListeners);
     }
-  }, [socket, hiddenWords]);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      removeAllListeners();
+    };
+  }, [socket]);
 
   // 나의 등수 계산 함수
   const calculateMyRank = (users) => {
-    const sortedUsers = [...users].sort((a, b) => b.score - a.score); // 점수 기준으로 정렬
+    const sortedUsers = [...users].sort((a, b) => b.score - a.score);
     const myUser = sortedUsers.findIndex(
       (userObj) => userObj.userId === user?.userId
-    ); // 내 userId로 내 위치 찾기
-    setMyRank(myUser + 1); // 나의 등수 설정 (1등부터 시작하도록)
+    );
+    setMyRank(myUser + 1);
   };
 
   // 단어 제출 처리 함수
-  async function handleSubmitWord(inputWord) {
+  const handleSubmitWord = async (inputWord) => {
     const word = inputWord.trim();
 
     try {
       const response = await wordInput(word);
+      console.log("제출");
       if (response.success) {
         setUserScore([
           response.gameInfo.users[0].score,
@@ -88,14 +100,12 @@ export default function Game() {
         ]);
 
         setGameInfo(response.gameInfo);
-
-        // 내 등수 계산
         calculateMyRank(response.gameInfo.users);
       }
     } catch (error) {
       console.error("Error submitting word:", error.message);
     }
-  }
+  };
 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
@@ -103,6 +113,7 @@ export default function Game() {
 
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
+      event.preventDefault();
       const trimmedInput = inputValue.trim();
       if (words.includes(trimmedInput)) {
         setSelectedImage(
@@ -124,7 +135,6 @@ export default function Game() {
           />
         );
         setIsValid(true);
-        console.log("틀림");
       }
 
       setTimeout(() => {
@@ -168,8 +178,7 @@ export default function Game() {
       {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
-        <div className="profile_name">{user?.userName}</div>{" "}
-        {/* user 객체에서 userName 가져옴 */}
+        <div className="profile_name">{user?.userName}</div>
         <div className="profile_timer">
           <img
             className="timer"
