@@ -9,10 +9,6 @@ export default function WaitingRoom() {
   const { roomId, roomName, users } = location.state || {};
   const { startGame, leaveRoom, deleteRoom } = useWaitingRoomActions();
   const [message, setMessage] = useState("");
-  const [isKickVisible, setIsKickVisible] = useState(false);
-  const [kickTarget, setKickTarget] = useState("");
-  const [isActive, setIsActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const navigate = useNavigate();
   const { socket, user, storage } = useSocket();
@@ -31,95 +27,23 @@ export default function WaitingRoom() {
   useEffect(() => {
     if (!socket || !user) return;
 
-    const getJoinUser = (newUser) => {
-      setPlayers((prevPlayers) => {
-        const isUserAlreadyInRoom = prevPlayers.some(
-          (player) => player.userId === newUser.user.userId
-        );
-        if (isUserAlreadyInRoom) {
-          return prevPlayers;
-        }
-
-        const updatedPlayers = [...prevPlayers, newUser.user];
-        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-        return updatedPlayers;
-      });
-    };
-
-    const getReconnectUser = (reconnectedUser) => {
-      setPlayers((prevPlayers) => {
-        const updatedPlayers = prevPlayers.map((player) =>
-          player.userId === reconnectedUser.userId ? reconnectedUser : player
-        );
-        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-        return updatedPlayers;
-      });
-    };
-
-    const getChatMessage = ({ userName, message }) => {
-      setChats((prevChats) => {
-        const updatedChats = [...prevChats, { userName, message }];
-        storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
-        return updatedChats;
-      });
-    };
-
-    const getDeleteRoom = () => {
-      alert("방이 삭제되었습니다.");
-      navigate("/lobby");
-    };
-
-    const removeUser = (response) => {
-      setPlayers((prevPlayers) => {
-        const updatedPlayers = prevPlayers.filter(
-          (player) => player.userId !== response.user.userId
-        );
-        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-        return updatedPlayers;
-      });
-    };
-
-    const getStartGame = ({ gameInfo }) => {
-      setCountdown(5);
-
-      const interval = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
-            clearInterval(interval);
-            navigate("/game", {
-              state: {
-                roomId: roomId,
-                roomName: roomName,
-                words: gameInfo.words,
-                users: gameInfo.users,
-              },
-            });
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 2000);
+    const removeAllListeners = () => {
+      socket.off("JOINUSER", getJoinUser);
+      socket.off("RECONNECT", getReconnectUser);
+      socket.off("CHAT", getChatMessage);
+      socket.off("DELETEROOM", getDeleteRoom);
+      socket.off("LEAVEUSER", removeUser);
+      socket.off("STARTGAME", getStartGame);
     };
 
     const setupSocketListeners = () => {
-      if (!socket.hasListeners("JOINUSER")) {
-        socket.on("JOINUSER", getJoinUser);
-      }
-      if (!socket.hasListeners("RECONNECT")) {
-        socket.on("RECONNECT", getReconnectUser);
-      }
-      if (!socket.hasListeners("CHAT")) {
-        socket.on("CHAT", getChatMessage);
-      }
-      if (!socket.hasListeners("DELETEROOM")) {
-        socket.on("DELETEROOM", getDeleteRoom);
-      }
-      if (!socket.hasListeners("LEAVEUSER")) {
-        socket.on("LEAVEUSER", removeUser);
-      }
-      if (!socket.hasListeners("STARTGAME")) {
-        socket.on("STARTGAME", getStartGame);
-      }
+      removeAllListeners();
+      socket.on("JOINUSER", getJoinUser);
+      socket.on("RECONNECT", getReconnectUser);
+      socket.on("CHAT", getChatMessage);
+      socket.on("DELETEROOM", getDeleteRoom);
+      socket.on("LEAVEUSER", removeUser);
+      socket.on("STARTGAME", getStartGame);
     };
 
     if (socket.connected) {
@@ -130,14 +54,77 @@ export default function WaitingRoom() {
     }
 
     return () => {
-      socket.off("JOINUSER", getJoinUser);
-      socket.off("RECONNECT", getReconnectUser);
-      socket.off("CHAT", getChatMessage);
-      socket.off("DELETEROOM", getDeleteRoom);
-      socket.off("LEAVEUSER", removeUser);
-      socket.off("STARTGAME", getStartGame);
+      removeAllListeners();
     };
   }, [socket, roomId, storage, navigate, leader, user]);
+
+  const getJoinUser = (newUser) => {
+    setPlayers((prevPlayers) => {
+      const isUserAlreadyInRoom = prevPlayers.some(
+        (player) => player.userId === newUser.user.userId
+      );
+      if (isUserAlreadyInRoom) {
+        return prevPlayers;
+      }
+      const updatedPlayers = [...prevPlayers, newUser.user];
+      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+      return updatedPlayers;
+    });
+  };
+
+  const getReconnectUser = (reconnectedUser) => {
+    setPlayers((prevPlayers) => {
+      const updatedPlayers = prevPlayers.map((player) =>
+        player.userId === reconnectedUser.userId ? reconnectedUser : player
+      );
+      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+      return updatedPlayers;
+    });
+  };
+
+  const getChatMessage = ({ userName, message }) => {
+    setChats((prevChats) => {
+      const updatedChats = [...prevChats, { userName, message }];
+      storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
+      return updatedChats;
+    });
+  };
+
+  const getDeleteRoom = () => {
+    alert("방이 삭제되었습니다.");
+    navigate("/lobby");
+  };
+
+  const removeUser = (response) => {
+    setPlayers((prevPlayers) => {
+      const updatedPlayers = prevPlayers.filter(
+        (player) => player.userId !== response.user.userId
+      );
+      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+      return updatedPlayers;
+    });
+  };
+
+  const getStartGame = ({ gameInfo }) => {
+    setCountdown(5);
+    const interval = setInterval(() => {
+      setCountdown((prevCountdown) => {
+        if (prevCountdown <= 1) {
+          clearInterval(interval);
+          navigate("/game", {
+            state: {
+              roomId: roomId,
+              roomName: roomName,
+              words: gameInfo.words,
+              users: gameInfo.users,
+            },
+          });
+          return 0;
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
+  };
 
   const addChatMessage = (userName, chatMessage) => {
     setChats((prevChats) => {
@@ -150,7 +137,6 @@ export default function WaitingRoom() {
   const handleSendMessage = () => {
     try {
       const chatPacket = { message };
-
       addChatMessage("나", message);
 
       socket.emit("CHAT", chatPacket, (response) => {
@@ -188,31 +174,6 @@ export default function WaitingRoom() {
     }
   };
 
-  const handleClick = () => {
-    if (!isActive) {
-      setIsActive(true);
-      setTimeout(() => setIsVisible(true), 500);
-    } else {
-      setIsVisible(false);
-      setTimeout(() => setIsActive(false), 1000);
-    }
-  };
-
-  const handleChange = (e) => {
-    setMessage(e.target.value);
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSendMessage();
-    }
-  };
-
-  const toggleKickModal = (target) => {
-    setKickTarget(target);
-    setIsKickVisible(!isKickVisible);
-  };
-
   const handleBack = async () => {
     try {
       await leaveRoom();
@@ -223,10 +184,13 @@ export default function WaitingRoom() {
     }
   };
 
-  const handleKickMemberConfirm = () => {
-    if (kickTarget) {
-      console.log(`${kickTarget} was kicked`);
-      setIsKickVisible(false);
+  const handleChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
     }
   };
 

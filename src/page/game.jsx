@@ -11,7 +11,10 @@ export default function Game() {
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
   const [selectedImage, setSelectedImage] = useState(
-    <img src={process.env.PUBLIC_URL + "/image/irumae_happy.png"} alt="profile" />
+    <img
+      src={process.env.PUBLIC_URL + "/image/irumae_happy.png"}
+      alt="profile"
+    />
   );
   const [isTimeout, setIsTimeout] = useState(false);
   const [isValid, setIsValid] = useState(false);
@@ -31,7 +34,11 @@ export default function Game() {
 
     const getWord = ({ userId, success, word, gameInfo }) => {
       setHiddenWords((prev) => [...prev, word]);
-      setUserScore([gameInfo.users[0].score, gameInfo.users[1].score, gameInfo.users[2].score]);
+      setUserScore([
+        gameInfo.users[0].score,
+        gameInfo.users[1].score,
+        gameInfo.users[2].score,
+      ]);
       setGameInfo(gameInfo);
 
       // 내 등수 계산
@@ -61,7 +68,9 @@ export default function Game() {
   // 나의 등수 계산 함수
   const calculateMyRank = (users) => {
     const sortedUsers = [...users].sort((a, b) => b.score - a.score); // 점수 기준으로 정렬
-    const myUser = sortedUsers.findIndex((userObj) => userObj.userId === user?.userId); // 내 userId로 내 위치 찾기
+    const myUser = sortedUsers.findIndex(
+      (userObj) => userObj.userId === user?.userId
+    ); // 내 userId로 내 위치 찾기
     setMyRank(myUser + 1); // 나의 등수 설정 (1등부터 시작하도록)
   };
 
@@ -97,7 +106,10 @@ export default function Game() {
       const trimmedInput = inputValue.trim();
       if (words.includes(trimmedInput)) {
         setSelectedImage(
-          <img src={process.env.PUBLIC_URL + "/image/irumae_happy.png"} alt="profile" />
+          <img
+            src={process.env.PUBLIC_URL + "/image/irumae_happy.png"}
+            alt="profile"
+          />
         );
         setHiddenWords((prev) => [...prev, trimmedInput]);
         setIsValid(false);
@@ -106,7 +118,10 @@ export default function Game() {
         await handleSubmitWord(trimmedInput);
       } else {
         setSelectedImage(
-          <img src={process.env.PUBLIC_URL + "/image/irumae_sad.png"} alt="profile" />
+          <img
+            src={process.env.PUBLIC_URL + "/image/irumae_sad.png"}
+            alt="profile"
+          />
         );
         setIsValid(true);
         console.log("틀림");
@@ -153,9 +168,14 @@ export default function Game() {
       {isTimeout && <div className="overlay"></div>}
       <div className="leftcontainer">
         <div className="profile">{selectedImage}</div>
-        <div className="profile_name">{user?.userName}</div> {/* user 객체에서 userName 가져옴 */}
+        <div className="profile_name">{user?.userName}</div>{" "}
+        {/* user 객체에서 userName 가져옴 */}
         <div className="profile_timer">
-          <img className="timer" src={process.env.PUBLIC_URL + "/image/timer.png"} alt="timer" />
+          <img
+            className="timer"
+            src={process.env.PUBLIC_URL + "/image/timer.png"}
+            alt="timer"
+          />
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
@@ -168,7 +188,8 @@ export default function Game() {
             <div>
               <p
                 style={{
-                  border: users[0]?.userId === user?.userId ? "2px solid #000" : "",
+                  border:
+                    users[0]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[0]?.userName} {userScore[0]}점
@@ -180,7 +201,8 @@ export default function Game() {
             <div>
               <p
                 style={{
-                  border: users[1]?.userId === user?.userId ? "2px solid #000" : "",
+                  border:
+                    users[1]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[1]?.userName} {userScore[1]}점
@@ -192,7 +214,8 @@ export default function Game() {
             <div>
               <p
                 style={{
-                  border: users[2]?.userId === user?.userId ? "2px solid #000" : "",
+                  border:
+                    users[2]?.userId === user?.userId ? "2px solid #000" : "",
                 }}
               >
                 {users[2]?.userName} {userScore[2]}점
@@ -206,11 +229,17 @@ export default function Game() {
         <div className="wordbox">
           {showTimeLeftMessage && (
             <div className="time-left-message">
-              <img src={process.env.PUBLIC_URL + "/image/alert.png"} alt="alert" />
+              <img
+                src={process.env.PUBLIC_URL + "/image/alert.png"}
+                alt="alert"
+              />
             </div>
           )}
           {words?.map((word, index) => (
-            <div key={index} className={hiddenWords.includes(word) ? "hidden-word" : ""}>
+            <div
+              key={index}
+              className={hiddenWords.includes(word) ? "hidden-word" : ""}
+            >
               <u className="text">{word}</u>
             </div>
           ))}
