@@ -3,8 +3,9 @@ import io from "socket.io-client";
 
 const BASE_URL = process.env.REACT_APP_BACKEND_URL;
 console.log(BASE_URL);
-const storage =
-  process.env.NODE_ENV === "production" ? localStorage : sessionStorage;
+// const storage =
+//   process.env.NODE_ENV === "production" ? localStorage : sessionStorage;
+const storage = sessionStorage;
 
 const SocketContext = createContext();
 
