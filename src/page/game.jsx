@@ -50,6 +50,7 @@ export default function Game() {
     };
 
     const handleNewWords = ({ words: newWords }) => {
+      setWords([]);
       setWords(newWords);
       setHiddenWords([]);
     };
