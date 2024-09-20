@@ -78,8 +78,6 @@ export default function Game() {
 
   // 나의 등수 계산 함수
   const calculateMyRank = (users) => {
-    console.log("users: ", users);
-    console.log("user: ", user);
     const sortedUsers = [...users].sort((a, b) => b.score - a.score);
     const myUser = sortedUsers.findIndex(
       (userObj) => String(userObj.userId) === String(user?.userId)
@@ -94,7 +92,6 @@ export default function Game() {
 
     try {
       const response = await wordInput(word);
-      console.log("제출");
       if (response.success) {
         setUserScore([
           response.gameInfo.users[0].score,
