@@ -82,8 +82,9 @@ export default function Game() {
     console.log("user: ", user);
     const sortedUsers = [...users].sort((a, b) => b.score - a.score);
     const myUser = sortedUsers.findIndex(
-      (userObj) => userObj.userId === user?.userId
+      (userObj) => String(userObj.userId) === String(user?.userId)
     );
+
     setMyRank(myUser + 1);
   };
 
