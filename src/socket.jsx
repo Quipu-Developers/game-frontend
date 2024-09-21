@@ -19,7 +19,10 @@ export const SocketProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const socketIo = io.connect(BASE_URL);
+    const socketIo = io.connect(BASE_URL, {
+      withCredentials: true,
+      transports: ["websocket"],
+    });
 
     // 소켓 연결 성공 시
     socketIo.on("connect", () => {
