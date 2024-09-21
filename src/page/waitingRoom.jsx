@@ -143,7 +143,7 @@ export default function WaitingRoom() {
 
       socket.emit("CHAT", chatPacket, (response) => {
         if (!response.success) {
-          console.error("Failed to send message.");
+          console.error("Failed to send message.", response.errMsg);
         }
       });
 
