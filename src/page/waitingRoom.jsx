@@ -1,5 +1,5 @@
 import "../style/waitingRoom.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWaitingRoomActions } from "../service/waitingRoom_service";
 import { useSocket } from "../socket";
@@ -13,7 +13,7 @@ export default function WaitingRoom() {
   const [countdown, setCountdown] = useState(0);
   const [isComposing, setIsComposing] = useState(false); // 한글 입력 상태
   const navigate = useNavigate();
-  const { socket, user, storage } = useSocket();
+  const { socket, user, storage, isConnected } = useSocket();
   const [chats, setChats] = useState(() => {
     const storedChats = storage.getItem(`chats_${roomId}`);
     return storedChats ? JSON.parse(storedChats) : [];
@@ -26,8 +26,89 @@ export default function WaitingRoom() {
 
   const leader = players.find((player) => player.power === "leader");
 
+  const getJoinUser = useCallback(
+    (newUser) => {
+      setPlayers((prevPlayers) => {
+        const isUserAlreadyInRoom = prevPlayers.some(
+          (player) => player.userId === newUser.user.userId
+        );
+        if (isUserAlreadyInRoom) {
+          return prevPlayers;
+        }
+        const updatedPlayers = [...prevPlayers, newUser.user];
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
+    },
+    [roomId, storage]
+  );
+
+  const getReconnectUser = useCallback(
+    (reconnectedUser) => {
+      setPlayers((prevPlayers) => {
+        const updatedPlayers = prevPlayers.map((player) =>
+          player.userId === reconnectedUser.userId ? reconnectedUser : player
+        );
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
+    },
+    [roomId, storage]
+  );
+
+  const getChatMessage = useCallback(
+    ({ userName, message }) => {
+      setChats((prevChats) => {
+        const updatedChats = [...prevChats, { userName, message }];
+        storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
+        return updatedChats;
+      });
+    },
+    [roomId, storage]
+  );
+
+  const getDeleteRoom = useCallback(() => {
+    alert("방이 삭제되었습니다.");
+    navigate("/lobby");
+  }, [navigate]);
+
+  const removeUser = useCallback(
+    (response) => {
+      setPlayers((prevPlayers) => {
+        const updatedPlayers = prevPlayers.filter(
+          (player) => player.userId !== response.user.userId
+        );
+        storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
+        return updatedPlayers;
+      });
+    },
+    [roomId, storage]
+  );
+
+  const getStartGame = useCallback(
+    ({ gameInfo }) => {
+      setCountdown(5);
+      const interval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(interval);
+            navigate("/game", {
+              state: {
+                words: gameInfo.words,
+                users: gameInfo.users,
+              },
+            });
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
+    },
+    [navigate]
+  );
+
   useEffect(() => {
-    if (!socket || !user) return;
+    if (!socket || !isConnected || !user) return;
 
     const removeAllListeners = () => {
       socket.off("JOINUSER", getJoinUser);
@@ -39,6 +120,7 @@ export default function WaitingRoom() {
     };
 
     const setupSocketListeners = () => {
+      console.log("eventListener on");
       removeAllListeners();
       socket.on("JOINUSER", getJoinUser);
       socket.on("RECONNECT", getReconnectUser);
@@ -48,85 +130,24 @@ export default function WaitingRoom() {
       socket.on("STARTGAME", getStartGame);
     };
 
-    if (socket.connected) {
-      setupSocketListeners();
-    } else {
-      socket.connect();
-      socket.once("connect", setupSocketListeners);
-    }
+    console.log("Setting up listeners");
+    setupSocketListeners();
 
     return () => {
       removeAllListeners();
     };
-  }, [socket, roomId, storage, navigate, leader, user]);
-
-  const getJoinUser = (newUser) => {
-    setPlayers((prevPlayers) => {
-      const isUserAlreadyInRoom = prevPlayers.some(
-        (player) => player.userId === newUser.user.userId
-      );
-      if (isUserAlreadyInRoom) {
-        return prevPlayers;
-      }
-      const updatedPlayers = [...prevPlayers, newUser.user];
-      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-      return updatedPlayers;
-    });
-  };
-
-  const getReconnectUser = (reconnectedUser) => {
-    setPlayers((prevPlayers) => {
-      const updatedPlayers = prevPlayers.map((player) =>
-        player.userId === reconnectedUser.userId ? reconnectedUser : player
-      );
-      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-      return updatedPlayers;
-    });
-  };
-
-  const getChatMessage = ({ userName, message }) => {
-    setChats((prevChats) => {
-      const updatedChats = [...prevChats, { userName, message }];
-      storage.setItem(`chats_${roomId}`, JSON.stringify(updatedChats));
-      return updatedChats;
-    });
-  };
-
-  const getDeleteRoom = () => {
-    alert("방이 삭제되었습니다.");
-    navigate("/lobby");
-  };
-
-  const removeUser = (response) => {
-    setPlayers((prevPlayers) => {
-      const updatedPlayers = prevPlayers.filter(
-        (player) => player.userId !== response.user.userId
-      );
-      storage.setItem(`players_${roomId}`, JSON.stringify(updatedPlayers));
-      return updatedPlayers;
-    });
-  };
-
-  const getStartGame = ({ gameInfo }) => {
-    setCountdown(5);
-    const interval = setInterval(() => {
-      setCountdown((prevCountdown) => {
-        if (prevCountdown <= 1) {
-          clearInterval(interval);
-          navigate("/game", {
-            state: {
-              roomId: roomId,
-              roomName: roomName,
-              words: gameInfo.words,
-              users: gameInfo.users,
-            },
-          });
-          return 0;
-        }
-        return prevCountdown - 1;
-      });
-    }, 1000);
-  };
+  }, [
+    socket,
+    isConnected,
+    roomId,
+    user,
+    getJoinUser,
+    getReconnectUser,
+    getChatMessage,
+    getDeleteRoom,
+    removeUser,
+    getStartGame,
+  ]);
 
   const addChatMessage = (userName, chatMessage) => {
     setChats((prevChats) => {
@@ -214,6 +235,7 @@ export default function WaitingRoom() {
           방 삭제하기
         </button>
       )}
+      {countdown > 0 && <div className="wr_countdown">{countdown}</div>}
       <div className="wr_topcontainer">
         <div className="wr_title">{roomName}</div>
       </div>
@@ -241,6 +263,7 @@ export default function WaitingRoom() {
             <div className="wr_bottom_left_num">{players.length}</div>
             <p>/3</p>
           </div>
+
           {String(leader?.userId) === String(user?.userId) && (
             <div
               className={`wr_bottom_start ${
@@ -252,13 +275,7 @@ export default function WaitingRoom() {
                 cursor: players.length === 3 ? "pointer" : "not-allowed",
               }}
             >
-              {countdown > 0 ? `게임 시작 ${countdown}` : "게임 시작"}
-            </div>
-          )}
-
-          {String(leader?.userId) !== String(user?.userId) && (
-            <div className="wr_bottom_start_count">
-              {countdown > 0 ? `게임 시작 ${countdown}` : ""}
+              게임 시작
             </div>
           )}
         </div>

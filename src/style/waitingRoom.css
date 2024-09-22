@@ -43,6 +43,18 @@
   cursor: pointer;
 }
 
+.wr_countdown {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  font-size: 15vh;
+  text-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+  color: #f0f3ff;
+  z-index: 1000;
+}
+
 .wr_back {
   position: fixed;
   top: 4vh;

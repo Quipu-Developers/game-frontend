@@ -6,7 +6,7 @@ import { useAuthActions } from "../service/login_service";
 import { useSocket } from "../socket";
 
 const End = () => {
-  const { socket, storage } = useSocket();
+  const { storage } = useSocket();
   const { logoutUser } = useAuthActions();
   const [gameEndInfo, setGameEndInfo] = useState(null);
   const userId = storage.getItem("userId");
@@ -43,7 +43,7 @@ const End = () => {
   return (
     <div className="game-result-screen">
       <div className="header">
-        <h1>GAME RESULT</h1>
+        <h1>배틀글라운드 게임 결과</h1>
       </div>
 
       <div className="content">

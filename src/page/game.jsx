@@ -7,7 +7,7 @@ import { useSocket } from "../socket";
 export default function Game() {
   const { socket, user } = useSocket();
   const location = useLocation();
-  const { roomId, roomName, words: initialWords, users } = location.state || {};
+  const { words: initialWords, users } = location.state || {};
   const { wordInput } = useGameActions();
   const [inputValue, setInputValue] = useState("");
   const [selectedImage, setSelectedImage] = useState(
