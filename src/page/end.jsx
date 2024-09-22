@@ -89,7 +89,9 @@ const End = () => {
                       }.png`
                     }
                   />
-                  <span style={{ color: "#3b4755" }}>&nbsp;{index + 1}위</span>{" "}
+                  <span style={{ color: "#3b4755" }}>
+                    &nbsp;{player.rank}위
+                  </span>{" "}
                   <span style={{ color: "#3b4755" }}>{player.userName}</span>{" "}
                   <span
                     style={{
