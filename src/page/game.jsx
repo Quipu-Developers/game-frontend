@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
 import { useSocket } from "../socket";
+import { debounce } from "lodash";
 
 export default function Game() {
   const { socket, user } = useSocket();
@@ -112,7 +113,7 @@ export default function Game() {
     setInputValue(event.target.value);
   };
 
-  const handleKeyDown = async (event) => {
+  const handleKeyDown = debounce(async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
       const trimmedInput = inputValue.trim();
@@ -144,7 +145,7 @@ export default function Game() {
 
       setInputValue("");
     }
-  };
+  }, 50);
 
   // 화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
