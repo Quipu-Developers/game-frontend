@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useGameActions() {
-  const { socket, storage } = useSocket();
+  const { socket } = useSocket();
 
   const wordInput = useCallback(
     async (word) => {

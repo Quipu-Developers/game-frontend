@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useLobbyActions() {
-  const { socket, storage } = useSocket();
+  const { socket } = useSocket();
 
   const fetchRooms = useCallback(async () => {
     return new Promise((resolve, reject) => {
