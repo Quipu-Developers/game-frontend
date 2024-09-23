@@ -11,7 +11,6 @@ export default function Lobby() {
   const [rooms, setRooms] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [roomName, setRoomName] = useState("");
-  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const [showRulesModal, setShowRulesModal] = useState(false);
   const navigate = useNavigate();
   const { user, socket, storage, isConnected } = useSocket();
@@ -88,8 +87,8 @@ export default function Lobby() {
           state: {
             roomId: roomId,
             roomName: roomName,
-            userName: user?.userName, // user에서 userName 가져옴
-            phoneNumber: user?.phoneNumber, // user에서 phoneNumber 가져옴
+            userName: user?.userName,
+            phoneNumber: user?.phoneNumber,
             users: users,
           },
         });
@@ -124,10 +123,6 @@ export default function Lobby() {
     } catch (error) {
       console.error("로그아웃 실패:", error.message);
     }
-  };
-
-  const handleCancelDelete = () => {
-    setShowConfirmDelete(false);
   };
 
   const handleShowRules = () => {
@@ -169,22 +164,7 @@ export default function Lobby() {
             방 만들기
           </button>
         </div>
-        {/* <div className="lb_sidebar_delete_button" onClick={handleDeleteClick}>
-          회원탈퇴
-        </div> */}
       </div>
-
-      {/* {showConfirmDelete && (
-        <div className="lb_confirm_overlay">
-          <div className="lb_confirm_dialog">
-            <p>정말 탈퇴하시겠습니까?</p>
-            <div className="lb_confirm_buttons">
-              <button onClick={handleConfirmDelete}>확인</button>
-              <button onClick={handleCancelDelete}>취소</button>
-            </div>
-          </div>
-        </div>
-      )} */}
 
       <div className="lb_titlecontainer">배틀글라운드</div>
       <div className="lb_topcontainer">

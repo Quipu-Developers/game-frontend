@@ -8,10 +8,9 @@ export default function WaitingRoom() {
   const location = useLocation();
   const { roomId, roomName, users } = location.state || {};
   const { leaveRoom, deleteRoom } = useWaitingRoomActions();
-  const [message, setMessage] = useState("");
-  const [inputValue, setInputValue] = useState(""); // inputValue 상태 정의
+  const [inputValue, setInputValue] = useState("");
   const [countdown, setCountdown] = useState(0);
-  const [isComposing, setIsComposing] = useState(false); // 한글 입력 상태
+  const [isComposing, setIsComposing] = useState(false);
   const navigate = useNavigate();
   const { socket, user, storage, isConnected } = useSocket();
   const [chats, setChats] = useState(() => {

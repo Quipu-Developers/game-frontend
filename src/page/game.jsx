@@ -1,5 +1,5 @@
 import "../style/game.css";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGameActions } from "../service/game_service";
 import { useSocket } from "../socket";
@@ -24,11 +24,22 @@ export default function Game() {
   const [userScore, setUserScore] = useState([0, 0, 0]);
   const [myRank, setMyRank] = useState(0);
   const [words, setWords] = useState(initialWords);
-  const [gameInfo, setGameInfo] = useState({ users: [] });
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
   const [count, setCount] = useState(60);
   const [isLoading, setIsLoading] = useState(false);
+
+  const calculateMyRank = useCallback(
+    (users) => {
+      const sortedUsers = [...users].sort((a, b) => b.score - a.score);
+      const myUser = sortedUsers.findIndex(
+        (userObj) => String(userObj.userId) === String(user?.userId)
+      );
+
+      setMyRank(myUser + 1);
+    },
+    [user]
+  );
 
   useEffect(() => {
     if (!socket) return;
@@ -40,21 +51,23 @@ export default function Game() {
       socket.off("NEWWORDS");
     };
 
-    const getWord = ({ userId, success, word, gameInfo }) => {
+    const getWord = ({ word, gameInfo }) => {
       setHiddenWords((prev) => [...prev, word]);
       setUserScore([
         gameInfo.users[0].score,
         gameInfo.users[1].score,
         gameInfo.users[2].score,
       ]);
-      setGameInfo(gameInfo);
       calculateMyRank(gameInfo.users);
     };
 
     const handleNewWords = ({ words: newWords }) => {
-      setWords([]);
-      setWords(newWords);
-      setHiddenWords([]);
+      setIsLoading(true);
+      setTimeout(() => {
+        setWords(newWords);
+        setHiddenWords([]);
+        setIsLoading(false);
+      }, 500);
     };
 
     const setupSocketListeners = () => {
@@ -77,23 +90,11 @@ export default function Game() {
       socket.once("connect", setupSocketListeners);
     }
 
-    // 컴포넌트 언마운트 시 리스너 제거
     return () => {
       removeAllListeners();
     };
-  }, [socket]);
+  }, [socket, navigate, calculateMyRank]);
 
-  // 나의 등수 계산 함수
-  const calculateMyRank = (users) => {
-    const sortedUsers = [...users].sort((a, b) => b.score - a.score);
-    const myUser = sortedUsers.findIndex(
-      (userObj) => String(userObj.userId) === String(user?.userId)
-    );
-
-    setMyRank(myUser + 1);
-  };
-
-  // 단어 제출 처리 함수
   const handleSubmitWord = async (inputWord) => {
     const word = inputWord.trim();
 
@@ -106,7 +107,6 @@ export default function Game() {
           response.gameInfo.users[2].score,
         ]);
 
-        setGameInfo(response.gameInfo);
         calculateMyRank(response.gameInfo.users);
       }
     } catch (error) {
@@ -152,7 +152,6 @@ export default function Game() {
     }
   }, 50);
 
-  // 화면 렌더링 시 바로 inputbox에 입력 기능
   useEffect(() => {
     if (inputRef.current) {
       inputRef.current.focus();
@@ -176,7 +175,7 @@ export default function Game() {
   }, [count]);
 
   useEffect(() => {
-    if (words.length > 0 && words.length === hiddenWords.length) {
+    if (words.length > 0 && words.every((word) => hiddenWords.includes(word))) {
       setIsLoading(true);
     } else {
       setIsLoading(false);

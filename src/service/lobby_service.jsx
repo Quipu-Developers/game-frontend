@@ -16,7 +16,7 @@ export function useLobbyActions() {
         }
       });
     });
-  }, [socket, storage]);
+  }, [socket]);
 
   const createRoom = useCallback(
     async (roomName) => {
@@ -35,7 +35,7 @@ export function useLobbyActions() {
         });
       });
     },
-    [socket, storage]
+    [socket]
   );
 
   const enterRoom = useCallback(
@@ -55,7 +55,7 @@ export function useLobbyActions() {
         });
       });
     },
-    [socket, storage]
+    [socket]
   );
 
   const deleteUserAccount = useCallback(async () => {
@@ -73,7 +73,7 @@ export function useLobbyActions() {
         }
       });
     });
-  }, [socket, storage]);
+  }, [socket]);
 
   return { fetchRooms, createRoom, enterRoom, deleteUserAccount };
 }

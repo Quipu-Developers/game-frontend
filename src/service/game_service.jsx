@@ -23,7 +23,7 @@ export function useGameActions() {
         });
       });
     },
-    [socket, storage]
+    [socket]
   );
 
   return { wordInput };

@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { useSocket } from "../socket";
 
 export function useWaitingRoomActions() {
-  const { socket, storage } = useSocket();
+  const { socket } = useSocket();
 
   const kickMember = useCallback(
     (targetId) => {
@@ -21,7 +21,7 @@ export function useWaitingRoomActions() {
         });
       });
     },
-    [socket, storage]
+    [socket]
   );
 
   const deleteRoom = useCallback(() => {
@@ -39,7 +39,7 @@ export function useWaitingRoomActions() {
         }
       });
     });
-  }, [socket, storage]);
+  }, [socket]);
 
   const leaveRoom = useCallback(() => {
     return new Promise((resolve, reject) => {
@@ -56,7 +56,7 @@ export function useWaitingRoomActions() {
         }
       });
     });
-  }, [socket, storage]);
+  }, [socket]);
 
   return { kickMember, deleteRoom, leaveRoom };
 }
