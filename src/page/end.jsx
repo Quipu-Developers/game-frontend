@@ -1,16 +1,18 @@
 import "../style/end.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { getGameEndInfo } from "../service/http_service";
 import { useAuthActions } from "../service/login_service";
 import { useSocket } from "../socket";
 
 const End = () => {
+  const location = useLocation();
   const { storage } = useSocket();
   const { logoutUser } = useAuthActions();
   const [gameEndInfo, setGameEndInfo] = useState(null);
   const userId = storage.getItem("userId");
   const navigate = useNavigate();
+  const { users, userScore } = location.state || {};
 
   const handleStartClick = async () => {
     try {
@@ -67,6 +69,20 @@ const End = () => {
       <div className="header">
         <h1>배틀글라운드 게임 결과</h1>
       </div>
+
+      {userScore && users && (
+        <div className="current-score">
+          <div>
+            {users[0].userName} {userScore[0]}
+          </div>
+          <div>
+            {users[2].userName} {userScore[1]}
+          </div>
+          <div>
+            {users[2].userName} {userScore[2]}
+          </div>
+        </div>
+      )}
 
       <div className="content">
         <div className="wrap">

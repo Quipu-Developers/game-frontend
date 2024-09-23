@@ -1,4 +1,5 @@
 .game-result-screen {
+  position: relative;
   height: 100vh;
   background: linear-gradient(140deg, #8090a4 40%, transparent 0%),
     linear-gradient(190deg, #3b4755 50%, transparent 0%), #6d8191;
@@ -8,6 +9,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 25px;
+}
+
+.current-score {
+  position: absolute;
+  top: 50%;
+  left: 30px;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
 }
 
 .teamicon {

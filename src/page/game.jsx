@@ -61,7 +61,12 @@ export default function Game() {
       removeAllListeners(); // 기존 리스너 제거
       socket.on("WORD", getWord);
       socket.on("ENDGAME", () => {
-        navigate("/end");
+        navigate("/end", {
+          state: {
+            users: users,
+            userScore: userScore,
+          },
+        });
       });
       socket.on("NEWWORDS", handleNewWords);
     };
