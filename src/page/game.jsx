@@ -60,11 +60,10 @@ export default function Game() {
     const setupSocketListeners = () => {
       removeAllListeners(); // 기존 리스너 제거
       socket.on("WORD", getWord);
-      socket.on("ENDGAME", () => {
+      socket.on("ENDGAME", ({ users }) => {
         navigate("/end", {
           state: {
             users: users,
-            userScore: userScore,
           },
         });
       });

@@ -12,7 +12,8 @@ const End = () => {
   const [gameEndInfo, setGameEndInfo] = useState(null);
   const userId = storage.getItem("userId");
   const navigate = useNavigate();
-  const { users, userScore } = location.state || {};
+  const { users } = location.state || {};
+  console.log(users);
 
   const handleStartClick = async () => {
     try {
@@ -70,16 +71,41 @@ const End = () => {
         <h1>배틀글라운드 게임 결과</h1>
       </div>
 
-      {userScore && users && (
+      {users && (
         <div className="current-score">
-          <div>
-            {users[0].userName} {userScore[0]}
+          <h1>Score</h1>
+          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+            <span style={{ color: "#3b4755" }}>{users[0]?.userName}</span>{" "}
+            <span
+              style={{
+                color: "white",
+                WebkitTextStroke: "1.5px #11324d",
+              }}
+            >
+              {users[0]?.score}
+            </span>
           </div>
-          <div>
-            {users[2].userName} {userScore[1]}
+          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+            <span style={{ color: "#3b4755" }}>{users[1]?.userName}</span>{" "}
+            <span
+              style={{
+                color: "white",
+                WebkitTextStroke: "1.5px #11324d",
+              }}
+            >
+              {users[1]?.score}
+            </span>
           </div>
-          <div>
-            {users[2].userName} {userScore[2]}
+          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+            <span style={{ color: "#3b4755" }}>{users[2]?.userName}</span>{" "}
+            <span
+              style={{
+                color: "white",
+                WebkitTextStroke: "1.5px #11324d",
+              }}
+            >
+              {users[2]?.score}
+            </span>
           </div>
         </div>
       )}
@@ -87,6 +113,7 @@ const End = () => {
       <div className="content">
         <div className="wrap">
           <div className="overall-ranking">
+            <h1>Top10</h1>
             <div className="ranking-item1">
               {top10.map((player, index) => (
                 <div
