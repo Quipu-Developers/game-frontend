@@ -44,7 +44,7 @@ export default function Lobby() {
       if (socket) {
         socket.off("CREATEROOM", loadRooms);
         socket.off("DELETEROOM", loadRooms);
-        socket.on("STARTGAME", loadRooms);
+        socket.off("STARTGAME", loadRooms);
         socket.off("JOINUSER", loadRooms);
         socket.off("LEAVEUSER", loadRooms);
       }
