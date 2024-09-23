@@ -35,6 +35,7 @@ export default function Lobby() {
     if (socket && isConnected) {
       socket.on("CREATEROOM", loadRooms);
       socket.on("DELETEROOM", loadRooms);
+      socket.on("STARTGAME", loadRooms);
       socket.on("JOINUSER", loadRooms);
       socket.on("LEAVEUSER", loadRooms);
     }
@@ -43,6 +44,7 @@ export default function Lobby() {
       if (socket) {
         socket.off("CREATEROOM", loadRooms);
         socket.off("DELETEROOM", loadRooms);
+        socket.on("STARTGAME", loadRooms);
         socket.off("JOINUSER", loadRooms);
         socket.off("LEAVEUSER", loadRooms);
       }
@@ -138,10 +140,7 @@ export default function Lobby() {
       <div className="lb_sidebar">
         <div className="lb_sidebar_top">
           <div className="lb_sidebar_profile">
-            <img
-              src={process.env.PUBLIC_URL + "/image/irumaelb.png"}
-              alt="irumaelb"
-            />
+            <img src={process.env.PUBLIC_URL + "/image/irumaelb.png"} alt="irumaelb" />
           </div>
           <div className="lb_sidebar_nn">
             <div className="lb_sidebar_name">{userName}</div>
@@ -151,10 +150,7 @@ export default function Lobby() {
             <button className="lb_rule" onClick={handleShowRules}>
               게임 규칙
             </button>
-            <button
-              className="lb_sidebar_logout_button"
-              onClick={handleLogoutClick}
-            >
+            <button className="lb_sidebar_logout_button" onClick={handleLogoutClick}>
               로그아웃
             </button>
           </div>
@@ -169,9 +165,7 @@ export default function Lobby() {
       <div className="lb_titlecontainer">배틀글라운드</div>
       <div className="lb_topcontainer">
         {rooms.length === 0 ? (
-          <div className="lb_no_rooms_message">
-            (&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)
-          </div>
+          <div className="lb_no_rooms_message">(&ensp; 방이 하나도 없어요 . . . 😢😢&ensp;)</div>
         ) : (
           <div className="lb_roomlist">
             {rooms.map((room, index) => (
@@ -179,26 +173,15 @@ export default function Lobby() {
                 <div className="lb_roombox_num">{room.users.length}/3</div>
                 <div className="lb_roombox_title">{room.roomName}</div>
                 <div className="lb_roombox_bottom">
-                  <div className="lb_roombox_started">
-                    {room.started ? "게임 중" : "준비 중"}
-                  </div>
+                  <div className="lb_roombox_started">{room.started ? "게임 중" : "준비 중"}</div>
                   <div className="lb_roombox_admin">
                     👑&nbsp;
-                    {
-                      room.users.find((user) => user.power === "leader")
-                        ?.userName
-                    }
+                    {room.users.find((user) => user.power === "leader")?.userName}
                   </div>
                 </div>
                 <button
                   className="lb_submit"
-                  onClick={() =>
-                    handleEnterRoom(
-                      room.users.length,
-                      room.roomId,
-                      room.roomName
-                    )
-                  }
+                  onClick={() => handleEnterRoom(room.users.length, room.roomId, room.roomName)}
                 >
                   입장하기
                 </button>
@@ -240,17 +223,17 @@ export default function Lobby() {
             <h3>게임 규칙</h3>
             <ul>
               <li>
-                화면에 쏟아지는 단어들을 노리는{" "}
-                <span className="highlight">1</span>분간의 치열한 격전!
+                화면에 쏟아지는 단어들을 노리는 <span className="highlight">1</span>분간의 치열한
+                격전!
               </li>
               <li>
                 놓친 단어는 <span className="highlight">라이벌</span>의 것!{" "}
-                <span className="lowlight">스피드</span>와{" "}
-                <span className="lowlight">전략</span>은 모두 필수!
+                <span className="lowlight">스피드</span>와 <span className="lowlight">전략</span>은
+                모두 필수!
               </li>
               <li>
-                60초 동안 당신의 <span className="lowlightt">타이핑</span>{" "}
-                실력과 <span className="highlightt">눈치</span> 게임의 조화로
+                60초 동안 당신의 <span className="lowlightt">타이핑</span> 실력과{" "}
+                <span className="highlightt">눈치</span> 게임의 조화로
                 <br />
                 <span className="highlight">🏆Top 10🏆</span>에 도전하세요!
               </li>
