@@ -4,23 +4,6 @@ import { useSocket } from "../socket";
 export function useWaitingRoomActions() {
   const { socket, storage } = useSocket();
 
-  const startGame = useCallback(() => {
-    return new Promise((resolve, reject) => {
-      if (!socket) {
-        reject(new Error("Socket is not connected"));
-        return;
-      }
-
-      socket.emit("STARTGAME", {}, (response) => {
-        if (response.success) {
-          resolve(response.gameInfo);
-        } else {
-          reject(new Error("Failed to start game"));
-        }
-      });
-    });
-  }, [socket, storage]);
-
   const kickMember = useCallback(
     (targetId) => {
       return new Promise((resolve, reject) => {
@@ -75,5 +58,5 @@ export function useWaitingRoomActions() {
     });
   }, [socket, storage]);
 
-  return { startGame, kickMember, deleteRoom, leaveRoom };
+  return { kickMember, deleteRoom, leaveRoom };
 }

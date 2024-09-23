@@ -310,6 +310,7 @@
 }
 
 .wordbox {
+  position: relative;
   margin-top: 9vh;
   width: 90%;
   height: 75vh;
@@ -334,6 +335,14 @@
     font-size: calc(0.8vh + 0.85vw);
     padding-top: 8px;
   }
+}
+
+.wordbox-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2000;
 }
 
 .text {

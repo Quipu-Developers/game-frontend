@@ -7,7 +7,7 @@ import { useSocket } from "../socket";
 export default function WaitingRoom() {
   const location = useLocation();
   const { roomId, roomName, users } = location.state || {};
-  const { startGame, leaveRoom, deleteRoom } = useWaitingRoomActions();
+  const { leaveRoom, deleteRoom } = useWaitingRoomActions();
   const [message, setMessage] = useState("");
   const [inputValue, setInputValue] = useState(""); // inputValue 상태 정의
   const [countdown, setCountdown] = useState(0);
@@ -84,14 +84,26 @@ export default function WaitingRoom() {
     },
     [roomId, storage]
   );
+
   const getStartGame = useCallback(
     ({ gameInfo }) => {
-      navigate("/game", {
-        state: {
-          words: gameInfo.words,
-          users: gameInfo.users,
-        },
-      });
+      console.log(gameInfo);
+      setCountdown(5);
+      const interval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(interval);
+            navigate("/game", {
+              state: {
+                words: gameInfo.words,
+                users: gameInfo.users,
+              },
+            });
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
     },
     [navigate]
   );
@@ -157,7 +169,7 @@ export default function WaitingRoom() {
         }
       });
 
-      setInputValue(""); // 메시지 전송 후 input 초기화
+      setInputValue("");
     } catch (error) {
       console.error("Failed to send message:", error.message);
     }
@@ -165,23 +177,11 @@ export default function WaitingRoom() {
 
   const handleStartGame = async () => {
     try {
-      setCountdown(5);
-      const interval = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
-            clearInterval(interval);
-            startGame().then((gameInfo) => {
-              socket.emit("STARTGAME", { gameInfo }, (response) => {
-                if (!response.success) {
-                  console.error("Failed to start game.");
-                }
-              });
-            });
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000);
+      socket.emit("STARTGAME", {}, (response) => {
+        if (!response.success) {
+          console.error("Failed to start game.");
+        }
+      });
     } catch (error) {
       console.error("Failed to start game:", error.message);
     }
@@ -208,7 +208,7 @@ export default function WaitingRoom() {
   };
 
   const handleChange = (e) => {
-    setInputValue(e.target.value); // input 값 업데이트
+    setInputValue(e.target.value);
   };
 
   const handleKeyPress = (e) => {
@@ -218,11 +218,11 @@ export default function WaitingRoom() {
   };
 
   const handleCompositionStart = () => {
-    setIsComposing(true); // 한글 입력 중일 때
+    setIsComposing(true);
   };
 
   const handleCompositionEnd = () => {
-    setIsComposing(false); // 한글 입력 완료 후
+    setIsComposing(false);
   };
 
   return (

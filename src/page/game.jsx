@@ -28,6 +28,7 @@ export default function Game() {
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
   const [count, setCount] = useState(60);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -170,6 +171,14 @@ export default function Game() {
     return () => clearInterval(id);
   }, [count]);
 
+  useEffect(() => {
+    if (words.length > 0 && words.length === hiddenWords.length) {
+      setIsLoading(true);
+    } else {
+      setIsLoading(false);
+    }
+  }, [words, hiddenWords]);
+
   return (
     <div
       className="container"
@@ -254,6 +263,11 @@ export default function Game() {
               <u className="text">{word}</u>
             </div>
           ))}
+          {isLoading && (
+            <div className="wordbox-loading">
+              새 단어장으로 업데이트 중...🫨🫨
+            </div>
+          )}
         </div>
         <div className="inputbox">
           <input

@@ -35,7 +35,29 @@ const End = () => {
   }, [userId]);
 
   if (!gameEndInfo) {
-    return <div>Loading...</div>;
+    return (
+      <div className="game-result-screen">
+        <div className="header">
+          <h1>배틀글라운드 게임 결과</h1>
+        </div>
+        <div className="content">
+          <div className="wrap">
+            <div className="overall-ranking">
+              <div className="ranking-item1">
+                <div className="ranking-loading">등수 계산 중...😵‍💫😵‍💫</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="home-button" onClick={handleStartClick}>
+          <img
+            className="back"
+            alt="버튼"
+            src={process.env.PUBLIC_URL + "/image/home.png"}
+          />
+        </div>
+      </div>
+    );
   }
 
   const { personalRank, top10 } = gameEndInfo;

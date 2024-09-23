@@ -111,11 +111,21 @@
 }
 
 .ranking-item1 {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(5, auto);
   column-gap: 2vh;
   grid-auto-flow: column;
+}
+
+.ranking-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 18px;
 }
 
 .ranking-item2 {
