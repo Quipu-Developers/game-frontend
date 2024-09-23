@@ -26,7 +26,7 @@ export default function Game() {
   const [words, setWords] = useState(initialWords);
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
-  const [count, setCount] = useState(60000);
+  const [count, setCount] = useState(60);
   const [isLoading, setIsLoading] = useState(false);
 
   const calculateMyRank = useCallback(
