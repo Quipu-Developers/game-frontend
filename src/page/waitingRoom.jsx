@@ -84,25 +84,14 @@ export default function WaitingRoom() {
     },
     [roomId, storage]
   );
-
   const getStartGame = useCallback(
     ({ gameInfo }) => {
-      setCountdown(5);
-      const interval = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          if (prevCountdown <= 1) {
-            clearInterval(interval);
-            navigate("/game", {
-              state: {
-                words: gameInfo.words,
-                users: gameInfo.users,
-              },
-            });
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000);
+      navigate("/game", {
+        state: {
+          words: gameInfo.words,
+          users: gameInfo.users,
+        },
+      });
     },
     [navigate]
   );
@@ -176,12 +165,23 @@ export default function WaitingRoom() {
 
   const handleStartGame = async () => {
     try {
-      const gameInfo = await startGame();
-      socket.emit("STARTGAME", { gameInfo }, (response) => {
-        if (!response.success) {
-          console.error("Failed to start game.");
-        }
-      });
+      setCountdown(5);
+      const interval = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          if (prevCountdown <= 1) {
+            clearInterval(interval);
+            startGame().then((gameInfo) => {
+              socket.emit("STARTGAME", { gameInfo }, (response) => {
+                if (!response.success) {
+                  console.error("Failed to start game.");
+                }
+              });
+            });
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000);
     } catch (error) {
       console.error("Failed to start game:", error.message);
     }
