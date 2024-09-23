@@ -26,7 +26,7 @@ export default function Game() {
   const [words, setWords] = useState(initialWords);
   const showTimeLeftMessage = false;
   const inputRef = useRef(null);
-  const [count, setCount] = useState(60);
+  const [count, setCount] = useState(60000);
   const [isLoading, setIsLoading] = useState(false);
 
   const calculateMyRank = useCallback(
@@ -202,7 +202,7 @@ export default function Game() {
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{count}
         </div>
         <div className="ranking">
-          <div className="ranking_number">{myRank} 등</div>
+          <div className="ranking_number">{myRank}</div>
         </div>
         <div className="rankbox">
           <div className="rankbox_title">실시간 점수</div>

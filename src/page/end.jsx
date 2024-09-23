@@ -68,13 +68,13 @@ const End = () => {
   return (
     <div className="game-result-screen">
       <div className="header">
-        <h1>배틀글라운드 게임 결과</h1>
+        <h1>GAME RESULT</h1>
       </div>
 
       {users && (
         <div className="current-score">
-          <h1>Score</h1>
-          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+          <h1>SCORE</h1>
+          <div className="ranking-num" style={{ border: "2px solid #000" }}>
             <span style={{ color: "#3b4755" }}>{users[0]?.userName}</span>{" "}
             <span
               style={{
@@ -85,7 +85,7 @@ const End = () => {
               {users[0]?.score}
             </span>
           </div>
-          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+          <div className="ranking-num" style={{ border: "2px solid #000" }}>
             <span style={{ color: "#3b4755" }}>{users[1]?.userName}</span>{" "}
             <span
               style={{
@@ -96,7 +96,7 @@ const End = () => {
               {users[1]?.score}
             </span>
           </div>
-          <div className="ranking-number" style={{ border: "2px solid #000" }}>
+          <div className="ranking-num" style={{ border: "2px solid #000" }}>
             <span style={{ color: "#3b4755" }}>{users[2]?.userName}</span>{" "}
             <span
               style={{
@@ -110,10 +110,10 @@ const End = () => {
         </div>
       )}
 
-      <div className="content">
+<div className="content">
         <div className="wrap">
           <div className="overall-ranking">
-            <h1>Top10</h1>
+            <h1>Top 10</h1>
             <div className="ranking-item1">
               {top10.map((player, index) => (
                 <div
@@ -130,40 +130,18 @@ const End = () => {
                         : "transparent",
                   }}
                 >
-                  <img
-                    className="teamicon"
-                    alt={
-                      index === 0
-                        ? "1st"
-                        : index === 1
-                        ? "2nd"
-                        : index === 2
-                        ? "3rd"
-                        : ""
-                    }
-                    src={
-                      process.env.PUBLIC_URL +
-                      `/image/${
-                        index === 0
-                          ? "first"
-                          : index === 1
-                          ? "second"
-                          : index === 2
-                          ? "third"
-                          : ""
-                      }.png`
-                    }
-                  />
-                  <span style={{ color: "#3b4755" }}>
-                    &nbsp;{player.rank}위
-                  </span>{" "}
-                  <span style={{ color: "#3b4755" }}>{player.userName}</span>{" "}
-                  <span
-                    style={{
-                      color: "white",
-                      WebkitTextStroke: "1.5px #11324d",
-                    }}
-                  >
+                  <div className="rank-info">
+                    {index < 3 && (
+                      <img
+                        className="teamicon"
+                        alt={`${index + 1}등`}
+                        src={process.env.PUBLIC_URL + `/image/${['first', 'second', 'third'][index]}.png`}
+                      />
+                    )}
+                    <span className="rank-text">{player.rank}위</span>
+                  </div>
+                  <span className="player-name">{player.userName}</span>{" "}
+                  <span className="player-score">
                     {player.score}
                   </span>
                 </div>

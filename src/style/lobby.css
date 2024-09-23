@@ -436,6 +436,7 @@
   width: 25%;
   z-index: 1000000;
   font-size: 2.4vh;
+  height: 20vh;
   flex-direction: column;
   align-items: center;
   padding: 50px 20px;
@@ -504,12 +505,20 @@
   margin-bottom: 3vh;
 }
 
+.lb_roombox_admin {
+  font-size: 2.4vh;
+}
+
 .lb_submit {
   position: absolute;
-  bottom: -11px;
+  bottom: calc(-1.8vh);
   left: 50%;
-  width: 80%;
-  height: 22px;
+  width: 40%;
+  padding: 1.8vh 0;
+  height: 2vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: translate(-50%, 0);
   background-color: #9db3d6;
   color: white;
