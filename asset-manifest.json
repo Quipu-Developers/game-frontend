@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/game-frontend/static/css/main.84bacd33.css",
-    "main.js": "/game-frontend/static/js/main.032e25d3.js",
+    "main.js": "/game-frontend/static/js/main.ae04ac6c.js",
     "static/media/VITRO CORE TTF.ttf": "/game-frontend/static/media/VITRO CORE TTF.82a2b0ef9f7a3886a8cd.ttf",
     "static/media/VITRO PRIDE TTF.ttf": "/game-frontend/static/media/VITRO PRIDE TTF.4a989a61e6062c1b91d1.ttf",
     "static/media/keyboard.jpg": "/game-frontend/static/media/keyboard.770ddf8ded133cf1ebb6.jpg",
     "static/media/VITRO INSPIRE TTF.ttf": "/game-frontend/static/media/VITRO INSPIRE TTF.f3132f4a34301f075d09.ttf",
     "index.html": "/game-frontend/index.html",
     "main.84bacd33.css.map": "/game-frontend/static/css/main.84bacd33.css.map",
-    "main.032e25d3.js.map": "/game-frontend/static/js/main.032e25d3.js.map"
+    "main.ae04ac6c.js.map": "/game-frontend/static/js/main.ae04ac6c.js.map"
   },
   "entrypoints": [
     "static/css/main.84bacd33.css",
-    "static/js/main.032e25d3.js"
+    "static/js/main.ae04ac6c.js"
   ]
 }
